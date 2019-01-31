@@ -5,7 +5,10 @@
  */
 package br.com.davidbuzatto.jjudge.utils;
 
-import br.com.davidbuzatto.jjudge.processor.Processor;
+import br.com.davidbuzatto.jjudge.processor.ProcessorC;
+import br.com.davidbuzatto.jjudge.processor.ProcessorCPP;
+import br.com.davidbuzatto.jjudge.processor.ProcessorJava;
+import br.com.davidbuzatto.jjudge.processor.ProcessorPython;
 import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.Test;
 import br.com.davidbuzatto.jjudge.testsets.TestResult;
@@ -15,7 +18,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -293,8 +295,7 @@ public class Utils {
             
             switch ( testSet.getProgrammingLanguage() ) {
                 case C:
-                    testResult.setExecutionState( 
-                            Processor.compileAndRunC( 
+                    testResult.setExecutionState( ProcessorC.compileAndRun( 
                                     t.getName(), 
                                     baseDir, 
                                     secondsToTimeout, 
@@ -303,8 +304,7 @@ public class Utils {
                                     textPane ) );
                     break;
                 case CPP:
-                    testResult.setExecutionState( 
-                            Processor.compileAndRunCPP( 
+                    testResult.setExecutionState( ProcessorCPP.compileAndRun( 
                                     t.getName(), 
                                     baseDir, 
                                     secondsToTimeout, 
@@ -313,8 +313,7 @@ public class Utils {
                                     textPane ) );
                     break;
                 case JAVA:
-                    testResult.setExecutionState( 
-                            Processor.compileAndRunJava( 
+                    testResult.setExecutionState( ProcessorJava.compileAndRun( 
                                     t.getName(), 
                                     baseDir, 
                                     secondsToTimeout, 
@@ -323,8 +322,7 @@ public class Utils {
                                     textPane ) );
                     break;
                 case PYTHON:
-                    testResult.setExecutionState( 
-                            Processor.compileAndRunPython( 
+                    testResult.setExecutionState( ProcessorPython.compileAndRun( 
                                     t.getName(), 
                                     baseDir, 
                                     secondsToTimeout, 
@@ -518,10 +516,25 @@ public class Utils {
         
     }
     
-    public static void main( String[] args ) {
+    public static boolean verifyBackwards( String output, String test ) {
         
-        System.out.println( new File("build.xml").getAbsolutePath() );
-        System.out.println( new File( new File("build.xml").getAbsolutePath() ).getParentFile() );
+        int outputLastIndex = output.length()-1;
+        
+        if ( output.length() < test.length() ) {
+            return false;
+        }
+        
+        try {
+            for ( int i = test.length()-1; i >= 0; i-- ) {
+                if ( test.charAt( i ) != output.charAt( outputLastIndex-- ) ) {
+                    return false;
+                }
+            }
+        } catch ( IndexOutOfBoundsException exc ) {
+            return false;
+        }
+        
+        return true;
         
     }
     

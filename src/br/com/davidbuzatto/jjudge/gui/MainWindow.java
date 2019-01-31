@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -69,7 +68,10 @@ public class MainWindow extends javax.swing.JFrame {
         
         menuTools.setVisible( false );
         
-        //listPackagesModel.addElement( new File( "debugPackage.zip" ) );
+        //listPackagesModel.addElement( new File( "debugPackageC.zip" ) );
+        //listPackagesModel.addElement( new File( "debugPackageCPP.zip" ) );
+        //listPackagesModel.addElement( new File( "debugPackageJAVA.zip" ) );
+        //listPackagesModel.addElement( new File( "debugPackagePYTHON.zip" ) );
         
     }
     
@@ -133,7 +135,7 @@ public class MainWindow extends javax.swing.JFrame {
         setTitle("JJudge");
         setResizable(false);
 
-        panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder("Packages to Test"));
+        panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder("Package(s) to Test"));
 
         scrollPackages.setViewportView(listPackages);
 
@@ -180,7 +182,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        panelTestSets.setBorder(javax.swing.BorderFactory.createTitledBorder("Test Sets (right click each item for details)"));
+        panelTestSets.setBorder(javax.swing.BorderFactory.createTitledBorder("Test Set(s) (right click each item for details)"));
 
         listTestSets.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         listTestSets.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -565,9 +567,7 @@ public class MainWindow extends javax.swing.JFrame {
               + "    JDK for Java code;\n"
               + "    WinPython for Python code.\n\n"
               + "Note that you will need the appropriate version of the tool\n"
-              + "based on the source code that will be tested.\n\n"
-              + "Furthermore, in its current version, JJudge is only supporting\n"
-              + "appropriately the compiling and execution of C code.", 
+              + "based on the source code that will be compiled and tested.",
                 "How to configure and use", 
                 JOptionPane.INFORMATION_MESSAGE );
         

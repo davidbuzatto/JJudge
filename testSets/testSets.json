@@ -1,6 +1,6 @@
 [
   {
-    "description": "Debug",
+    "description": "Debug Test Set C",
     "programmingLanguage": "C",
     "tests": [
       {
@@ -84,6 +84,342 @@
       {
         "name": "debugCompilationError",
         "testCases": [
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugRuntimeError",
+        "testCases": [
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugTimeoutError",
+        "testCases": [
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugFileNotFoundError",
+        "testCases": []
+      }
+    ]
+  },
+  {
+    "description": "Debug Test Set CPP",
+    "programmingLanguage": "CPP",
+    "tests": [
+      {
+        "name": "debugApproveSum",
+        "testCases": [
+          {
+            "input": "1\n2",
+            "output": "output: 3"
+          },
+          {
+            "input": "3\n3",
+            "output": "output: 6"
+          }
+        ]
+      },
+      {
+        "name": "debugApproveBhaskara",
+        "testCases": [
+          {
+            "input": "1\n5\n4",
+            "output": "Delta: 9.00\nS \u003d {-4.00, -1.00}"
+          },
+          {
+            "input": "1\n4\n4",
+            "output": "Delta: 0.00\nS \u003d {-2.00}"
+          },
+          {
+            "input": "2\n2\n1",
+            "output": "Delta: -4.00\nS \u003d {}"
+          },
+          {
+            "input": "0\n3\n-2",
+            "output": "the second degree equation does not exist!"
+          }
+        ]
+      },
+      {
+        "name": "debugApproveComplexOutput",
+        "testCases": [
+          {
+            "input": "",
+            "output": "a a a\na a a\na\ta\ta\n\na\ta\ta\n\n\ta\ta"
+          }
+        ]
+      },
+      {
+        "name": "debugReproveSum",
+        "testCases": [
+          {
+            "input": "1\n2",
+            "output": "output: 3"
+          },
+          {
+            "input": "3\n3",
+            "output": "output: 6"
+          }
+        ]
+      },
+      {
+        "name": "debugReproveComplexOutput",
+        "testCases": [
+          {
+            "input": "",
+            "output": "a a a\na a a\na\ta\ta\n\na\ta\ta\n\n\ta\ta"
+          }
+        ]
+      },
+      {
+        "name": "debugReproveWithRuntimeError",
+        "testCases": [
+          {
+            "input": "10\n5",
+            "output": "output: 2"
+          },
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugCompilationError",
+        "testCases": [
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugRuntimeError",
+        "testCases": [
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugTimeoutError",
+        "testCases": [
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugFileNotFoundError",
+        "testCases": []
+      }
+    ]
+  },
+  {
+    "description": "Debug Test Set Java",
+    "programmingLanguage": "JAVA",
+    "tests": [
+      {
+        "name": "debugApproveSum",
+        "testCases": [
+          {
+            "input": "1\n2",
+            "output": "output: 3"
+          },
+          {
+            "input": "3\n3",
+            "output": "output: 6"
+          }
+        ]
+      },
+      {
+        "name": "debugApproveBhaskara",
+        "testCases": [
+          {
+            "input": "1\n5\n4",
+            "output": "Delta: 9.00\nS \u003d {-4.00, -1.00}"
+          },
+          {
+            "input": "1\n4\n4",
+            "output": "Delta: 0.00\nS \u003d {-2.00}"
+          },
+          {
+            "input": "2\n2\n1",
+            "output": "Delta: -4.00\nS \u003d {}"
+          },
+          {
+            "input": "0\n3\n-2",
+            "output": "the second degree equation does not exist!"
+          }
+        ]
+      },
+      {
+        "name": "debugApproveComplexOutput",
+        "testCases": [
+          {
+            "input": "",
+            "output": "a a a\na a a\na\ta\ta\n\na\ta\ta\n\n\ta\ta"
+          }
+        ]
+      },
+      {
+        "name": "debugReproveSum",
+        "testCases": [
+          {
+            "input": "1\n2",
+            "output": "output: 3"
+          },
+          {
+            "input": "3\n3",
+            "output": "output: 6"
+          }
+        ]
+      },
+      {
+        "name": "debugReproveComplexOutput",
+        "testCases": [
+          {
+            "input": "",
+            "output": "a a a\na a a\na\ta\ta\n\na\ta\ta\n\n\ta\ta"
+          }
+        ]
+      },
+      {
+        "name": "debugReproveWithRuntimeError",
+        "testCases": [
+          {
+            "input": "10\n5",
+            "output": "output: 2"
+          },
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugCompilationError",
+        "testCases": [
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugRuntimeError",
+        "testCases": [
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugTimeoutError",
+        "testCases": [
+          {
+            "input": "",
+            "output": ""
+          }
+        ]
+      },
+      {
+        "name": "debugFileNotFoundError",
+        "testCases": []
+      }
+    ]
+  },
+  {
+    "description": "Debug Test Set Python",
+    "programmingLanguage": "PYTHON",
+    "tests": [
+      {
+        "name": "debugApproveSum",
+        "testCases": [
+          {
+            "input": "1\n2",
+            "output": "output: 3"
+          },
+          {
+            "input": "3\n3",
+            "output": "output: 6"
+          }
+        ]
+      },
+      {
+        "name": "debugApproveBhaskara",
+        "testCases": [
+          {
+            "input": "1\n5\n4",
+            "output": "Delta: 9.00\nS \u003d {-4.00, -1.00}"
+          },
+          {
+            "input": "1\n4\n4",
+            "output": "Delta: 0.00\nS \u003d {-2.00}"
+          },
+          {
+            "input": "2\n2\n1",
+            "output": "Delta: -4.00\nS \u003d {}"
+          },
+          {
+            "input": "0\n3\n-2",
+            "output": "the second degree equation does not exist!"
+          }
+        ]
+      },
+      {
+        "name": "debugApproveComplexOutput",
+        "testCases": [
+          {
+            "input": "",
+            "output": "a a a\na a a\na\ta\ta\n\na\ta\ta\n\n\ta\ta"
+          }
+        ]
+      },
+      {
+        "name": "debugReproveSum",
+        "testCases": [
+          {
+            "input": "1\n2",
+            "output": "output: 3"
+          },
+          {
+            "input": "3\n3",
+            "output": "output: 6"
+          }
+        ]
+      },
+      {
+        "name": "debugReproveComplexOutput",
+        "testCases": [
+          {
+            "input": "",
+            "output": "a a a\na a a\na\ta\ta\n\na\ta\ta\n\n\ta\ta"
+          }
+        ]
+      },
+      {
+        "name": "debugReproveWithRuntimeError",
+        "testCases": [
+          {
+            "input": "10\n5",
+            "output": "output: 2"
+          },
           {
             "input": "",
             "output": ""

@@ -1,6 +1,6 @@
 ## Synopsis
 
-JJudge is a Java desktop application that aims to automate the checking of programs by compiling and executing them by providing inputs and testing for expected outputs.
+JJudge is a Java desktop application that aims to automate the checking of programs by compiling and executing them by providing inputs and testing for expected outputs. It supports code writen in C, C++, Java and Python.
 
 This tool was developed by Professor Dr. David Buzatto for application in the disciplines in which he teaches.
 

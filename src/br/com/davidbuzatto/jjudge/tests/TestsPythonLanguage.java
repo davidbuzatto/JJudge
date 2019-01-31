@@ -16,14 +16,14 @@ import java.util.List;
  *
  * @author David
  */
-public class TestsCLanguage {
+public class TestsPythonLanguage {
     
     /**
      * @param args the command line arguments
      */
     public static void main( String[] args ) throws Exception {
         
-        String baseDir = "C:\\Users\\David\\Documents\\Google Drive\\Projetos\\Corretor de Exercícios\\JJudge\\debugCode\\c";
+        String baseDir = "C:\\Users\\David\\Documents\\Google Drive\\Projetos\\Corretor de Exercícios\\JJudge\\debugCode\\python";
         boolean outputStreams = false;
         int secondsToTimeout = 10;
         
@@ -32,7 +32,7 @@ public class TestsCLanguage {
         
         TestSet testSet = null;
         for ( TestSet t : testSets ) {
-            if ( t.getDescription().equals( "Debug Test Set C" ) ) {
+            if ( t.getDescription().equals( "Debug Test Set Python" ) ) {
                 testSet = t;
                 break;
             }

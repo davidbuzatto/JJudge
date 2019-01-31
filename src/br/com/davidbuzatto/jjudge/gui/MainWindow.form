@@ -207,7 +207,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Packages to Test"/>
+            <TitledBorder title="Package(s) to Test"/>
           </Border>
         </Property>
       </Properties>
@@ -293,7 +293,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Test Sets (right click each item for details)"/>
+            <TitledBorder title="Test Set(s) (right click each item for details)"/>
           </Border>
         </Property>
       </Properties>
