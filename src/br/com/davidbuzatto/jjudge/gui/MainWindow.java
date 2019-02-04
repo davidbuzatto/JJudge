@@ -405,11 +405,15 @@ public class MainWindow extends javax.swing.JFrame {
         if ( listPackages.getSelectedValue() != null ) {
             
             if ( JOptionPane.showConfirmDialog( 
-                    this, "Do you really want to remove the selected package?",
+                    this, "Do you really want to remove the selected package(s)?",
                     "Remove package",
                     JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION ) {
                 
-                listPackagesModel.remove( listPackages.getSelectedIndex() );
+                int[] indices = listPackages.getSelectedIndices();
+                
+                for ( int i = indices.length-1; i >= 0; i-- ) {
+                    listPackagesModel.remove( indices[i] );
+                }
                 
             }
             
@@ -449,6 +453,7 @@ public class MainWindow extends javax.swing.JFrame {
                         for ( int i = 0; i < listPackagesModel.size(); i++ ) {
                             
                             File zipFile = listPackagesModel.get( i );
+                            
                             Utils.addFormattedText( 
                                     textPaneProcessOutput, 
                                     String.format( "Processing %s\n", zipFile ),
@@ -625,6 +630,8 @@ public class MainWindow extends javax.swing.JFrame {
                     jfc.setDialogTitle( "Choose the files to insert into the test package" );
                     jfc.setMultiSelectionEnabled( true );
                     jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
+                    jfc.removeChoosableFileFilter( jfc.getFileFilter() );
+                    jfc.setFileFilter( new FileNameExtensionFilter( "Source code files" , "c", "cpp", "java", "py" ) );
 
                     jfc.showOpenDialog( this );
                     File[] files = jfc.getSelectedFiles();
