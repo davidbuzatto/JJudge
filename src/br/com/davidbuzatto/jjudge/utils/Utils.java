@@ -290,45 +290,6 @@ public class Utils {
             TestResult testResult = new TestResult();
             testResult.setTest( t );
             
-            /*switch ( testSet.getProgrammingLanguage() ) {
-                case C:
-                    testResult.setExecutionState( ProcessorC.compileAndRun( 
-                                    t.getName(), 
-                                    baseDir, 
-                                    secondsToTimeout, 
-                                    outputStreams,
-                                    t.getTestCases(),
-                                    textPane ) );
-                    break;
-                case CPP:
-                    testResult.setExecutionState( ProcessorCPP.compileAndRun( 
-                                    t.getName(), 
-                                    baseDir, 
-                                    secondsToTimeout, 
-                                    outputStreams,
-                                    t.getTestCases(),
-                                    textPane ) );
-                    break;
-                case JAVA:
-                    testResult.setExecutionState( ProcessorJava.compileAndRun( 
-                                    t.getName(), 
-                                    baseDir, 
-                                    secondsToTimeout, 
-                                    outputStreams,
-                                    t.getTestCases(),
-                                    textPane ) );
-                    break;
-                case PYTHON:
-                    testResult.setExecutionState( ProcessorPython.compileAndRun( 
-                                    t.getName(), 
-                                    baseDir, 
-                                    secondsToTimeout, 
-                                    outputStreams,
-                                    t.getTestCases(),
-                                    textPane ) );
-                    break;
-            }*/
-            
             testResult.setExecutionState( Processor.compileAndRun( 
                     t.getName(), 
                     baseDir, 
