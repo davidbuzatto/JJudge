@@ -23,7 +23,7 @@ public class TestsCPPLanguage {
      */
     public static void main( String[] args ) throws Exception {
         
-        String baseDir = "C:\\Users\\David\\Documents\\Google Drive\\Projetos\\Corretor de Exercícios\\JJudge\\debugCode\\cpp";
+        String baseDir = "debugCode/cpp";
         boolean outputStreams = false;
         int secondsToTimeout = 10;
         

@@ -23,7 +23,7 @@ public class TestsPythonLanguage {
      */
     public static void main( String[] args ) throws Exception {
         
-        String baseDir = "C:\\Users\\David\\Documents\\Google Drive\\Projetos\\Corretor de Exercícios\\JJudge\\debugCode\\python";
+        String baseDir = "debugCode/python";
         boolean outputStreams = false;
         int secondsToTimeout = 10;
         

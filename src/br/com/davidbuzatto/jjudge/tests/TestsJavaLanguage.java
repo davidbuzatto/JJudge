@@ -23,7 +23,7 @@ public class TestsJavaLanguage {
      */
     public static void main( String[] args ) throws Exception {
         
-        String baseDir = "C:\\Users\\David\\Documents\\Google Drive\\Projetos\\Corretor de Exercícios\\JJudge\\debugCode\\java";
+        String baseDir = "debugCode/java";
         boolean outputStreams = false;
         int secondsToTimeout = 10;
         

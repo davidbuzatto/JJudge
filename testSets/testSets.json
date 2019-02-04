@@ -76,7 +76,7 @@
             "output": "output: 2"
           },
           {
-            "input": "",
+            "input": "10\n0",
             "output": ""
           }
         ]
@@ -91,7 +91,7 @@
         ]
       },
       {
-        "name": "debugRuntimeError",
+        "name": "debugInfiniteRecursion",
         "testCases": [
           {
             "input": "",
@@ -100,7 +100,7 @@
         ]
       },
       {
-        "name": "debugTimeoutError",
+        "name": "debugInfiniteLoop",
         "testCases": [
           {
             "input": "",
@@ -191,7 +191,7 @@
             "output": "output: 2"
           },
           {
-            "input": "",
+            "input": "10\n0",
             "output": ""
           }
         ]
@@ -206,7 +206,7 @@
         ]
       },
       {
-        "name": "debugRuntimeError",
+        "name": "debugInfiniteRecursion",
         "testCases": [
           {
             "input": "",
@@ -215,7 +215,7 @@
         ]
       },
       {
-        "name": "debugTimeoutError",
+        "name": "debugInfiniteLoop",
         "testCases": [
           {
             "input": "",
@@ -306,7 +306,7 @@
             "output": "output: 2"
           },
           {
-            "input": "",
+            "input": "10\n0",
             "output": ""
           }
         ]
@@ -321,7 +321,7 @@
         ]
       },
       {
-        "name": "debugRuntimeError",
+        "name": "debugInfiniteRecursion",
         "testCases": [
           {
             "input": "",
@@ -330,7 +330,7 @@
         ]
       },
       {
-        "name": "debugTimeoutError",
+        "name": "debugInfiniteLoop",
         "testCases": [
           {
             "input": "",
@@ -421,13 +421,13 @@
             "output": "output: 2"
           },
           {
-            "input": "",
+            "input": "10\n0",
             "output": ""
           }
         ]
       },
       {
-        "name": "debugRuntimeError",
+        "name": "debugInfiniteRecursion",
         "testCases": [
           {
             "input": "",
@@ -436,7 +436,7 @@
         ]
       },
       {
-        "name": "debugTimeoutError",
+        "name": "debugInfiniteLoop",
         "testCases": [
           {
             "input": "",

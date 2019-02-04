@@ -1,12 +1,13 @@
 
-public class debugRuntimeError {
+public class debugInfiniteLoop {
 
     public static void main( String[] args ) {
         f();
     }
 
     public static void f() {
-        f();
+        while ( true ) {
+        }
     }
     
 }

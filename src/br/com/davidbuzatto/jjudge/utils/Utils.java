@@ -5,10 +5,7 @@
  */
 package br.com.davidbuzatto.jjudge.utils;
 
-import br.com.davidbuzatto.jjudge.processor.ProcessorC;
-import br.com.davidbuzatto.jjudge.processor.ProcessorCPP;
-import br.com.davidbuzatto.jjudge.processor.ProcessorJava;
-import br.com.davidbuzatto.jjudge.processor.ProcessorPython;
+import br.com.davidbuzatto.jjudge.processor.Processor;
 import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.Test;
 import br.com.davidbuzatto.jjudge.testsets.TestResult;
@@ -293,7 +290,7 @@ public class Utils {
             TestResult testResult = new TestResult();
             testResult.setTest( t );
             
-            switch ( testSet.getProgrammingLanguage() ) {
+            /*switch ( testSet.getProgrammingLanguage() ) {
                 case C:
                     testResult.setExecutionState( ProcessorC.compileAndRun( 
                                     t.getName(), 
@@ -330,7 +327,16 @@ public class Utils {
                                     t.getTestCases(),
                                     textPane ) );
                     break;
-            }
+            }*/
+            
+            testResult.setExecutionState( Processor.compileAndRun( 
+                    t.getName(), 
+                    baseDir, 
+                    secondsToTimeout, 
+                    outputStreams,
+                    t.getTestCases(),
+                    testSet.getProgrammingLanguage(),
+                    textPane ) );
             
             testSetResult.getTestResults().add( testResult );
             
@@ -519,6 +525,14 @@ public class Utils {
     public static boolean verifyBackwards( String output, String test ) {
         
         int outputLastIndex = output.length()-1;
+        
+        if ( output.length() == 0 ) {
+            return false;
+        }
+        
+        if ( test.length() == 0 ) {
+            return false;
+        }
         
         if ( output.length() < test.length() ) {
             return false;

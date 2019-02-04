@@ -6,6 +6,7 @@
 package br.com.davidbuzatto.jjudge.processor;
 
 import br.com.davidbuzatto.jjudge.testsets.TestCase;
+import br.com.davidbuzatto.jjudge.testsets.TestProgrammingLanguage;
 import br.com.davidbuzatto.jjudge.utils.StreamGobbler;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
@@ -22,7 +23,7 @@ import javax.swing.JTextPane;
  *
  * @author David
  */
-public class ProcessorJava {
+public class Processor {
     
     public static ExecutionState compileAndRun( 
             String fileName, 
@@ -30,55 +31,163 @@ public class ProcessorJava {
             int secondsToTimeout, 
             boolean outputStreams,
             List<TestCase> testCases,
+            TestProgrammingLanguage pLang,
             JTextPane textPane ) throws IOException, InterruptedException {
+        
         
         ExecutionState state = null;
         Runtime rt = Runtime.getRuntime();
         File dir = new File( baseDir );
         int passedTestCases = 0;
         
-        File[] filesToRemove = {
-            new File( String.format( "%s/%s.class", baseDir, fileName ) ),
-            new File( String.format( "%s/output.txt", baseDir ) )
-        };
+        String sourceExt = pLang.name().toLowerCase();
+        sourceExt = sourceExt.equals( "python" ) ? "py" : sourceExt;
         
-        String cmdJavac = String.format( "javac %s.java", fileName );
-        String cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s", fileName );
+        String cmdExec = "";
+        File[] filesToRemove = {};
+        String[] compilationCommands = {};
+        String[] threadId = {};
+        
+        
+        switch ( pLang ) {
+            
+            case C:
+                
+                cmdExec = String.format( "%s/%s.exe", baseDir, fileName );
+                
+                filesToRemove = new File[]{
+                    new File( String.format( "%s/%s.o", baseDir, fileName ) ),
+                    new File( String.format( "%s/%s.exe", baseDir, fileName ) ),
+                    new File( String.format( "%s/output.txt", baseDir ) )
+                };
+
+                compilationCommands = new String[]{
+                    String.format( "gcc -c %s.c -o %s.o", fileName, fileName ),
+                    String.format( "g++ -o %s.exe %s.o", fileName, fileName )
+                };
+
+                threadId = new String[]{
+                    "    gcc (comp)",
+                    "    g++ (link)"
+                };
+                
+                break;
+                
+                
+                
+            case CPP:
+                
+                cmdExec = String.format( "%s/%s.exe", baseDir, fileName );
+                
+                filesToRemove = new File[]{
+                    new File( String.format( "%s/%s.o", baseDir, fileName ) ),
+                    new File( String.format( "%s/%s.exe", baseDir, fileName ) ),
+                    new File( String.format( "%s/output.txt", baseDir ) )
+                };
+
+                compilationCommands = new String[]{
+                    String.format( "g++ -c %s.cpp -o %s.o", fileName, fileName ),
+                    String.format( "g++ -o %s.exe %s.o", fileName, fileName )
+                };
+
+                threadId = new String[]{
+                    "    g++ (comp)",
+                    "    g++ (link)"
+                };
+                
+                break;
+                
+                
+                
+            case JAVA:
+                
+                cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s", fileName );
+                
+                filesToRemove = new File[]{
+                    new File( String.format( "%s/%s.class", baseDir, fileName ) ),
+                    new File( String.format( "%s/output.txt", baseDir ) )
+                };
+
+                compilationCommands = new String[]{
+                    String.format( "javac %s.java", fileName )
+                };
+
+                threadId = new String[]{
+                    "    javac"
+                };
+                
+                break;
+                
+                
+                
+            case PYTHON:
+                
+                cmdExec = String.format( "python %s.py", fileName );
+                break;
+            
+        }
+        
+        
         
         
         if ( textPane == null ) {
-            System.out.printf( "Processing file %s/%s.java\n", baseDir, fileName );
+            System.out.printf( "Processing file %s/%s.%s\n", baseDir, fileName, sourceExt );
         } else {
             Utils.addFormattedText( 
                     textPane, 
-                    String.format( "|-- Processing file %s\\%s.java\n", baseDir, fileName ), 
+                    String.format( "|-- Processing file %s\\%s.%s\n", baseDir, fileName, sourceExt ), 
                     Color.BLACK );
         }
 
-        if ( new File( String.format( "%s/%s.java", baseDir, fileName ) ).exists() ) {
+        
+        if ( new File( String.format( "%s/%s.%s", baseDir, fileName, sourceExt ) ).exists() ) {
             
-            Process pJavac = rt.exec( cmdJavac, null, dir );
-            StreamGobbler sgJavac = new StreamGobbler( 
-                    pJavac.getInputStream(), 
-                    pJavac.getErrorStream(), 
-                    null, 
-                    "    javac", 
-                    outputStreams );
-            Thread tJavac = new Thread( sgJavac );
-            tJavac.start();
-            tJavac.join();
+            // compilation
+            for ( int i = 0; i < compilationCommands.length; i++ ) {
+                
+                Process p = rt.exec( compilationCommands[i], null, dir );
+                StreamGobbler sg = new StreamGobbler( 
+                        p.getInputStream(), 
+                        p.getErrorStream(), 
+                        null, 
+                        threadId[i], 
+                        outputStreams );
+                Thread t = new Thread( sg );
+                t.start();
+                t.join();
+                
+                // if error...
+                if ( sg.isProcessErrorStreamDataAvailable() ) {
+                    state = ExecutionState.COMPILATION_ERROR;
+                    break;
+                }
+                
+            }
 
-            // no error
-            if ( !sgJavac.isProcessErrorStreamDataAvailable() ) {
+            if ( state != ExecutionState.COMPILATION_ERROR ) {
 
                 if ( textPane == null ) {
-                    System.out.println( "|-- compiled!" );
+                    
+                    if ( compilationCommands.length > 0 ) {
+                        System.out.println( "|-- compiled!" );
+                    }
+                    
                     System.out.println( "|-- executing..." );
+                    
                 } else {
+                    
+                    if ( compilationCommands.length > 0 ) {
+                        Utils.addFormattedText( 
+                            textPane, 
+                            "|   |-- compiled!\n", 
+                            Color.BLACK );
+                    }
+                    
                     Utils.addFormattedText( 
                             textPane, 
-                            "|   |-- compiled!\n|   |-- executing...\n", 
+                            "|   |-- executing...\n", 
                             Color.BLACK );
+                    
                 }
 
                 int i = 1;
@@ -159,7 +268,6 @@ public class ProcessorJava {
                         }
                     }
 
-                    //sExec.close();
                     fosOutput.close();
 
                     // verify output with expected data...
@@ -269,9 +377,7 @@ public class ProcessorJava {
                 for ( File f : filesToRemove ) {
                     f.delete();
                 }
-
-            } else {
-                state = ExecutionState.COMPILATION_ERROR;
+            
             }
             
         } else {
@@ -287,6 +393,7 @@ public class ProcessorJava {
                     Color.BLACK );
             
             Color color = Color.BLACK;
+            
             switch ( state ) {
                 case APPROVED:
                     color = Color.GREEN.darker();
@@ -298,6 +405,7 @@ public class ProcessorJava {
                     color = Color.ORANGE.darker();
                     break;
             }
+            
             Utils.addFormattedText( 
                     textPane, 
                     state.toString(), 
