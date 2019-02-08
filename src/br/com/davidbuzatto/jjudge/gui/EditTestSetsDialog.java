@@ -451,10 +451,12 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         lblTestCaseOutput.setText("Output:");
 
         textAreaTestCaseInput.setColumns(20);
+        textAreaTestCaseInput.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         textAreaTestCaseInput.setRows(5);
         scrollTestCaseInput.setViewportView(textAreaTestCaseInput);
 
         textAreaTestCaseOutput.setColumns(20);
+        textAreaTestCaseOutput.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         textAreaTestCaseOutput.setRows(5);
         scrollTestCaseOutput.setViewportView(textAreaTestCaseOutput);
 

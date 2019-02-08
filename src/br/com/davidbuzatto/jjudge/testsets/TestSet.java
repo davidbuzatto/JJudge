@@ -44,7 +44,7 @@ public class TestSet implements Cloneable {
 
     @Override
     public String toString() {
-        return String.format(  "%s (%s) - %02d tests", description, programmingLanguage, tests.size() );
+        return String.format(  "%s (%s) - %02d test(s)", description, programmingLanguage, tests.size() );
     }
     
     @Override

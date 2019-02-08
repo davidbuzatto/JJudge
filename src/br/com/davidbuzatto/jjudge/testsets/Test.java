@@ -35,7 +35,7 @@ public class Test implements Cloneable {
 
     @Override
     public String toString() {
-        return String.format(  "%s - %02d test cases", name, testCases.size() );
+        return String.format(  "%s - %02d test case(s)", name, testCases.size() );
     }
     
     @Override
