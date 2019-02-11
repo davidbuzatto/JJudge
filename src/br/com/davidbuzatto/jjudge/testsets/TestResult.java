@@ -6,6 +6,7 @@
 package br.com.davidbuzatto.jjudge.testsets;
 
 import br.com.davidbuzatto.jjudge.processor.ExecutionState;
+import java.util.List;
 
 /**
  *
@@ -13,15 +14,24 @@ import br.com.davidbuzatto.jjudge.processor.ExecutionState;
  */
 public class TestResult {
     
-    private Test test;
+    private String name;
+    private List<TestCaseResult> testCasesResult;
     private ExecutionState executionState;
 
-    public Test getTest() {
-        return test;
+    public String getName() {
+        return name;
     }
 
-    public void setTest( Test test ) {
-        this.test = test;
+    public void setName( String name ) {
+        this.name = name;
+    }
+
+    public List<TestCaseResult> getTestCasesResult() {
+        return testCasesResult;
+    }
+
+    public void setTestCasesResult( List<TestCaseResult> testCasesResult ) {
+        this.testCasesResult = testCasesResult;
     }
 
     public ExecutionState getExecutionState() {
@@ -38,7 +48,7 @@ public class TestResult {
     
     @Override
     public String toString() {
-        return test.getName() + ": " + executionState;
+        return String.format(  "%s - %02d test case(s) result: %s", name, testCasesResult.size(), executionState );
     }
     
 }

@@ -106,6 +106,9 @@ public class MainWindow extends javax.swing.JFrame {
         panelProcessOutput = new javax.swing.JPanel();
         scrollProcessOutput = new javax.swing.JScrollPane();
         textPaneProcessOutput = new javax.swing.JTextPane();
+        panelResults = new javax.swing.JPanel();
+        scrollResults = new javax.swing.JScrollPane();
+        resultPanel = new br.com.davidbuzatto.jjudge.gui.ResultPanel();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemBuildTestPackage = new javax.swing.JMenuItem();
@@ -162,9 +165,9 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(panelPackagesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelPackagesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPackages, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(scrollPackages, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPackagesLayout.createSequentialGroup()
-                        .addGap(0, 78, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnAddPackage)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemovePackage)))
@@ -174,12 +177,12 @@ public class MainWindow extends javax.swing.JFrame {
             panelPackagesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelPackagesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollPackages, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+                .addComponent(scrollPackages, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelPackagesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRemovePackage)
                     .addComponent(btnAddPackage))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panelTestSets.setBorder(javax.swing.BorderFactory.createTitledBorder("Test Set(s) (right click each item for details)"));
@@ -212,8 +215,8 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(panelTestSetsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelTestSetsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollTestSets, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTestSetsLayout.createSequentialGroup()
+                    .addComponent(scrollTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelTestSetsLayout.createSequentialGroup()
                         .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRunTest)))
@@ -223,12 +226,12 @@ public class MainWindow extends javax.swing.JFrame {
             panelTestSetsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTestSetsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollTestSets)
+                .addComponent(scrollTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelTestSetsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRunTest)
                     .addComponent(lblStatus))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panelProcessOutput.setBorder(javax.swing.BorderFactory.createTitledBorder("Process Output"));
@@ -243,14 +246,48 @@ public class MainWindow extends javax.swing.JFrame {
             panelProcessOutputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelProcessOutputLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollProcessOutput)
-                .addContainerGap())
+                .addComponent(scrollProcessOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 754, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelProcessOutputLayout.setVerticalGroup(
             panelProcessOutputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelProcessOutputLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollProcessOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                .addComponent(scrollProcessOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        panelResults.setBorder(javax.swing.BorderFactory.createTitledBorder("Results"));
+
+        resultPanel.setFocusable(false);
+
+        javax.swing.GroupLayout resultPanelLayout = new javax.swing.GroupLayout(resultPanel);
+        resultPanel.setLayout(resultPanelLayout);
+        resultPanelLayout.setHorizontalGroup(
+            resultPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 388, Short.MAX_VALUE)
+        );
+        resultPanelLayout.setVerticalGroup(
+            resultPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 542, Short.MAX_VALUE)
+        );
+
+        scrollResults.setViewportView(resultPanel);
+
+        javax.swing.GroupLayout panelResultsLayout = new javax.swing.GroupLayout(panelResults);
+        panelResults.setLayout(panelResultsLayout);
+        panelResultsLayout.setHorizontalGroup(
+            panelResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelResultsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scrollResults, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        panelResultsLayout.setVerticalGroup(
+            panelResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelResultsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scrollResults)
                 .addContainerGap())
         );
 
@@ -355,12 +392,14 @@ public class MainWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelProcessOutput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(panelPackages, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(panelPackages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(panelTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(panelProcessOutput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -368,10 +407,13 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelPackages, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelTestSets, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelProcessOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(panelPackages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(panelTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panelProcessOutput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -426,6 +468,11 @@ public class MainWindow extends javax.swing.JFrame {
         TestSet tSet = listTestSets.getSelectedValue();
         List<TestSetResult> tSetResList = new ArrayList<>();
         
+        resultPanel.setTestSetResultList( tSetResList );
+        resultPanel.repaint();
+        resultPanel.updateSize();
+        scrollResults.updateUI();
+        
         if ( tSet != null && !listPackagesModel.isEmpty() ) {
             
             new Thread( new Runnable() {
@@ -447,6 +494,7 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( "Please wait while the tests are being executed." );
                     textPaneProcessOutput.setText( "" );
+                    resultPanel.setMouseOverAllowed( false );
                     
                     try {
                         
@@ -466,6 +514,11 @@ public class MainWindow extends javax.swing.JFrame {
                                     secondsToTimeout, 
                                     textPaneProcessOutput ) );
                             
+                            resultPanel.generateRects();
+                            resultPanel.updateSize();
+                            resultPanel.repaint();
+                            scrollResults.updateUI();
+                            
                             Utils.addFormattedText( 
                                     textPaneProcessOutput, 
                                     String.format( "Cleaning up...\n\n", zipFile ),
@@ -475,8 +528,6 @@ public class MainWindow extends javax.swing.JFrame {
                             
                         }
                         
-                        //ResultDialog r = new ResultDialog( null, true, tSetResList );
-                        //r.setVisible( true );
                         Utils.processResultsToExcel( tSetResList, tSet );
                         
                     } catch ( IOException | InterruptedException exc ) {
@@ -496,6 +547,7 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
                     lblStatus.setText( "Done!" );
+                    resultPanel.setMouseOverAllowed( true );
                     
                 }
                 
@@ -733,10 +785,13 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu menuTools;
     private javax.swing.JPanel panelPackages;
     private javax.swing.JPanel panelProcessOutput;
+    private javax.swing.JPanel panelResults;
     private javax.swing.JPanel panelTestSets;
     private javax.swing.JPopupMenu popupMenu;
+    private br.com.davidbuzatto.jjudge.gui.ResultPanel resultPanel;
     private javax.swing.JScrollPane scrollPackages;
     private javax.swing.JScrollPane scrollProcessOutput;
+    private javax.swing.JScrollPane scrollResults;
     private javax.swing.JScrollPane scrollTestSets;
     private javax.swing.JPopupMenu.Separator sepMenuFile01;
     private javax.swing.JPopupMenu.Separator sepMenuFile02;

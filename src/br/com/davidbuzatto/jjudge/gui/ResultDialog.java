@@ -7,7 +7,10 @@ package br.com.davidbuzatto.jjudge.gui;
 
 import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
-import java.util.List;
+import br.com.davidbuzatto.jjudge.testsets.TestCaseResult;
+import br.com.davidbuzatto.jjudge.utils.Colors;
+import br.com.davidbuzatto.jjudge.utils.Utils;
+import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
@@ -20,88 +23,135 @@ public class ResultDialog extends javax.swing.JDialog {
     /**
      * Creates new form ResultDialog
      */
-    public ResultDialog( JFrame parent, boolean modal, List<TestSetResult> tSetResList ) {
+    public ResultDialog( JFrame parent, boolean modal, TestResult testResult ) {
         super( parent, modal );
         initComponents();
-        customInit( tSetResList );
+        customInit( testResult );
     }
     
-    private void customInit( List<TestSetResult> tSetResList ) {
+    private void customInit( TestResult testResult ) {
         
         setIconImage( new ImageIcon( getClass().getResource(
                 "/br/com/davidbuzatto/jjudge/gui/icons/report.png" ) ).getImage() );
         
-        textAreaResult.setText( processResults( tSetResList ) );
+        processResults( testResult );
         
     }
     
-    private String processResults( List<TestSetResult> tSetResList ) {
+    private void processResults( TestResult testResult ) {
         
-        StringBuilder sb = new StringBuilder();
+        Utils.addFormattedText( 
+                    textPaneResult, 
+                    String.format( "test %s: \n", testResult.getName() ), 
+                    Color.BLUE );
         
-        sb.append( "student" )
-                .append( "\t" )
-                .append( "code" )
-                .append( "\t" );
+        int testCase = 1;
         
-        for ( TestResult tr : tSetResList.get( 0 ).getTestResults() ) {
-            sb.append( tr.getTest().getName() ).append( "\t" );
-        }
-        
-        sb.append( "grade" );
-        sb.append( "\n" );
-        
-        for ( TestSetResult tsr : tSetResList ) {
+        for ( TestCaseResult tcr : testResult.getTestCasesResult() ) {
             
-            sb.append( tsr.getStudent().getName() )
-                    .append( "\t" )
-                    .append( tsr.getStudent().getCode() )
-                    .append( "\t" );
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    String.format( "|-- test case %02d:\n", testCase++ ), 
+                    Color.BLACK );
             
-            for ( TestResult tr : tsr.getTestResults() ) {
-                
-                String result = "-";
-                
-                switch ( tr.getExecutionState() ) {
-                    case APPROVED:
-                        result = "A";
-                        break;
-                    case REPROVED:
-                        result = "R";
-                        break;
-                    case COMPILATION_ERROR:
-                        result = "CE";
-                        break;
-                    case RUNTIME_ERROR:
-                        result = "RE";
-                        break;
-                    case TIMEOUT_ERROR:
-                        result = "TE";
-                        break;
-                    case FILE_NOT_FOUND_ERROR:
-                        result = "FE";
-                        break;
-                }
-                
-                sb.append( result ).append( "\t" );
-                
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "|   |-- process test input:\n", 
+                    Color.BLACK );
+            
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    Utils.identText( tcr.getInput(), 3 ) + "\n", 
+                    Color.BLACK );
+                    
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "|   |\n", 
+                    Color.BLACK );
+            
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "|   |-- process test output:\n", 
+                    Color.BLACK );
+            
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    Utils.identText( tcr.getOutput(), 3 ) + "\n", 
+                    Color.BLACK );
+            
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "|   |\n", 
+                    Color.BLACK );
+            
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "|   |-- process output:\n", 
+                    Color.BLACK );
+            
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    Utils.identText( tcr.getTestOutput(), 3 ) + "\n", 
+                    Color.BLACK );
+            
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "|   |\n", 
+                    Color.BLACK );
+            
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "|   |-- test case state: ", 
+                    Color.BLACK );
+            
+            Color color = Color.BLACK;
+            switch ( tcr.getExecutionState() ) {
+                case PASSED:
+                    color = Colors.PASSED;
+                    break;
+                case NOT_PASSED:
+                    color = Colors.NOT_PASSED;
+                    break;
+                default:
+                    color = Colors.ERROR;
+                    break;
             }
             
-            sb.append( String.format( "%.2f", tsr.getGrade() ) );
-            sb.append( "\n" );
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    tcr.getExecutionState().toString(), 
+                    color );
+            
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "\n|\n", 
+                    Color.BLACK );
             
         }
         
-        sb.append( "\n" );
+        Utils.addFormattedText( 
+                textPaneResult, 
+                "|-- test state: ", 
+                Color.BLACK );
+        
+        Color color = Color.BLACK;
             
-        sb.append( "A: approved\n" );
-        sb.append( "R: reproved\n" );
-        sb.append( "CE: compilation error\n" );
-        sb.append( "RE: runtime error\n" );
-        sb.append( "TE: timeout error\n" );
-        sb.append( "FE: file not found error" );
+        switch ( testResult.getExecutionState() ) {
+            case APPROVED:
+                color = Colors.APPROVED;
+                break;
+            case REPROVED:
+                color = Colors.REPROVED;
+                break;
+            default:
+                color = Colors.ERROR;
+                break;
+        }
             
-        return sb.toString();
+        Utils.addFormattedText( 
+                textPaneResult, 
+                testResult.getExecutionState().toString(), 
+                color );
         
     }
 
@@ -114,26 +164,25 @@ public class ResultDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        scrollPaneResult = new javax.swing.JScrollPane();
-        textAreaResult = new javax.swing.JTextArea();
+        scrollResult = new javax.swing.JScrollPane();
+        textPaneResult = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Test Results");
 
-        textAreaResult.setColumns(20);
-        textAreaResult.setFont(new java.awt.Font("Monospaced", 1, 13)); // NOI18N
-        textAreaResult.setRows(5);
-        scrollPaneResult.setViewportView(textAreaResult);
+        textPaneResult.setEditable(false);
+        textPaneResult.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        scrollResult.setViewportView(textPaneResult);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPaneResult, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addComponent(scrollResult, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPaneResult, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+            .addComponent(scrollResult, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
         );
 
         pack();
@@ -141,7 +190,7 @@ public class ResultDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane scrollPaneResult;
-    private javax.swing.JTextArea textAreaResult;
+    private javax.swing.JScrollPane scrollResult;
+    private javax.swing.JTextPane textPaneResult;
     // End of variables declaration//GEN-END:variables
 }

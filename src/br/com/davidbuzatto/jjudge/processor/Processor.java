@@ -6,7 +6,10 @@
 package br.com.davidbuzatto.jjudge.processor;
 
 import br.com.davidbuzatto.jjudge.testsets.TestCase;
+import br.com.davidbuzatto.jjudge.testsets.TestCaseResult;
 import br.com.davidbuzatto.jjudge.testsets.TestProgrammingLanguage;
+import br.com.davidbuzatto.jjudge.testsets.TestResult;
+import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.StreamGobbler;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
@@ -14,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +29,7 @@ import javax.swing.JTextPane;
  */
 public class Processor {
     
-    public static ExecutionState compileAndRun( 
+    public static TestResult compileAndRun( 
             String fileName, 
             String baseDir, 
             int secondsToTimeout, 
@@ -34,7 +38,10 @@ public class Processor {
             TestProgrammingLanguage pLang,
             JTextPane textPane ) throws IOException, InterruptedException {
         
-        
+        TestResult testResult = new TestResult();
+        testResult.setName( fileName );
+        testResult.setTestCasesResult( new ArrayList<>() );
+            
         ExecutionState state = null;
         Runtime rt = Runtime.getRuntime();
         File dir = new File( baseDir );
@@ -270,6 +277,13 @@ public class Processor {
 
                     fosOutput.close();
 
+                    TestCaseResult tcr = new TestCaseResult();
+                    tcr.setInput( tc.getInput() );
+                    tcr.setOutput( tc.getOutput() );
+                    tcr.setTestOutput( "" );
+                    tcr.setExecutionState( state );
+                    testResult.getTestCasesResult().add( tcr );
+                    
                     // verify output with expected data...
                     if ( state == null ) {
 
@@ -292,25 +306,13 @@ public class Processor {
                         sOutput.close();
 
                         if ( textPane == null ) {
-                            System.out.println( "|   |-- process output: " );
-                            System.out.println( Utils.identText( sbOutput.toString(), 3 ) );
-                            System.out.println( "|   |" );
                             System.out.println( "|   |-- process test output: " );
                             System.out.println( Utils.identText( test, 3 ) );
                             System.out.println( "|   |" );
+                            System.out.println( "|   |-- process output: " );
+                            System.out.println( Utils.identText( sbOutput.toString(), 3 ) );
+                            System.out.println( "|   |" );
                         } else {
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    "|   |   |-- process output:\n", 
-                                    Color.BLACK );
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    Utils.identText( sbOutput.toString(), 4 ) + "\n", 
-                                    Color.BLACK );
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    "|   |   |\n", 
-                                    Color.BLACK );
                             Utils.addFormattedText( 
                                     textPane, 
                                     "|   |   |-- process test output:\n", 
@@ -318,6 +320,18 @@ public class Processor {
                             Utils.addFormattedText( 
                                     textPane, 
                                     Utils.identText( test, 4 ) + "\n", 
+                                    Color.BLACK );
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    "|   |   |\n", 
+                                    Color.BLACK );
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    "|   |   |-- process output:\n", 
+                                    Color.BLACK );
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    Utils.identText( sbOutput.toString(), 4 ) + "\n", 
                                     Color.BLACK );
                             Utils.addFormattedText( 
                                     textPane, 
@@ -332,6 +346,9 @@ public class Processor {
                         } else {
                             state = ExecutionState.NOT_PASSED;
                         }
+                        
+                        tcr.setTestOutput( sbOutput.toString() );
+                        tcr.setExecutionState( state );
 
                     }
 
@@ -346,13 +363,13 @@ public class Processor {
                         Color color = Color.BLACK;
                         switch ( state ) {
                             case PASSED:
-                                color = Color.GREEN.darker().darker();
+                                color = Colors.PASSED;
                                 break;
                             case NOT_PASSED:
-                                color = Color.RED.darker();
+                                color = Colors.NOT_PASSED;
                                 break;
                             default:
-                                color = Color.ORANGE.darker();
+                                color = Colors.ERROR;
                                 break;
                         }
                         Utils.addFormattedText( 
@@ -363,8 +380,9 @@ public class Processor {
                                 textPane, 
                                 "\n|   |\n", 
                                 Color.BLACK );
+                        
                     }
-
+                    
                 }
 
                 if ( passedTestCases == testCases.size() ) {
@@ -396,13 +414,13 @@ public class Processor {
             
             switch ( state ) {
                 case APPROVED:
-                    color = Color.GREEN.darker();
+                    color = Colors.APPROVED;
                     break;
                 case REPROVED:
-                    color = Color.RED;
+                    color = Colors.REPROVED;
                     break;
                 default:
-                    color = Color.ORANGE.darker();
+                    color = Colors.ERROR;
                     break;
             }
             
@@ -417,7 +435,9 @@ public class Processor {
                     
         }
         
-        return state;
+        testResult.setExecutionState( state );
+        
+        return testResult;
         
     }
     

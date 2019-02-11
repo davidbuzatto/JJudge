@@ -287,17 +287,14 @@ public class Utils {
         
         for ( Test t : testSet.getTests() ) {
             
-            TestResult testResult = new TestResult();
-            testResult.setTest( t );
-            
-            testResult.setExecutionState( Processor.compileAndRun( 
+            TestResult testResult = Processor.compileAndRun( 
                     t.getName(), 
                     baseDir, 
                     secondsToTimeout, 
                     outputStreams,
                     t.getTestCases(),
                     testSet.getProgrammingLanguage(),
-                    textPane ) );
+                    textPane );
             
             testSetResult.getTestResults().add( testResult );
             
@@ -374,7 +371,7 @@ public class Utils {
             int cr = 1;   // current row
             
             for ( TestResult tr : tSetResList.get( 0 ).getTestResults() ) {
-                r.getCell( cc++ ).setCellValue( tr.getTest().getName() );
+                r.getCell( cc++ ).setCellValue( tr.getName() );
             }
             r.getCell( cc ).setCellValue( "grade" );
             
