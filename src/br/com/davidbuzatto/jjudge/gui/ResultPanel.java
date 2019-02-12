@@ -8,7 +8,9 @@ package br.com.davidbuzatto.jjudge.gui;
 import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import br.com.davidbuzatto.jjudge.utils.Colors;
+import br.com.davidbuzatto.jjudge.utils.Cursors;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -74,13 +76,23 @@ public class ResultPanel extends JPanel {
             @Override
             public void mouseMoved( MouseEvent e ) {
                 
+                boolean found = false;
+                
                 if ( mouseOverAllowed ) {
                     
                     int x = e.getX();
                     int y = e.getY();
 
                     for ( TestResultRectangle r : resRects ) {
-                        r.intersects( x, y );
+                        if ( r.intersects( x, y ) ) {
+                            found = true;
+                        }
+                    }
+                    
+                    if ( found ) {
+                        setCursor( Cursors.HAND_CURSOR );
+                    } else {
+                        setCursor( Cursors.DEFAULT_CURSOR );
                     }
                     
                     repaint();

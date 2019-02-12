@@ -469,6 +469,7 @@ public class MainWindow extends javax.swing.JFrame {
         List<TestSetResult> tSetResList = new ArrayList<>();
         
         resultPanel.setTestSetResultList( tSetResList );
+        resultPanel.generateRects();
         resultPanel.repaint();
         resultPanel.updateSize();
         scrollResults.updateUI();
