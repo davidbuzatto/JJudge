@@ -482,6 +482,9 @@ public class Utils {
     
     public static boolean verifyBackwards( String output, String test ) {
         
+        // trim end
+        
+        
         int outputLastIndex = output.length()-1;
         
         if ( output.length() == 0 ) {

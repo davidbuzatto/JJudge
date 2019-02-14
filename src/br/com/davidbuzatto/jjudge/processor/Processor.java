@@ -305,6 +305,9 @@ public class Processor {
 
                         sOutput.close();
 
+                        // trim end
+                        String cleanOutput = sbOutput.toString().replaceAll( "\\s+$", "" );
+                        
                         if ( textPane == null ) {
                             System.out.println( "|   |-- process test output: " );
                             System.out.println( Utils.identText( test, 3 ) );
@@ -331,7 +334,7 @@ public class Processor {
                                     Color.BLACK );
                             Utils.addFormattedText( 
                                     textPane, 
-                                    Utils.identText( sbOutput.toString(), 4 ) + "\n", 
+                                    Utils.identText( cleanOutput, 4 ) + "\n", 
                                     Color.BLACK );
                             Utils.addFormattedText( 
                                     textPane, 
@@ -340,14 +343,14 @@ public class Processor {
                         }
 
                         if ( Utils.verifyBackwards( 
-                                sbOutput.toString(), test ) ) {
+                                cleanOutput, test ) ) {
                             state = ExecutionState.PASSED;
                             passedTestCases++;
                         } else {
                             state = ExecutionState.NOT_PASSED;
                         }
                         
-                        tcr.setTestOutput( sbOutput.toString() );
+                        tcr.setTestOutput( cleanOutput );
                         tcr.setExecutionState( state );
 
                     }
