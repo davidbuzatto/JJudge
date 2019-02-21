@@ -71,4 +71,10 @@
 
     -->
     
+    <target name="-post-jar">
+        <copy todir="${dist.dir}">
+            <fileset dir="runbat"/>
+        </copy>
+    </target>
+    
 </project>
