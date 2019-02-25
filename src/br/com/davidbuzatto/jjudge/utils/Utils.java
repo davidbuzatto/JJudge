@@ -53,6 +53,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 public class Utils {
 
     private static final String PREFERENCES_PATH = "br.com.davidbuzatto.jjudge";
+    private static final Color HIGHLIGHTED_SPACE_COLOR = new Color( 230, 230, 230 );
     
     public static void zipFile( File fileToZip, File zipFile ) throws IOException {
         
@@ -315,31 +316,47 @@ public class Utils {
     }
     
     public static TestSetResult runTest( 
-            File zipFile, 
+            File file, 
             TestSet testSet, 
             boolean outputStreams, 
             int secondsToTimeout,
             JTextPane textPane ) throws IOException, InterruptedException {
         
-        File destDir = new File( zipFile.getAbsolutePath().replace( ".zip", "" ) );
+        File destDir;
+        Student student;
+        
+        boolean loadStudent = false;
+        
+        if ( file.getName().endsWith( ".zip" ) ) {
+            destDir = new File( file.getAbsolutePath().replace( ".zip", "" ) );
+            Utils.unzip( file, destDir );
+            loadStudent = true;
+        } else {
+            destDir = new File( file.getParent() );
+        }
+        
+        
         String baseDir = destDir.getAbsolutePath();
         
-        Utils.unzip( zipFile, destDir );
-        Student student = loadStudent( baseDir );
+        if ( loadStudent ) {
+            student = loadStudent( baseDir );
+        } else {
+            student = new Student();
+            student.setName( file.getName() );
+            student.setCode( "" );
+        }
         
-        TestSetResult tResSet = verify( 
-                testSet, 
-                student, 
-                baseDir, 
-                secondsToTimeout, 
-                outputStreams,
-                textPane );
-        
-        return tResSet;
+        return verify( 
+                    testSet, 
+                    student, 
+                    baseDir, 
+                    secondsToTimeout, 
+                    outputStreams,
+                    textPane );
         
     }
     
-    public static void addFormattedText( JTextPane textPane, String text, Color color ) {
+    public static void addFormattedText( JTextPane textPane, String text, Color color, boolean formatOutputAsConsole ) {
         
         try {
             
@@ -347,8 +364,60 @@ public class Utils {
             
             StyleConstants.setForeground( attr, color );
             StyleConstants.setBold( attr, true );
+            
+            if ( formatOutputAsConsole ) {
+                
+                for ( String line : text.split( "\n" ) ) {
+                    
+                    int identEnd = line.indexOf( "|-- " );
+
+                    String identText = line.substring( 0, identEnd + 4 );
+                    textPane.getDocument().insertString( 
+                            textPane.getDocument().getLength(), identText, attr );
+
+                    String textToFormat = line.substring( identEnd + 4 );
+                    
+                    StyleConstants.setBackground( attr, Color.BLACK );
+                    StyleConstants.setForeground( attr, Color.LIGHT_GRAY );
+                    textPane.getDocument().insertString( 
+                                textPane.getDocument().getLength(), textToFormat, attr );
+                    
+                    StyleConstants.setBackground( attr, Color.WHITE );
+                    StyleConstants.setForeground( attr, color );
+                    textPane.getDocument().insertString( 
+                                textPane.getDocument().getLength(), "\n", attr );
+                    
+                }
+                
+            } else {
+                textPane.getDocument().insertString( 
+                        textPane.getDocument().getLength(), text, attr );
+            }
+            
+        } catch ( BadLocationException exc ) {
+            exc.printStackTrace();
+        }
+        
+    }
+    
+    public static void changeFormattedText( 
+            JTextPane textPane, 
+            String text, 
+            int offset, 
+            int length, 
+            Color textColor,
+            Color backColor ) {
+        
+        try {
+            
+            SimpleAttributeSet attr = new SimpleAttributeSet();
+            StyleConstants.setForeground( attr, textColor );
+            StyleConstants.setBackground( attr, backColor );
+            StyleConstants.setBold( attr, true );
+            
+            textPane.getDocument().remove( offset, length );
             textPane.getDocument().insertString( 
-                    textPane.getDocument().getLength(), text, attr );
+                                offset, text, attr );
             
         } catch ( BadLocationException exc ) {
             exc.printStackTrace();
@@ -481,9 +550,6 @@ public class Utils {
     }
     
     public static boolean verifyBackwards( String output, String test ) {
-        
-        // trim end
-        
         
         int outputLastIndex = output.length()-1;
         

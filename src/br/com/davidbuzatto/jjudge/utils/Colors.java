@@ -19,4 +19,7 @@ public class Colors {
     public static final Color NOT_PASSED = Color.RED.darker();
     public static final Color ERROR = Color.ORANGE.darker();
     
+    public static final Color VERIFICATION_ERROR_F = Color.RED;
+    public static final Color VERIFICATION_ERROR_B = new Color( 50, 0, 0 );
+    
 }

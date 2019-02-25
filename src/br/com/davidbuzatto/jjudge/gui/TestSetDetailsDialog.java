@@ -9,6 +9,7 @@ import br.com.davidbuzatto.jjudge.testsets.Test;
 import br.com.davidbuzatto.jjudge.testsets.TestCase;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.utils.Utils;
+import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
@@ -32,62 +33,154 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
         setIconImage( new ImageIcon( getClass().getResource(
                 "/br/com/davidbuzatto/jjudge/gui/icons/report.png" ) ).getImage() );
         
-        textAreaDetails.setText( processDetailsTestSet( testSet ) );
+        processDetailsTestSet( testSet );
         
     }
 
-    private String processDetailsTestSet( TestSet testSet ) {
+    private void processDetailsTestSet( TestSet testSet ) {
         
         StringBuilder sb = new StringBuilder();
         
-        sb.append( "Description: " ).append( testSet.getDescription() ).append( "\n" );
-        sb.append( "Programming Language: " ).append( testSet.getProgrammingLanguage() ).append( "\n" );
-        sb.append( "Tests:" ).append( "\n" );
+        Utils.addFormattedText( 
+                textPaneDetails, 
+                "Description: ",
+                Color.BLACK, false );
+        Utils.addFormattedText( 
+                textPaneDetails, 
+                testSet.getDescription(),
+                Color.BLUE, false );
+        
+        Utils.addFormattedText( 
+                textPaneDetails, 
+                "\nProgramming Language: ",
+                Color.BLACK, false );
+        Utils.addFormattedText( 
+                textPaneDetails, 
+                testSet.getProgrammingLanguage().toString(),
+                Color.BLUE, false );
+        
+        Utils.addFormattedText( 
+                textPaneDetails, 
+                "\nTests:\n",
+                Color.BLACK, false );
         
         for ( Test t : testSet.getTests() ) {    
             
-            sb.append( "|-- Name: " ).append( t.getName() ).append( "\n" );
-            sb.append( "|   |-- file name: " ).append( t.getName() );
+            Utils.addFormattedText( 
+                    textPaneDetails, 
+                    "|-- Name: ",
+                    Color.BLACK, false );
+            Utils.addFormattedText( 
+                    textPaneDetails, 
+                    t.getName(),
+                    Color.BLUE, false );
+            Utils.addFormattedText( 
+                    textPaneDetails, 
+                    "\n|   |-- file name: ",
+                    Color.BLACK, false );
+            Utils.addFormattedText( 
+                    textPaneDetails, 
+                    t.getName(),
+                    Color.BLUE, false );
+            
+            String ext = "";
             
             switch ( testSet.getProgrammingLanguage() ) {
                 case C:
-                    sb.append( ".c" );
+                    ext = ".c";
                     break;
                 case CPP:
-                    sb.append( ".cpp" );
+                    ext = ".cpp";
                     break;
                 case JAVA:
-                    sb.append( ".java" );
+                    ext = ".java";
                     break;
                 case PYTHON:
-                    sb.append( ".py" );
+                    ext = ".py";
                     break;
                 default:
-                    sb.append( "<undefined>" );
+                    ext = ".<undefined>";
                     break;
             }
             
-            sb.append( "\n" );
+            Utils.addFormattedText( 
+                    textPaneDetails, 
+                    ext,
+                    Color.BLUE, false );
             
-            sb.append( "|   |-- test cases: " ).append( "\n" );
+            Utils.addFormattedText( 
+                    textPaneDetails, 
+                    "\n|   |-- test cases:\n",
+                    Color.BLACK, false );
             
             int i = 1;
             for ( TestCase tc : t.getTestCases() ) {
-                sb.append( String.format( "|   |   |-- test case %02d:\n", i++ ) );
-                sb.append( "|   |   |   |-- input: " ).append( "\n" ).append( Utils.identText( tc.getInput(), 5 ) ).append( "\n" );
-                sb.append( "|   |   |   |" ).append( "\n" );
-                sb.append( "|   |   |   |-- output: " ).append( "\n" ).append( Utils.identText( tc.getOutput(), 5 ) ).append( "\n" );
-                sb.append( "|   |   |   |" ).append( "\n" );
-                sb.append( "|   |   |" ).append( "\n" );
+                
+                Utils.addFormattedText( 
+                        textPaneDetails, 
+                        String.format( "|   |   |-- test case %02d:\n", i++ ),
+                        Color.BLACK, false );
+                
+                Utils.addFormattedText( 
+                        textPaneDetails, 
+                        "|   |   |   |-- input:\n",
+                        Color.BLACK, false );
+                
+                Utils.addFormattedText( 
+                        textPaneDetails, 
+                        Utils.identText( tc.getInput().isEmpty() ? "<empty>" : tc.getInput(), 5 ),
+                        Color.BLACK, false );
+                
+                Utils.addFormattedText( 
+                        textPaneDetails, 
+                        "\n|   |   |   |\n",
+                        Color.BLACK, false );
+                
+                Utils.addFormattedText( 
+                        textPaneDetails, 
+                        "|   |   |   |-- output:\n",
+                        Color.BLACK, false );
+                
+                if ( tc.getOutput().isEmpty() ) {
+                    Utils.addFormattedText( 
+                            textPaneDetails, 
+                            Utils.identText( "<empty>", 5 ),
+                            Color.BLACK, false );
+                    Utils.addFormattedText( 
+                            textPaneDetails, 
+                            "\n",
+                            Color.BLACK, false );
+                } else {
+                    Utils.addFormattedText( 
+                            textPaneDetails, 
+                            Utils.identText( tc.getOutput(), 5 ),
+                            Color.BLACK, true );
+                }
+                
+                
+                Utils.addFormattedText( 
+                        textPaneDetails, 
+                        "|   |   |   |\n",
+                        Color.BLACK, false );
+                
+                Utils.addFormattedText( 
+                        textPaneDetails, 
+                        "|   |   |\n",
+                        Color.BLACK, false );
+                
             }
             
-            sb.append( "|   |" ).append( "\n" );
-            sb.append( "|" ).append( "\n" );
+            Utils.addFormattedText( 
+                        textPaneDetails, 
+                        "|   |\n",
+                        Color.BLACK, false );
             
+            Utils.addFormattedText( 
+                        textPaneDetails, 
+                        "|\n",
+                        Color.BLACK, false );
             
         }
-        
-        return sb.toString();
         
     }
     
@@ -101,15 +194,13 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         scrollPaneDetails = new javax.swing.JScrollPane();
-        textAreaDetails = new javax.swing.JTextArea();
+        textPaneDetails = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Test Set Details");
 
-        textAreaDetails.setColumns(20);
-        textAreaDetails.setFont(new java.awt.Font("Monospaced", 1, 13)); // NOI18N
-        textAreaDetails.setRows(5);
-        scrollPaneDetails.setViewportView(textAreaDetails);
+        textPaneDetails.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        scrollPaneDetails.setViewportView(textPaneDetails);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -128,6 +219,6 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane scrollPaneDetails;
-    private javax.swing.JTextArea textAreaDetails;
+    private javax.swing.JTextPane textPaneDetails;
     // End of variables declaration//GEN-END:variables
 }

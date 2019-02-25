@@ -143,7 +143,7 @@ public class Processor {
             Utils.addFormattedText( 
                     textPane, 
                     String.format( "|-- Processing file %s\\%s.%s\n", baseDir, fileName, sourceExt ), 
-                    Color.BLACK );
+                    Color.BLACK, false );
         }
 
         
@@ -187,13 +187,13 @@ public class Processor {
                         Utils.addFormattedText( 
                             textPane, 
                             "|   |-- compiled!\n", 
-                            Color.BLACK );
+                            Color.BLACK, false );
                     }
                     
                     Utils.addFormattedText( 
                             textPane, 
                             "|   |-- executing...\n", 
-                            Color.BLACK );
+                            Color.BLACK, false );
                     
                 }
 
@@ -231,26 +231,26 @@ public class Processor {
                         Utils.addFormattedText( 
                                 textPane, 
                                 String.format( "|   |-- test case %02d:\n", i++ ), 
-                                Color.BLACK );
+                                Color.BLACK, false );
                         Utils.addFormattedText( 
                                 textPane, 
                                 "|   |   |-- process test input:\n", 
-                                Color.BLACK );
+                                Color.BLACK, false );
                         if ( input.isEmpty() ) {
                             Utils.addFormattedText( 
                                     textPane, 
                                     Utils.identText( "<empty>", 4 ) + "\n", 
-                                    Color.BLACK );
+                                    Color.BLACK, false );
                         } else {
                             Utils.addFormattedText( 
                                     textPane, 
                                     Utils.identText( input, 4 ) + "\n", 
-                                    Color.BLACK );
+                                    Color.BLACK, false );
                         }
                         Utils.addFormattedText( 
                                 textPane, 
                                 "|   |   |\n", 
-                                Color.BLACK );
+                                Color.BLACK, false );
 
                     }
 
@@ -308,38 +308,42 @@ public class Processor {
                         // trim end
                         String cleanOutput = sbOutput.toString().replaceAll( "\\s+$", "" );
                         
+                        // change spaces to \u2334
+                        /*test = test.replace( " ", "\u2334" );
+                        cleanOutput = cleanOutput.replace( " ", "\u2334" );*/
+                        
                         if ( textPane == null ) {
                             System.out.println( "|   |-- process test output: " );
                             System.out.println( Utils.identText( test, 3 ) );
                             System.out.println( "|   |" );
                             System.out.println( "|   |-- process output: " );
-                            System.out.println( Utils.identText( sbOutput.toString(), 3 ) );
+                            System.out.println( Utils.identText( cleanOutput, 3 ) );
                             System.out.println( "|   |" );
                         } else {
                             Utils.addFormattedText( 
                                     textPane, 
                                     "|   |   |-- process test output:\n", 
-                                    Color.BLACK );
+                                    Color.BLACK, false );
                             Utils.addFormattedText( 
                                     textPane, 
                                     Utils.identText( test, 4 ) + "\n", 
-                                    Color.BLACK );
+                                    Color.BLACK, true );
                             Utils.addFormattedText( 
                                     textPane, 
                                     "|   |   |\n", 
-                                    Color.BLACK );
+                                    Color.BLACK, false );
                             Utils.addFormattedText( 
                                     textPane, 
                                     "|   |   |-- process output:\n", 
-                                    Color.BLACK );
+                                    Color.BLACK, false );
                             Utils.addFormattedText( 
                                     textPane, 
                                     Utils.identText( cleanOutput, 4 ) + "\n", 
-                                    Color.BLACK );
+                                    Color.BLACK, true );
                             Utils.addFormattedText( 
                                     textPane, 
                                     "|   |   |\n", 
-                                    Color.BLACK );
+                                    Color.BLACK, false );
                         }
 
                         if ( Utils.verifyBackwards( 
@@ -361,7 +365,7 @@ public class Processor {
                         Utils.addFormattedText( 
                                 textPane, 
                                 "|   |   |-- test case state: ", 
-                                Color.BLACK );
+                                Color.BLACK, false );
 
                         Color color = Color.BLACK;
                         switch ( state ) {
@@ -378,11 +382,11 @@ public class Processor {
                         Utils.addFormattedText( 
                                 textPane, 
                                 state.toString(), 
-                                color );
+                                color, false );
                         Utils.addFormattedText( 
                                 textPane, 
                                 "\n|   |\n", 
-                                Color.BLACK );
+                                Color.BLACK, false );
                         
                     }
                     
@@ -411,7 +415,7 @@ public class Processor {
             Utils.addFormattedText( 
                     textPane, 
                     "|   |-- test state: ", 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
             Color color = Color.BLACK;
             
@@ -430,11 +434,11 @@ public class Processor {
             Utils.addFormattedText( 
                     textPane, 
                     state.toString(), 
-                    color );
+                    color, false );
             Utils.addFormattedText( 
                     textPane, 
                     "\n|\n", 
-                    Color.BLACK );
+                    Color.BLACK, false );
                     
         }
         

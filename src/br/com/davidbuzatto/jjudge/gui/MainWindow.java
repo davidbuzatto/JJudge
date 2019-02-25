@@ -63,10 +63,8 @@ public class MainWindow extends javax.swing.JFrame {
         DefaultCaret caret = (DefaultCaret) textPaneProcessOutput.getCaret();
         caret.setUpdatePolicy( DefaultCaret.ALWAYS_UPDATE );
         
-        testSets = Utils.loadTestSets();
-        buildTestSetsModel();
-        
-        menuTools.setVisible( false );
+        //testSets = Utils.loadTestSets();
+        //buildTestSetsModel();
         
         //listPackagesModel.addElement( new File( "debugPackageC.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackageCPP.zip" ) );
@@ -80,6 +78,91 @@ public class MainWindow extends javax.swing.JFrame {
         for ( TestSet ts : testSets ) {
             listTestSetsModel.addElement( ts );
         }
+    }
+    
+    private void buildTestPackage() {
+        
+        String name = JOptionPane.showInputDialog( "Student full name:" );
+        String code;
+        String packageName;
+        
+        if ( name != null ) {
+            
+            code = JOptionPane.showInputDialog( "Student code:" );
+            
+            if ( code != null ) {
+                
+                packageName = JOptionPane.showInputDialog( "Package name:" );
+                
+                if ( packageName != null ) {
+                    
+                    JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "buildTestPackagePath" ) ) );
+                    jfc.setDialogTitle( "Choose the files to insert into the test package" );
+                    jfc.setMultiSelectionEnabled( true );
+                    jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
+                    jfc.removeChoosableFileFilter( jfc.getFileFilter() );
+                    jfc.setFileFilter( new FileNameExtensionFilter( "Source code files" , "c", "cpp", "java", "py" ) );
+
+                    jfc.showOpenDialog( this );
+                    File[] files = jfc.getSelectedFiles();
+
+                    if ( files != null && files.length > 0 ) {
+
+                        String absolutePath = files[0].getParentFile().getAbsolutePath();
+                        Utils.setPref( "buildTestPackagePath", absolutePath );
+                        
+                        Student s = new Student();
+                        s.setName( name );
+                        s.setCode( code );
+
+                        try {
+                            
+                            File studentFile = new File( absolutePath + "/student.json" );
+                            
+                            Utils.saveStudent( s, studentFile );
+                            
+                            List<File> filesList = new ArrayList<>( Arrays.asList( files ) );
+                            filesList.add( studentFile );
+                            files = filesList.toArray( files );
+                            
+                            Utils.zipFiles( files, new File( absolutePath + "/" + packageName + ".zip" )  );
+                            
+                            studentFile.delete();
+                            
+                            JOptionPane.showMessageDialog( this, "The test package was built successfully!" );
+                            
+                        } catch ( IOException exc )  {
+                            exc.printStackTrace();
+                        }
+
+                    }
+                
+                }
+        
+            }
+            
+        }
+        
+    }
+    
+    private void loadTestSet() {
+        
+        JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "loadTestSets" ) ) );
+        jfc.setDialogTitle( "Choose a package of test sets" );
+        jfc.setMultiSelectionEnabled( false );
+        jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
+        jfc.removeChoosableFileFilter( jfc.getFileFilter() );
+        jfc.setFileFilter( new FileNameExtensionFilter( "Test Sets JSON File" , "json" ) );
+        
+        jfc.showOpenDialog( this );
+        File file = jfc.getSelectedFile();
+        
+        if ( file != null ) {
+            Utils.setPref( "loadTestSets", file.getParentFile().getAbsolutePath() );
+            testSets = Utils.loadTestSets( file );
+            buildTestSetsModel();
+        }
+        
     }
     
     /**
@@ -96,12 +179,14 @@ public class MainWindow extends javax.swing.JFrame {
         panelPackages = new javax.swing.JPanel();
         scrollPackages = new javax.swing.JScrollPane();
         listPackages = new javax.swing.JList<>();
+        btnBuildTestPackage = new javax.swing.JButton();
         btnAddPackage = new javax.swing.JButton();
         btnRemovePackage = new javax.swing.JButton();
         panelTestSets = new javax.swing.JPanel();
         scrollTestSets = new javax.swing.JScrollPane();
         listTestSets = new javax.swing.JList<>();
         lblStatus = new javax.swing.JLabel();
+        btnLoadTestSet = new javax.swing.JButton();
         btnRunTest = new javax.swing.JButton();
         panelProcessOutput = new javax.swing.JPanel();
         scrollProcessOutput = new javax.swing.JScrollPane();
@@ -118,8 +203,6 @@ public class MainWindow extends javax.swing.JFrame {
         menuItemExit = new javax.swing.JMenuItem();
         menuEdit = new javax.swing.JMenu();
         menuItemTestSets = new javax.swing.JMenuItem();
-        menuTools = new javax.swing.JMenu();
-        menuItemOptions = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemHowTo = new javax.swing.JMenuItem();
         sepMenuHelp01 = new javax.swing.JPopupMenu.Separator();
@@ -138,9 +221,17 @@ public class MainWindow extends javax.swing.JFrame {
         setTitle("JJudge");
         setResizable(false);
 
-        panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder("Package(s) to Test"));
+        panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder("Package(s) or File(s) to Test"));
 
         scrollPackages.setViewportView(listPackages);
+
+        btnBuildTestPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/package.png"))); // NOI18N
+        btnBuildTestPackage.setText("Build");
+        btnBuildTestPackage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuildTestPackageActionPerformed(evt);
+            }
+        });
 
         btnAddPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/add.png"))); // NOI18N
         btnAddPackage.setText("Add");
@@ -164,10 +255,11 @@ public class MainWindow extends javax.swing.JFrame {
             panelPackagesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelPackagesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelPackagesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelPackagesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(scrollPackages, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPackagesLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnBuildTestPackage)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAddPackage)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemovePackage)))
@@ -181,7 +273,8 @@ public class MainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelPackagesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRemovePackage)
-                    .addComponent(btnAddPackage))
+                    .addComponent(btnAddPackage)
+                    .addComponent(btnBuildTestPackage))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -199,6 +292,14 @@ public class MainWindow extends javax.swing.JFrame {
         lblStatus.setForeground(new java.awt.Color(0, 102, 204));
         lblStatus.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblStatus.setText("status");
+
+        btnLoadTestSet.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/database_refresh.png"))); // NOI18N
+        btnLoadTestSet.setText("Load Test Sets");
+        btnLoadTestSet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadTestSetActionPerformed(evt);
+            }
+        });
 
         btnRunTest.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
         btnRunTest.setText("Run Test");
@@ -219,14 +320,19 @@ public class MainWindow extends javax.swing.JFrame {
                     .addGroup(panelTestSetsLayout.createSequentialGroup()
                         .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRunTest)))
+                        .addComponent(btnRunTest))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTestSetsLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnLoadTestSet)))
                 .addContainerGap())
         );
         panelTestSetsLayout.setVerticalGroup(
             panelTestSetsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTestSetsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnLoadTestSet)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelTestSetsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRunTest)
@@ -269,7 +375,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         resultPanelLayout.setVerticalGroup(
             resultPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 542, Short.MAX_VALUE)
+            .addGap(0, 544, Short.MAX_VALUE)
         );
 
         scrollResults.setViewportView(resultPanel);
@@ -280,7 +386,7 @@ public class MainWindow extends javax.swing.JFrame {
             panelResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelResultsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollResults, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                .addComponent(scrollResults)
                 .addContainerGap())
         );
         panelResultsLayout.setVerticalGroup(
@@ -342,21 +448,6 @@ public class MainWindow extends javax.swing.JFrame {
         menuEdit.add(menuItemTestSets);
 
         menuBar.add(menuEdit);
-
-        menuTools.setMnemonic('T');
-        menuTools.setText("Tools");
-
-        menuItemOptions.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/wrench.png"))); // NOI18N
-        menuItemOptions.setMnemonic('O');
-        menuItemOptions.setText("Options");
-        menuItemOptions.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemOptionsActionPerformed(evt);
-            }
-        });
-        menuTools.add(menuItemOptions);
-
-        menuBar.add(menuTools);
 
         menuHelp.setMnemonic('H');
         menuHelp.setText("Help");
@@ -424,11 +515,14 @@ public class MainWindow extends javax.swing.JFrame {
     private void btnAddPackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPackageActionPerformed
         
         JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "addPackagePath" ) ) );
-        jfc.setDialogTitle( "Choose a package" );
+        jfc.setDialogTitle( "Choose a package or a source code file" );
         jfc.setMultiSelectionEnabled( true );
         jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
         jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-        jfc.setFileFilter( new FileNameExtensionFilter( "Zip file" , "zip" ) );
+        jfc.setFileFilter( new FileNameExtensionFilter( 
+                "Test Package (Zip) or Source code" , 
+                "zip", "c", "cpp", "java", "py" ) );
+        
         
         jfc.showOpenDialog( this );
         File[] files = jfc.getSelectedFiles();
@@ -447,8 +541,8 @@ public class MainWindow extends javax.swing.JFrame {
         if ( listPackages.getSelectedValue() != null ) {
             
             if ( JOptionPane.showConfirmDialog( 
-                    this, "Do you really want to remove the selected package(s)?",
-                    "Remove package",
+                    this, "Do you really want to remove the selected package(s)/file(s)?",
+                    "Remove package/file",
                     JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION ) {
                 
                 int[] indices = listPackages.getSelectedIndices();
@@ -465,7 +559,13 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void btnRunTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRunTestActionPerformed
         
-        TestSet tSet = listTestSets.getSelectedValue();
+        final TestSet tSet;
+        
+        if ( listTestSetsModel.getSize() == 1 ) {
+            tSet = listTestSetsModel.get( 0 );
+        } else {
+            tSet = listTestSets.getSelectedValue();
+        }
         List<TestSetResult> tSetResList = new ArrayList<>();
         
         resultPanel.setTestSetResultList( tSetResList );
@@ -483,6 +583,7 @@ public class MainWindow extends javax.swing.JFrame {
                     
                     listPackages.setEnabled( false );
                     listTestSets.setEnabled( false );
+                    btnBuildTestPackage.setEnabled( false );
                     btnAddPackage.setEnabled( false );
                     btnRemovePackage.setEnabled( false );
                     btnRunTest.setEnabled( false );
@@ -490,7 +591,6 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemLoadTestSets.setEnabled( false );
                     menuItemExit.setEnabled( false );
                     menuItemTestSets.setEnabled( false );
-                    menuItemOptions.setEnabled( false );
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( "Please wait while the tests are being executed." );
@@ -501,31 +601,36 @@ public class MainWindow extends javax.swing.JFrame {
                         
                         for ( int i = 0; i < listPackagesModel.size(); i++ ) {
                             
-                            File zipFile = listPackagesModel.get( i );
+                            File file = listPackagesModel.get( i );
                             
                             Utils.addFormattedText( 
                                     textPaneProcessOutput, 
-                                    String.format( "Processing %s\n", zipFile ),
-                                    Color.BLUE );
-                            
+                                    String.format( "Processing %s\n", file ),
+                                    Color.BLUE, false );
+
                             tSetResList.add( Utils.runTest( 
-                                    zipFile, 
+                                    file, 
                                     tSet, 
                                     outputStreams, 
                                     secondsToTimeout, 
                                     textPaneProcessOutput ) );
-                            
+
                             resultPanel.generateRects();
                             resultPanel.updateSize();
                             resultPanel.repaint();
                             scrollResults.updateUI();
-                            
-                            Utils.addFormattedText( 
-                                    textPaneProcessOutput, 
-                                    String.format( "Cleaning up...\n\n", zipFile ),
-                                    Color.BLACK );
-                            
-                            FileUtils.deleteDirectory( new File( zipFile.getAbsolutePath().replace( ".zip", "" ) ) );
+                                
+                            if ( file.getName().endsWith( ".zip" ) ) {
+
+                                Utils.addFormattedText( 
+                                        textPaneProcessOutput, 
+                                        String.format( "Cleaning up...\n\n", file ),
+                                        Color.BLACK, false );
+
+                                FileUtils.deleteDirectory( new File( 
+                                        file.getAbsolutePath().replace( ".zip", "" ) ) );
+                                
+                            }
                             
                         }
                         
@@ -537,6 +642,7 @@ public class MainWindow extends javax.swing.JFrame {
                     
                     listPackages.setEnabled( true );
                     listTestSets.setEnabled( true );
+                    btnBuildTestPackage.setEnabled( true );
                     btnAddPackage.setEnabled( true );
                     btnRemovePackage.setEnabled( true );
                     btnRunTest.setEnabled( true );
@@ -544,7 +650,6 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemLoadTestSets.setEnabled( true );
                     menuItemExit.setEnabled( true );
                     menuItemTestSets.setEnabled( true );
-                    menuItemOptions.setEnabled( true );
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
                     lblStatus.setText( "Done!" );
@@ -562,7 +667,7 @@ public class MainWindow extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog( 
                     this, 
-                    "You must have at least one package to test!", 
+                    "You must have at least one package or source code file to test!", 
                     "ERROR", JOptionPane.ERROR_MESSAGE );
         }
         
@@ -607,10 +712,6 @@ public class MainWindow extends javax.swing.JFrame {
         
     }//GEN-LAST:event_menuItemTestSetsActionPerformed
 
-    private void menuItemOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOptionsActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_menuItemOptionsActionPerformed
-
     private void menuItemHowToActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemHowToActionPerformed
         
         JOptionPane.showMessageDialog( 
@@ -619,7 +720,7 @@ public class MainWindow extends javax.swing.JFrame {
               + "the tested programs.\n\n"
               + "To make it possible, it's necessary to modify the PATH\n"
               + "envinroment variable of your OS to point to the tools that are\n"
-              + "necessary.\n\n"
+              + "necessary or configure the run.bat file.\n\n"
               + "These tools are:\n"
               + "    GCC and G++ for C and C++ code;\n"
               + "    JDK for Java code;\n"
@@ -644,89 +745,20 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItemAboutActionPerformed
 
     private void menuItemLoadTestSetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLoadTestSetsActionPerformed
-        
-        JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "loadTestSets" ) ) );
-        jfc.setDialogTitle( "Choose a package of test sets" );
-        jfc.setMultiSelectionEnabled( false );
-        jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
-        jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-        jfc.setFileFilter( new FileNameExtensionFilter( "Test Sets JSON File" , "json" ) );
-        
-        jfc.showOpenDialog( this );
-        File file = jfc.getSelectedFile();
-        
-        if ( file != null ) {
-            Utils.setPref( "loadTestSets", file.getParentFile().getAbsolutePath() );
-            testSets = Utils.loadTestSets( file );
-            buildTestSetsModel();
-        }
-        
+        loadTestSet();
     }//GEN-LAST:event_menuItemLoadTestSetsActionPerformed
 
     private void menuItemBuildTestPackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBuildTestPackageActionPerformed
-        
-        String name = JOptionPane.showInputDialog( "Student full name:" );
-        String code;
-        String packageName;
-        
-        if ( name != null ) {
-            
-            code = JOptionPane.showInputDialog( "Student code:" );
-            
-            if ( code != null ) {
-                
-                packageName = JOptionPane.showInputDialog( "Package name:" );
-                
-                if ( packageName != null ) {
-                    
-                    JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "buildTestPackagePath" ) ) );
-                    jfc.setDialogTitle( "Choose the files to insert into the test package" );
-                    jfc.setMultiSelectionEnabled( true );
-                    jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
-                    jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-                    jfc.setFileFilter( new FileNameExtensionFilter( "Source code files" , "c", "cpp", "java", "py" ) );
-
-                    jfc.showOpenDialog( this );
-                    File[] files = jfc.getSelectedFiles();
-
-                    if ( files != null && files.length > 0 ) {
-
-                        String absolutePath = files[0].getParentFile().getAbsolutePath();
-                        Utils.setPref( "buildTestPackagePath", absolutePath );
-                        
-                        Student s = new Student();
-                        s.setName( name );
-                        s.setCode( code );
-
-                        try {
-                            
-                            File studentFile = new File( absolutePath + "/student.json" );
-                            
-                            Utils.saveStudent( s, studentFile );
-                            
-                            List<File> filesList = new ArrayList<>( Arrays.asList( files ) );
-                            filesList.add( studentFile );
-                            files = filesList.toArray( files );
-                            
-                            Utils.zipFiles( files, new File( absolutePath + "/" + packageName + ".zip" )  );
-                            
-                            studentFile.delete();
-                            
-                            JOptionPane.showMessageDialog( this, "The test package was built successfully!" );
-                            
-                        } catch ( IOException exc )  {
-                            exc.printStackTrace();
-                        }
-
-                    }
-                
-                }
-        
-            }
-            
-        }
-        
+        buildTestPackage();
     }//GEN-LAST:event_menuItemBuildTestPackageActionPerformed
+
+    private void btnBuildTestPackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuildTestPackageActionPerformed
+        buildTestPackage();
+    }//GEN-LAST:event_btnBuildTestPackageActionPerformed
+
+    private void btnLoadTestSetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadTestSetActionPerformed
+        loadTestSet();
+    }//GEN-LAST:event_btnLoadTestSetActionPerformed
 
     /**
      * @param args the command line arguments
@@ -766,6 +798,8 @@ public class MainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddPackage;
+    private javax.swing.JButton btnBuildTestPackage;
+    private javax.swing.JButton btnLoadTestSet;
     private javax.swing.JButton btnRemovePackage;
     private javax.swing.JButton btnRunTest;
     private javax.swing.JLabel lblStatus;
@@ -780,10 +814,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemExit;
     private javax.swing.JMenuItem menuItemHowTo;
     private javax.swing.JMenuItem menuItemLoadTestSets;
-    private javax.swing.JMenuItem menuItemOptions;
     private javax.swing.JMenuItem menuItemShowDetails;
     private javax.swing.JMenuItem menuItemTestSets;
-    private javax.swing.JMenu menuTools;
     private javax.swing.JPanel panelPackages;
     private javax.swing.JPanel panelProcessOutput;
     private javax.swing.JPanel panelResults;

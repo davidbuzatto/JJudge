@@ -43,7 +43,7 @@ public class ResultDialog extends javax.swing.JDialog {
         Utils.addFormattedText( 
                     textPaneResult, 
                     String.format( "test %s: \n", testResult.getName() ), 
-                    Color.BLUE );
+                    Color.BLUE, false );
         
         int testCase = 1;
         
@@ -52,57 +52,57 @@ public class ResultDialog extends javax.swing.JDialog {
             Utils.addFormattedText( 
                     textPaneResult, 
                     String.format( "|-- test case %02d:\n", testCase++ ), 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |-- process test input:\n", 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     Utils.identText( tcr.getInput(), 3 ) + "\n", 
-                    Color.BLACK );
+                    Color.BLACK, false );
                     
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |\n", 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |-- process test output:\n", 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     Utils.identText( tcr.getOutput(), 3 ) + "\n", 
-                    Color.BLACK );
+                    Color.BLACK, true );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |\n", 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |-- process output:\n", 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     Utils.identText( tcr.getTestOutput(), 3 ) + "\n", 
-                    Color.BLACK );
+                    Color.BLACK, true );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |\n", 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |-- test case state: ", 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
             Color color = Color.BLACK;
             switch ( tcr.getExecutionState() ) {
@@ -120,19 +120,19 @@ public class ResultDialog extends javax.swing.JDialog {
             Utils.addFormattedText( 
                     textPaneResult, 
                     tcr.getExecutionState().toString(), 
-                    color );
+                    color, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     "\n|\n", 
-                    Color.BLACK );
+                    Color.BLACK, false );
             
         }
         
         Utils.addFormattedText( 
                 textPaneResult, 
                 "|-- test state: ", 
-                Color.BLACK );
+                Color.BLACK, false );
         
         Color color = Color.BLACK;
             
@@ -151,7 +151,7 @@ public class ResultDialog extends javax.swing.JDialog {
         Utils.addFormattedText( 
                 textPaneResult, 
                 testResult.getExecutionState().toString(), 
-                color );
+                color, false );
         
     }
 
