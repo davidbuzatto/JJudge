@@ -304,7 +304,10 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="scrollTestSets" min="-2" pref="398" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="scrollTestSets" min="-2" pref="398" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
                       <Group type="102" attributes="0">
                           <Component id="lblStatus" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -312,6 +315,8 @@
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="checkGenerateResultsSpreadsheet" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnLoadTestSet" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -325,7 +330,10 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="scrollTestSets" min="-2" pref="286" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btnLoadTestSet" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="btnLoadTestSet" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="checkGenerateResultsSpreadsheet" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btnRunTest" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -393,6 +401,11 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRunTestActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="checkGenerateResultsSpreadsheet">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Generate Results Spreadsheet"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

@@ -9,8 +9,8 @@ import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.Cursors;
+import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -304,21 +304,7 @@ public class ResultPanel extends JPanel {
         
         void draw( Graphics2D g2d ) {
             
-            Color drawColor;
-            
-            switch ( testResult.getExecutionState() ) {
-                case APPROVED:
-                case PASSED:
-                    drawColor = Colors.APPROVED;
-                    break;
-                case REPROVED:
-                case NOT_PASSED:
-                    drawColor = Colors.REPROVED;
-                    break;
-                default:
-                    drawColor = Color.ORANGE;
-                    break;
-            }
+            Color drawColor = Utils.retrieveStateColor( testResult.getExecutionState() );
             
             if ( mouseOver ) {
                 drawColor = drawColor.darker();

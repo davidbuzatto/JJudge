@@ -367,18 +367,7 @@ public class Processor {
                                 "|   |   |-- test case state: ", 
                                 Color.BLACK, false );
 
-                        Color color = Color.BLACK;
-                        switch ( state ) {
-                            case PASSED:
-                                color = Colors.PASSED;
-                                break;
-                            case NOT_PASSED:
-                                color = Colors.NOT_PASSED;
-                                break;
-                            default:
-                                color = Colors.ERROR;
-                                break;
-                        }
+                        Color color = Utils.retrieveStateColor( state );
                         Utils.addFormattedText( 
                                 textPane, 
                                 state.toString(), 
@@ -417,19 +406,7 @@ public class Processor {
                     "|   |-- test state: ", 
                     Color.BLACK, false );
             
-            Color color = Color.BLACK;
-            
-            switch ( state ) {
-                case APPROVED:
-                    color = Colors.APPROVED;
-                    break;
-                case REPROVED:
-                    color = Colors.REPROVED;
-                    break;
-                default:
-                    color = Colors.ERROR;
-                    break;
-            }
+            Color color = Utils.retrieveStateColor( state );
             
             Utils.addFormattedText( 
                     textPane, 

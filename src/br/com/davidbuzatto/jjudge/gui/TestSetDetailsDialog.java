@@ -155,8 +155,7 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
                             textPaneDetails, 
                             Utils.identText( tc.getOutput(), 5 ),
                             Color.BLACK, true );
-                }
-                
+                }                
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
@@ -206,7 +205,7 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPaneDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 547, Short.MAX_VALUE)
+            .addComponent(scrollPaneDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -5,6 +5,7 @@
  */
 package br.com.davidbuzatto.jjudge.utils;
 
+import br.com.davidbuzatto.jjudge.processor.ExecutionState;
 import br.com.davidbuzatto.jjudge.processor.Processor;
 import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.Test;
@@ -53,7 +54,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 public class Utils {
 
     private static final String PREFERENCES_PATH = "br.com.davidbuzatto.jjudge";
-    private static final Color HIGHLIGHTED_SPACE_COLOR = new Color( 230, 230, 230 );
     
     public static void zipFile( File fileToZip, File zipFile ) throws IOException {
         
@@ -598,6 +598,31 @@ public class Utils {
         preparePreferences();
         Preferences prefs = Preferences.userRoot().node( PREFERENCES_PATH );
         prefs.put( key, value );
+    }
+    
+    public static Color retrieveStateColor( ExecutionState state ) {
+            
+        switch ( state ) {
+            case PASSED:
+                return Colors.PASSED;
+            case NOT_PASSED:
+                return Colors.NOT_PASSED;
+            case APPROVED:
+                return Colors.APPROVED;
+            case REPROVED:
+                return Colors.REPROVED;
+            case COMPILATION_ERROR:
+                return Colors.COMPILATION_ERROR;
+            case RUNTIME_ERROR:
+                return Colors.RUNTIME_ERROR;
+            case TIMEOUT_ERROR:
+                return Colors.TIMEOUT_ERROR;
+            case FILE_NOT_FOUND_ERROR:
+                return Colors.FILE_NOT_FOUND_ERROR;
+        }
+        
+        return Colors.ERROR;
+        
     }
 
 }

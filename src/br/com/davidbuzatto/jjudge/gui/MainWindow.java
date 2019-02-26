@@ -63,10 +63,10 @@ public class MainWindow extends javax.swing.JFrame {
         DefaultCaret caret = (DefaultCaret) textPaneProcessOutput.getCaret();
         caret.setUpdatePolicy( DefaultCaret.ALWAYS_UPDATE );
         
-        //testSets = Utils.loadTestSets();
-        //buildTestSetsModel();
+        testSets = Utils.loadTestSets();
+        buildTestSetsModel();
         
-        //listPackagesModel.addElement( new File( "debugPackageC.zip" ) );
+        listPackagesModel.addElement( new File( "debugPackageC.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackageCPP.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackageJAVA.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackagePYTHON.zip" ) );
@@ -188,6 +188,7 @@ public class MainWindow extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
         btnLoadTestSet = new javax.swing.JButton();
         btnRunTest = new javax.swing.JButton();
+        checkGenerateResultsSpreadsheet = new javax.swing.JCheckBox();
         panelProcessOutput = new javax.swing.JPanel();
         scrollProcessOutput = new javax.swing.JScrollPane();
         textPaneProcessOutput = new javax.swing.JTextPane();
@@ -309,6 +310,8 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        checkGenerateResultsSpreadsheet.setText("Generate Results Spreadsheet");
+
         javax.swing.GroupLayout panelTestSetsLayout = new javax.swing.GroupLayout(panelTestSets);
         panelTestSets.setLayout(panelTestSetsLayout);
         panelTestSetsLayout.setHorizontalGroup(
@@ -316,13 +319,17 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(panelTestSetsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelTestSetsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelTestSetsLayout.createSequentialGroup()
+                        .addComponent(scrollTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(panelTestSetsLayout.createSequentialGroup()
                         .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRunTest))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTestSetsLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(checkGenerateResultsSpreadsheet)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnLoadTestSet)))
                 .addContainerGap())
         );
@@ -332,7 +339,9 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(scrollTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnLoadTestSet)
+                .addGroup(panelTestSetsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLoadTestSet)
+                    .addComponent(checkGenerateResultsSpreadsheet))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelTestSetsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRunTest)
@@ -586,6 +595,8 @@ public class MainWindow extends javax.swing.JFrame {
                     btnBuildTestPackage.setEnabled( false );
                     btnAddPackage.setEnabled( false );
                     btnRemovePackage.setEnabled( false );
+                    checkGenerateResultsSpreadsheet.setEnabled( false );
+                    btnLoadTestSet.setEnabled( false );
                     btnRunTest.setEnabled( false );
                     menuItemBuildTestPackage.setEnabled( false );
                     menuItemLoadTestSets.setEnabled( false );
@@ -634,7 +645,9 @@ public class MainWindow extends javax.swing.JFrame {
                             
                         }
                         
-                        Utils.processResultsToExcel( tSetResList, tSet );
+                        if ( checkGenerateResultsSpreadsheet.isSelected() ) {
+                            Utils.processResultsToExcel( tSetResList, tSet );
+                        }
                         
                     } catch ( IOException | InterruptedException exc ) {
                         exc.printStackTrace();
@@ -645,6 +658,8 @@ public class MainWindow extends javax.swing.JFrame {
                     btnBuildTestPackage.setEnabled( true );
                     btnAddPackage.setEnabled( true );
                     btnRemovePackage.setEnabled( true );
+                    checkGenerateResultsSpreadsheet.setEnabled( true );
+                    btnLoadTestSet.setEnabled( true );
                     btnRunTest.setEnabled( true );
                     menuItemBuildTestPackage.setEnabled( true );
                     menuItemLoadTestSets.setEnabled( true );
@@ -760,48 +775,13 @@ public class MainWindow extends javax.swing.JFrame {
         loadTestSet();
     }//GEN-LAST:event_btnLoadTestSetActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main( String args[] ) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() ) {
-                if ( "Nimbus".equals( info.getName() ) ) {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
-                    break;
-                }
-            }
-        } catch ( ClassNotFoundException ex ) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        } catch ( InstantiationException ex ) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        } catch ( IllegalAccessException ex ) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        } catch ( javax.swing.UnsupportedLookAndFeelException ex ) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MainWindow().setVisible( true );
-            }
-        } );
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddPackage;
     private javax.swing.JButton btnBuildTestPackage;
     private javax.swing.JButton btnLoadTestSet;
     private javax.swing.JButton btnRemovePackage;
     private javax.swing.JButton btnRunTest;
+    private javax.swing.JCheckBox checkGenerateResultsSpreadsheet;
     private javax.swing.JLabel lblStatus;
     private javax.swing.JList<File> listPackages;
     private javax.swing.JList<TestSet> listTestSets;
