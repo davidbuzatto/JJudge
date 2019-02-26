@@ -7,7 +7,6 @@ package br.com.davidbuzatto.jjudge.gui;
 
 import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
-import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.Cursors;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;

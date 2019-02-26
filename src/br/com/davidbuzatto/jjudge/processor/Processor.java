@@ -9,7 +9,6 @@ import br.com.davidbuzatto.jjudge.testsets.TestCase;
 import br.com.davidbuzatto.jjudge.testsets.TestCaseResult;
 import br.com.davidbuzatto.jjudge.testsets.TestProgrammingLanguage;
 import br.com.davidbuzatto.jjudge.testsets.TestResult;
-import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.StreamGobbler;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;

@@ -6,7 +6,6 @@
 package br.com.davidbuzatto.jjudge.testsets;
 
 import br.com.davidbuzatto.jjudge.processor.ExecutionState;
-import br.com.davidbuzatto.jjudge.utils.Utils;
 
 /**
  *
