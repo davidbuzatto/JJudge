@@ -75,7 +75,7 @@ public class ResultDialog extends javax.swing.JDialog {
             if ( tcr.getOutput().isEmpty() ) {
                 Utils.addFormattedText( 
                         textPaneResult, 
-                        Utils.identText( "<empty>", 3 ),
+                        Utils.identText( "<empty>", 3 ) + "\n",
                         Color.BLACK, false );
             } else {
                 Utils.addFormattedText( 
@@ -97,7 +97,7 @@ public class ResultDialog extends javax.swing.JDialog {
             if ( tcr.getTestOutput().isEmpty() ) {
                 Utils.addFormattedText( 
                         textPaneResult, 
-                        Utils.identText( "<empty>", 3 ),
+                        Utils.identText( "<empty>", 3 ) + "\n",
                         Color.BLACK, false );
             } else {
                 Utils.addFormattedText( 

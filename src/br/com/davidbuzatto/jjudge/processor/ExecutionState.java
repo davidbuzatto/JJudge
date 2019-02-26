@@ -21,6 +21,7 @@ public enum ExecutionState {
     COMPILATION_ERROR,
     RUNTIME_ERROR,
     TIMEOUT_ERROR,
-    FILE_NOT_FOUND_ERROR
+    FILE_NOT_FOUND_ERROR,
+    DONT_CHECK
     
 }

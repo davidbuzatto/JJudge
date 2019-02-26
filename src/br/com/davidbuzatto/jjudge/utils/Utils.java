@@ -280,24 +280,63 @@ public class Utils {
             String baseDir, 
             int secondsToTimeout, 
             boolean outputStreams,
-            JTextPane textPane ) throws IOException, InterruptedException {
+            JTextPane textPane,
+            File file ) throws IOException, InterruptedException {
         
         TestSetResult testSetResult = new TestSetResult();
         testSetResult.setStudent( student );
         testSetResult.setTestResults( new ArrayList<>() );
         
-        for ( Test t : testSet.getTests() ) {
+        // run all
+        if ( file == null ) {
             
-            TestResult testResult = Processor.compileAndRun( 
-                    t.getName(), 
-                    baseDir, 
-                    secondsToTimeout, 
-                    outputStreams,
-                    t.getTestCases(),
-                    testSet.getProgrammingLanguage(),
-                    textPane );
+            for ( Test t : testSet.getTests() ) {
+
+                TestResult testResult = Processor.compileAndRun( 
+                        t.getName(), 
+                        baseDir, 
+                        secondsToTimeout, 
+                        outputStreams,
+                        t.getTestCases(),
+                        testSet.getProgrammingLanguage(),
+                        textPane );
+
+                testSetResult.getTestResults().add( testResult );
+
+            }
             
-            testSetResult.getTestResults().add( testResult );
+        } else {
+            
+            for ( Test t : testSet.getTests() ) {
+
+                String filenameWithoutExt = file.getName();
+                filenameWithoutExt = filenameWithoutExt.substring( 0, filenameWithoutExt.lastIndexOf( "." ) );
+                
+                TestResult testResult;
+                
+                if ( filenameWithoutExt.equals( t.getName() ) ) {
+                    
+                    testResult = Processor.compileAndRun( 
+                            t.getName(), 
+                            baseDir, 
+                            secondsToTimeout, 
+                            outputStreams,
+                            t.getTestCases(),
+                            testSet.getProgrammingLanguage(),
+                            textPane );
+                
+                } else {
+                    
+                    testResult = new TestResult();
+                    testResult.setName( t.getName() );
+                    testResult.setTestCasesResult( new ArrayList<>() );
+                    testResult.setExecutionState( ExecutionState.DONT_CHECK );
+                    
+                }
+                
+                testSetResult.getTestResults().add( testResult );
+
+            }
             
         }
         
@@ -346,13 +385,25 @@ public class Utils {
             student.setCode( "" );
         }
         
-        return verify( 
+        if ( file.getName().endsWith( ".zip" ) ) {
+            return verify( 
                     testSet, 
                     student, 
                     baseDir, 
                     secondsToTimeout, 
                     outputStreams,
-                    textPane );
+                    textPane,
+                    null );
+        } else {
+            return verify( 
+                    testSet, 
+                    student, 
+                    baseDir, 
+                    secondsToTimeout, 
+                    outputStreams,
+                    textPane,
+                    file );
+        }
         
     }
     
@@ -473,6 +524,12 @@ public class Utils {
                             break;
                         case FILE_NOT_FOUND_ERROR:
                             result = "FE";
+                            break;
+                        case DONT_CHECK:
+                            result = "DC";
+                            break;
+                        default:
+                            result = "?";
                             break;
                     }
                     
@@ -619,6 +676,8 @@ public class Utils {
                 return Colors.TIMEOUT_ERROR;
             case FILE_NOT_FOUND_ERROR:
                 return Colors.FILE_NOT_FOUND_ERROR;
+            case DONT_CHECK:
+                return Colors.DONT_CHECK;
         }
         
         return Colors.ERROR;

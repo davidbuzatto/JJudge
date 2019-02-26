@@ -63,10 +63,10 @@ public class MainWindow extends javax.swing.JFrame {
         DefaultCaret caret = (DefaultCaret) textPaneProcessOutput.getCaret();
         caret.setUpdatePolicy( DefaultCaret.ALWAYS_UPDATE );
         
-        testSets = Utils.loadTestSets();
-        buildTestSetsModel();
+        //testSets = Utils.loadTestSets();
+        //buildTestSetsModel();
         
-        listPackagesModel.addElement( new File( "debugPackageC.zip" ) );
+        //listPackagesModel.addElement( new File( "debugPackageC.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackageCPP.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackageJAVA.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackagePYTHON.zip" ) );

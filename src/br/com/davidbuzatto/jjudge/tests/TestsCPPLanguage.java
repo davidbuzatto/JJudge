@@ -46,6 +46,7 @@ public class TestsCPPLanguage {
                     baseDir, 
                     secondsToTimeout, 
                     outputStreams,
+                    null,
                     null );
 
             System.out.println( testSet.getDescription() );

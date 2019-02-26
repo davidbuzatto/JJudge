@@ -21,6 +21,7 @@ public class Colors {
     public static final Color RUNTIME_ERROR = new Color( 163, 73, 164 );
     public static final Color TIMEOUT_ERROR = new Color( 91, 0, 183 );
     public static final Color FILE_NOT_FOUND_ERROR = new Color( 120, 120, 120 );
+    public static final Color DONT_CHECK = new Color( 0, 176, 240 );
     public static final Color ERROR = Color.ORANGE.darker();
     
     public static final Color VERIFICATION_ERROR_F = Color.RED;
