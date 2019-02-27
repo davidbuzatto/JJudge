@@ -14,7 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -537,7 +539,47 @@ public class MainWindow extends javax.swing.JFrame {
         File[] files = jfc.getSelectedFiles();
         
         if ( files != null && files.length > 0 ) {
+            
             Utils.setPref( "addPackagePath", files[0].getParentFile().getAbsolutePath() );
+            
+            Arrays.sort( files, ( File f1, File f2 ) -> {
+            
+                String n1 = f1.getName();
+                String n2 = f2.getName();
+                
+                if ( ( n1.startsWith( "ex" ) || n1.startsWith( "de" ) || n1.startsWith( "pr" ) ) && 
+                     ( n2.startsWith( "ex" ) || n2.startsWith( "de" ) || n2.startsWith( "pr" ) ) && 
+                       n1.contains( "." ) && n2.contains( "." ) ) {
+                    
+                    String t1 = n1.substring( 0, n1.indexOf( "." ) );
+                    String t2 = n2.substring( 0, n2.indexOf( "." ) );
+                    
+                    String v1 = n1.substring( n1.indexOf( "." ) + 1, n1.lastIndexOf( "." ) );
+                    String v2 = n2.substring( n2.indexOf( "." ) + 1, n2.lastIndexOf( "." ) );
+                    
+                    try {
+                        
+                        int num1 = Integer.parseInt( v1 );
+                        int num2 = Integer.parseInt( v2 );
+                        
+                        int compT = t1.compareTo( t2 );
+                        
+                        if ( compT == 0 ) {
+                            return num1 - num2;
+                        } else {
+                            return compT;
+                        }
+                        
+                    } catch ( NumberFormatException exc ) {
+                        return n1.compareTo( n2 );
+                    }
+                    
+                } else {
+                    return n1.compareTo( n2 );
+                }
+                
+            });
+            
             for ( File f : files ) {
                 listPackagesModel.addElement( f );
             }
