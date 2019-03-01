@@ -14,9 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -554,8 +552,15 @@ public class MainWindow extends javax.swing.JFrame {
                     String t1 = n1.substring( 0, n1.indexOf( "." ) );
                     String t2 = n2.substring( 0, n2.indexOf( "." ) );
                     
-                    String v1 = n1.substring( n1.indexOf( "." ) + 1, n1.lastIndexOf( "." ) );
-                    String v2 = n2.substring( n2.indexOf( "." ) + 1, n2.lastIndexOf( "." ) );
+                    String v1;
+                    String v2;
+                    
+                    try {
+                        v1 = n1.substring( n1.indexOf( "." ) + 1, n1.lastIndexOf( "." ) );
+                        v2 = n2.substring( n2.indexOf( "." ) + 1, n2.lastIndexOf( "." ) );
+                    } catch ( StringIndexOutOfBoundsException exc ) {
+                        return n1.compareTo( n2 );
+                    }
                     
                     try {
                         
@@ -694,6 +699,11 @@ public class MainWindow extends javax.swing.JFrame {
                     } catch ( IOException | InterruptedException exc ) {
                         exc.printStackTrace();
                     }
+                    
+                    Utils.addFormattedText( 
+                            textPaneProcessOutput, 
+                            "Finished!!!",
+                            Color.BLACK, false );
                     
                     listPackages.setEnabled( true );
                     listTestSets.setEnabled( true );

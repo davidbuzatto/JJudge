@@ -5,8 +5,10 @@
  */
 package br.com.davidbuzatto.jjudge.gui;
 
+import br.com.davidbuzatto.jjudge.processor.ExecutionState;
 import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.testsets.TestCaseResult;
+import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
 import javax.swing.ImageIcon;
@@ -100,10 +102,18 @@ public class ResultDialog extends javax.swing.JDialog {
                         Utils.identText( "<empty>", 3 ) + "\n",
                         Color.BLACK, false );
             } else {
-                Utils.addFormattedText( 
-                        textPaneResult, 
-                        Utils.identText( tcr.getTestOutput(), 3 ),
-                        Color.BLACK, true );
+                if ( tcr.getExecutionState() == ExecutionState.RUNTIME_ERROR || 
+                        tcr.getExecutionState() == ExecutionState.TIMEOUT_ERROR ) {
+                    Utils.addFormattedText( 
+                            textPaneResult, 
+                            Utils.identText( tcr.getTestOutput(), 3 ) + "\n",
+                            Color.BLACK, false );
+                } else {
+                    Utils.addFormattedText( 
+                            textPaneResult, 
+                            Utils.identText( tcr.getTestOutput(), 3 ),
+                            Color.BLACK, true );
+                }
             }
             
             Utils.addFormattedText( 
@@ -130,6 +140,25 @@ public class ResultDialog extends javax.swing.JDialog {
             
         }
         
+        if ( testResult.getExecutionState() == ExecutionState.COMPILATION_ERROR ) {
+
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "|-- ", 
+                    Color.BLACK, false );
+
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    "compilation error!\n", 
+                    Colors.COMPILATION_ERROR.darker(), false );
+
+            Utils.addFormattedText( 
+                    textPaneResult, 
+                    Utils.identText( testResult.getErrorMessage(), 2 ) + "\n", 
+                    Color.BLACK, false );
+
+        }
+        
         Utils.addFormattedText( 
                 textPaneResult, 
                 "|-- test state: ", 
@@ -154,14 +183,19 @@ public class ResultDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         scrollResult = new javax.swing.JScrollPane();
+        panelResult = new javax.swing.JPanel();
         textPaneResult = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Test Results");
 
+        panelResult.setLayout(new java.awt.BorderLayout());
+
         textPaneResult.setEditable(false);
         textPaneResult.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
-        scrollResult.setViewportView(textPaneResult);
+        panelResult.add(textPaneResult, java.awt.BorderLayout.CENTER);
+
+        scrollResult.setViewportView(panelResult);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -179,6 +213,7 @@ public class ResultDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel panelResult;
     private javax.swing.JScrollPane scrollResult;
     private javax.swing.JTextPane textPaneResult;
     // End of variables declaration//GEN-END:variables

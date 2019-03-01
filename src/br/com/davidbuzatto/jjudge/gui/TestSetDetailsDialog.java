@@ -193,23 +193,29 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         scrollPaneDetails = new javax.swing.JScrollPane();
+        panelDetails = new javax.swing.JPanel();
         textPaneDetails = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Test Set Details");
 
+        panelDetails.setLayout(new java.awt.BorderLayout());
+
+        textPaneDetails.setEditable(false);
         textPaneDetails.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
-        scrollPaneDetails.setViewportView(textPaneDetails);
+        panelDetails.add(textPaneDetails, java.awt.BorderLayout.CENTER);
+
+        scrollPaneDetails.setViewportView(panelDetails);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPaneDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
+            .addComponent(scrollPaneDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPaneDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+            .addComponent(scrollPaneDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
         );
 
         pack();
@@ -217,6 +223,7 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel panelDetails;
     private javax.swing.JScrollPane scrollPaneDetails;
     private javax.swing.JTextPane textPaneDetails;
     // End of variables declaration//GEN-END:variables

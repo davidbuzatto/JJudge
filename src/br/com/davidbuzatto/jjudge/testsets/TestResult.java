@@ -17,6 +17,7 @@ public class TestResult {
     private String name;
     private List<TestCaseResult> testCasesResult;
     private ExecutionState executionState;
+    private String errorMessage;
 
     public String getName() {
         return name;
@@ -44,6 +45,14 @@ public class TestResult {
 
     public boolean isApproved() {
         return executionState == ExecutionState.APPROVED;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage( String errorMessage ) {
+        this.errorMessage = errorMessage;
     }
     
     @Override

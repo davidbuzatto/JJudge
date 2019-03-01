@@ -9,6 +9,7 @@ import br.com.davidbuzatto.jjudge.testsets.TestCase;
 import br.com.davidbuzatto.jjudge.testsets.TestCaseResult;
 import br.com.davidbuzatto.jjudge.testsets.TestProgrammingLanguage;
 import br.com.davidbuzatto.jjudge.testsets.TestResult;
+import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.StreamGobbler;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
@@ -64,7 +65,8 @@ public class Processor {
                 filesToRemove = new File[]{
                     new File( String.format( "%s/%s.o", baseDir, fileName ) ),
                     new File( String.format( "%s/%s.exe", baseDir, fileName ) ),
-                    new File( String.format( "%s/output.txt", baseDir ) )
+                    new File( String.format( "%s/output.txt", baseDir ) ),
+                    new File( String.format( "%s/error.txt", baseDir ) )
                 };
 
                 compilationCommands = new String[]{
@@ -88,7 +90,8 @@ public class Processor {
                 filesToRemove = new File[]{
                     new File( String.format( "%s/%s.o", baseDir, fileName ) ),
                     new File( String.format( "%s/%s.exe", baseDir, fileName ) ),
-                    new File( String.format( "%s/output.txt", baseDir ) )
+                    new File( String.format( "%s/output.txt", baseDir ) ),
+                    new File( String.format( "%s/error.txt", baseDir ) )
                 };
 
                 compilationCommands = new String[]{
@@ -111,7 +114,8 @@ public class Processor {
                 
                 filesToRemove = new File[]{
                     new File( String.format( "%s/%s.class", baseDir, fileName ) ),
-                    new File( String.format( "%s/output.txt", baseDir ) )
+                    new File( String.format( "%s/output.txt", baseDir ) ),
+                    new File( String.format( "%s/error.txt", baseDir ) )
                 };
 
                 compilationCommands = new String[]{
@@ -152,20 +156,66 @@ public class Processor {
             for ( int i = 0; i < compilationCommands.length; i++ ) {
                 
                 Process p = rt.exec( compilationCommands[i], null, dir );
+                
+                FileOutputStream fosOutput = new FileOutputStream( 
+                        new File( String.format(  "%s/error.txt" , baseDir ) ) );
+                
                 StreamGobbler sg = new StreamGobbler( 
                         p.getInputStream(), 
                         p.getErrorStream(), 
-                        null, 
+                        fosOutput, 
                         threadId[i], 
                         outputStreams );
                 Thread t = new Thread( sg );
                 t.start();
                 t.join();
                 
+                fosOutput.close();
+                
                 // if error...
                 if ( sg.isProcessErrorStreamDataAvailable() ) {
+                    
+                    // reading process output from file
+                    StringBuilder sbOutput = new StringBuilder();
+                    Scanner sOutput = new Scanner( 
+                            new File( String.format( "%s/%s", baseDir, "error.txt" ) ) );
+
+                    boolean first = true;
+                    while ( sOutput.hasNextLine() ) {
+                        if ( first ) {
+                            first = false;
+                        } else {
+                            sbOutput.append( "\n" );
+                        }
+                        sbOutput.append( sOutput.nextLine() );
+                    }
+                    sOutput.close();
+                    testResult.setErrorMessage( sbOutput.toString() );
+                    
+                    if ( textPane == null ) {
+                        System.out.println( "|-- compilation error!" );
+                    } else {
+
+                        Utils.addFormattedText( 
+                                textPane, 
+                                "|   |-- ", 
+                                Color.BLACK, false );
+                        
+                        Utils.addFormattedText( 
+                                textPane, 
+                                "compilation error!\n", 
+                                Colors.COMPILATION_ERROR.darker(), false );
+
+                        Utils.addFormattedText( 
+                                textPane, 
+                                Utils.identText( sbOutput.toString(), 3 ) + "\n", 
+                                Color.BLACK, false );
+
+                    }
+                        
                     state = ExecutionState.COMPILATION_ERROR;
                     break;
+                    
                 }
                 
             }
@@ -276,74 +326,103 @@ public class Processor {
 
                     fosOutput.close();
 
+                    
+                    // reading process output from file
+                    StringBuilder sbOutput = new StringBuilder();
+
+                    Scanner sOutput = new Scanner( 
+                            new File( String.format( "%s/%s", baseDir, "output.txt" ) ) );
+
+                    boolean first = true;
+                    while ( sOutput.hasNextLine() ) {
+                        if ( first ) {
+                            first = false;
+                        } else {
+                            sbOutput.append( "\n" );
+                        }
+                        sbOutput.append( sOutput.nextLine() );
+                    }
+
+                    sOutput.close();
+                    
+                    // change spaces to \u2334
+                    /*test = test.replace( " ", "\u2334" );
+                    cleanOutput = cleanOutput.replace( " ", "\u2334" );*/
+                        
+                    // trim end
+                    String cleanOutput = sbOutput.toString().replaceAll( "\\s+$", "" );
+                        
                     TestCaseResult tcr = new TestCaseResult();
                     tcr.setInput( tc.getInput() );
                     tcr.setOutput( tc.getOutput() );
-                    tcr.setTestOutput( "" );
+                    tcr.setTestOutput( cleanOutput );
                     tcr.setExecutionState( state );
                     testResult.getTestCasesResult().add( tcr );
                     
-                    // verify output with expected data...
-                    if ( state == null ) {
-
-                        // reading process output from file
-                        StringBuilder sbOutput = new StringBuilder();
-
-                        Scanner sOutput = new Scanner( 
-                                new File( String.format( "%s/%s", baseDir, "output.txt" ) ) );
-
-                        boolean first = true;
-                        while ( sOutput.hasNextLine() ) {
-                            if ( first ) {
-                                first = false;
-                            } else {
-                                sbOutput.append( "\n" );
-                            }
-                            sbOutput.append( sOutput.nextLine() );
-                        }
-
-                        sOutput.close();
-
-                        // trim end
-                        String cleanOutput = sbOutput.toString().replaceAll( "\\s+$", "" );
+                    if ( textPane == null ) {
+                        System.out.println( "|   |-- process test output: " );
+                        System.out.println( Utils.identText( test, 3 ) );
+                        System.out.println( "|   |" );
+                        System.out.println( "|   |-- process output: " );
+                        System.out.println( Utils.identText( cleanOutput, 3 ) );
+                        System.out.println( "|   |" );
+                    } else {
                         
-                        // change spaces to \u2334
-                        /*test = test.replace( " ", "\u2334" );
-                        cleanOutput = cleanOutput.replace( " ", "\u2334" );*/
+                        Utils.addFormattedText( 
+                                textPane, 
+                                "|   |   |-- process test output:\n", 
+                                Color.BLACK, false );
                         
-                        if ( textPane == null ) {
-                            System.out.println( "|   |-- process test output: " );
-                            System.out.println( Utils.identText( test, 3 ) );
-                            System.out.println( "|   |" );
-                            System.out.println( "|   |-- process output: " );
-                            System.out.println( Utils.identText( cleanOutput, 3 ) );
-                            System.out.println( "|   |" );
-                        } else {
+                        if ( test.isEmpty() ) {
                             Utils.addFormattedText( 
                                     textPane, 
-                                    "|   |   |-- process test output:\n", 
+                                    Utils.identText( "<empty>", 4 ) + "\n", 
                                     Color.BLACK, false );
+                        } else {
                             Utils.addFormattedText( 
                                     textPane, 
                                     Utils.identText( test, 4 ) + "\n", 
                                     Color.BLACK, true );
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    "|   |   |\n", 
-                                    Color.BLACK, false );
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    "|   |   |-- process output:\n", 
-                                    Color.BLACK, false );
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    Utils.identText( cleanOutput, 4 ) + "\n", 
-                                    Color.BLACK, true );
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    "|   |   |\n", 
-                                    Color.BLACK, false );
                         }
+                        
+                        Utils.addFormattedText( 
+                                textPane, 
+                                "|   |   |\n", 
+                                Color.BLACK, false );
+                        
+                        Utils.addFormattedText( 
+                                textPane, 
+                                "|   |   |-- process output:\n", 
+                                Color.BLACK, false );
+                        
+                        if ( cleanOutput.isEmpty() ) {
+                            Utils.addFormattedText( 
+                                textPane, 
+                                Utils.identText( "<empty>", 4 ) + "\n", 
+                                Color.BLACK, false );
+                        } else {
+                            if ( state == ExecutionState.RUNTIME_ERROR || 
+                                    state == ExecutionState.TIMEOUT_ERROR ) {
+                                Utils.addFormattedText( 
+                                        textPane, 
+                                        Utils.identText( cleanOutput, 4 ) + "\n", 
+                                        Color.BLACK, false );
+                            } else {
+                                Utils.addFormattedText( 
+                                        textPane, 
+                                        Utils.identText( cleanOutput, 4 ) + "\n", 
+                                        Color.BLACK, true );
+                            }
+                        }
+                        
+                        Utils.addFormattedText( 
+                                textPane, 
+                                "|   |   |\n", 
+                                Color.BLACK, false );
+                    }
+                    
+                    // verify output with expected data...
+                    if ( state == null ) {
 
                         if ( Utils.verifyBackwards( 
                                 cleanOutput, test ) ) {
@@ -353,7 +432,6 @@ public class Processor {
                             state = ExecutionState.NOT_PASSED;
                         }
                         
-                        tcr.setTestOutput( cleanOutput );
                         tcr.setExecutionState( state );
 
                     }
@@ -385,11 +463,6 @@ public class Processor {
                 } else {
                     state = ExecutionState.REPROVED;
                 }
-
-                // clean files
-                for ( File f : filesToRemove ) {
-                    f.delete();
-                }
             
             }
             
@@ -418,6 +491,13 @@ public class Processor {
                     
         }
         
+        // clean files
+        for ( File f : filesToRemove ) {
+            if ( f.exists() ) {
+                f.delete();
+            }
+        }
+                
         testResult.setExecutionState( state );
         
         return testResult;
