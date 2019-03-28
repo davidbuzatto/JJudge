@@ -362,7 +362,9 @@ public class Utils {
             JTextPane textPane ) throws IOException, InterruptedException {
         
         File destDir;
-        Student student;
+        Student student = new Student();
+        student.setName( file.getName() );
+        student.setCode( "" );
         
         boolean loadStudent = false;
         
@@ -374,15 +376,14 @@ public class Utils {
             destDir = new File( file.getParent() );
         }
         
-        
         String baseDir = destDir.getAbsolutePath();
-        
+            
         if ( loadStudent ) {
-            student = loadStudent( baseDir );
-        } else {
-            student = new Student();
-            student.setName( file.getName() );
-            student.setCode( "" );
+            try {
+                student = loadStudent( baseDir );
+            } catch ( FileNotFoundException exc ) {
+                // student file not found
+            }
         }
         
         if ( file.getName().endsWith( ".zip" ) ) {
