@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import java.awt.Color;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,10 +29,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import javax.swing.JFileChooser;
@@ -205,6 +212,43 @@ public class Utils {
         
     }
     
+    public static void completeUnzip( File file, File destDir ) throws IOException {
+        
+        try( ZipFile zipFile = new ZipFile( file ) ) {
+            
+            FileSystem fileSystem = FileSystems.getDefault();
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+             
+            String uncompressedDirectory = destDir.getPath();
+            System.out.println( uncompressedDirectory );
+            Files.createDirectory( fileSystem.getPath( uncompressedDirectory ) );
+             
+            while ( entries.hasMoreElements() ) {
+                
+                ZipEntry entry = entries.nextElement();
+                
+                if ( entry.isDirectory() ) {
+                    Files.createDirectories( fileSystem.getPath( uncompressedDirectory + "\\" + entry.getName() ) );
+                } else {
+                    try ( InputStream is = zipFile.getInputStream( entry );
+                          BufferedInputStream bis = new BufferedInputStream( is ) ) {
+                        
+                        String uncompressedFileName = uncompressedDirectory + "\\" + entry.getName();
+                        Path uncompressedFilePath = fileSystem.getPath( uncompressedFileName );
+                        Files.createFile( uncompressedFilePath );
+                        
+                        try ( FileOutputStream fileOutput = new FileOutputStream( uncompressedFileName ) ) {
+                            while ( bis.available() > 0 ) {
+                                fileOutput.write( bis.read() );
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+    
     public static List<TestSet> loadTestSets() {
         
         List<TestSet> testSets = null;
@@ -370,7 +414,8 @@ public class Utils {
         
         if ( file.getName().endsWith( ".zip" ) ) {
             destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
-            Utils.unzip( file, destDir );
+            //Utils.unzip( file, destDir );
+            Utils.completeUnzip( file, destDir );
             loadStudent = true;
         } else {
             destDir = new File( file.getParent().trim() );
