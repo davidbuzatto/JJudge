@@ -369,11 +369,11 @@ public class Utils {
         boolean loadStudent = false;
         
         if ( file.getName().endsWith( ".zip" ) ) {
-            destDir = new File( file.getAbsolutePath().replace( ".zip", "" ) );
+            destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
             Utils.unzip( file, destDir );
             loadStudent = true;
         } else {
-            destDir = new File( file.getParent() );
+            destDir = new File( file.getParent().trim() );
         }
         
         String baseDir = destDir.getAbsolutePath();

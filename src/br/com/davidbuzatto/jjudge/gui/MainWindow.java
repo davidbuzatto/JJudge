@@ -220,7 +220,6 @@ public class MainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("JJudge");
-        setResizable(false);
 
         panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder("Package(s) or File(s) to Test"));
 
@@ -368,8 +367,8 @@ public class MainWindow extends javax.swing.JFrame {
             panelProcessOutputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelProcessOutputLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollProcessOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(scrollProcessOutput)
+                .addContainerGap())
         );
 
         panelResults.setBorder(javax.swing.BorderFactory.createTitledBorder("Results"));
@@ -686,7 +685,7 @@ public class MainWindow extends javax.swing.JFrame {
                                         Color.BLACK, false );
 
                                 FileUtils.deleteDirectory( new File( 
-                                        file.getAbsolutePath().replace( ".zip", "" ) ) );
+                                        file.getAbsolutePath().replace( ".zip", "" ).trim() ) );
                                 
                             }
                             
