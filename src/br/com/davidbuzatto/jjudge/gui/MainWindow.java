@@ -88,13 +88,19 @@ public class MainWindow extends javax.swing.JFrame {
         
         if ( name != null ) {
             
+            name = name.trim();
+            
             code = JOptionPane.showInputDialog( "Student code:" );
             
             if ( code != null ) {
                 
+                code = code.trim();
+                
                 packageName = JOptionPane.showInputDialog( "Package name:" );
                 
                 if ( packageName != null ) {
+                    
+                    packageName = packageName.trim();
                     
                     JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "buildTestPackagePath" ) ) );
                     jfc.setDialogTitle( "Choose the files to insert into the test package" );
