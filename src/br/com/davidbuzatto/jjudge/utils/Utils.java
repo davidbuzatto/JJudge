@@ -411,12 +411,21 @@ public class Utils {
         student.setCode( "" );
         
         boolean loadStudent = false;
+        boolean errorUnzipping = false;
         
         if ( file.getName().endsWith( ".zip" ) ) {
+            
             destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
-            //Utils.unzip( file, destDir );
-            Utils.completeUnzip( file, destDir );
+            
+            try {
+                //Utils.unzip( file, destDir );
+                Utils.completeUnzip( file, destDir );
+            } catch ( IllegalArgumentException exc ) {
+                errorUnzipping = true;
+            }
+            
             loadStudent = true;
+            
         } else {
             destDir = new File( file.getParent().trim() );
         }
@@ -431,24 +440,38 @@ public class Utils {
             }
         }
         
-        if ( file.getName().endsWith( ".zip" ) ) {
-            return verify( 
-                    testSet, 
-                    student, 
-                    baseDir, 
-                    secondsToTimeout, 
-                    outputStreams,
-                    textPane,
-                    null );
-        } else {
-            return verify( 
-                    testSet, 
-                    student, 
-                    baseDir, 
-                    secondsToTimeout, 
-                    outputStreams,
-                    textPane,
-                    file );
+        if ( errorUnzipping ) {
+            
+            TestSetResult tsResult = new TestSetResult();
+            tsResult.setStudent( student );
+            tsResult.setGrade( 0 );
+            tsResult.setTestResults( new ArrayList<>() );
+            tsResult.setError( "wrong file format..." );
+            
+            return tsResult;
+            
+        } else { 
+            
+            if ( file.getName().endsWith( ".zip" ) ) {
+                return verify( 
+                        testSet, 
+                        student, 
+                        baseDir, 
+                        secondsToTimeout, 
+                        outputStreams,
+                        textPane,
+                        null );
+            } else {
+                return verify( 
+                        testSet, 
+                        student, 
+                        baseDir, 
+                        secondsToTimeout, 
+                        outputStreams,
+                        textPane,
+                        file );
+            }
+            
         }
         
     }

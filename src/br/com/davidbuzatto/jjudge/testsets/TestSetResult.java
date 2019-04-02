@@ -16,6 +16,7 @@ public class TestSetResult {
     private Student student;
     private double grade;
     private List<TestResult> testResults;
+    private String error;
 
     public Student getStudent() {
         return student;
@@ -39,6 +40,14 @@ public class TestSetResult {
 
     public void setTestResults( List<TestResult> testResults ) {
         this.testResults = testResults;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError( String error ) {
+        this.error = error;
     }
     
 }

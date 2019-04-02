@@ -180,6 +180,13 @@ public class ResultPanel extends JPanel {
                     
                 }
                 
+                if ( tsr.getError() != null ) {
+                    g2d.setColor( Color.RED );
+                    g2d.drawString( tsr.getError(), 
+                            maxStudentWidth + RES_WIDTH, 
+                            y + RES_HEIGHT - 7 );
+                }
+                
                 currTestSetResult++;
                 
             }
