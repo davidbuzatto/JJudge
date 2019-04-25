@@ -46,7 +46,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void customInit() {
         
-        secondsToTimeout = 10;
+        secondsToTimeout = 5;
         outputStreams = false;
         
         setIconImage( new ImageIcon( getClass().getResource(

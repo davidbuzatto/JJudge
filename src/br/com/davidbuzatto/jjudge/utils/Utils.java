@@ -220,7 +220,6 @@ public class Utils {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
              
             String uncompressedDirectory = destDir.getPath();
-            System.out.println( uncompressedDirectory );
             Files.createDirectory( fileSystem.getPath( uncompressedDirectory ) );
              
             while ( entries.hasMoreElements() ) {

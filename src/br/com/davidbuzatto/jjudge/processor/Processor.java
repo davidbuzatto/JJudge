@@ -329,139 +329,148 @@ public class Processor {
                     
                     // reading process output from file
                     StringBuilder sbOutput = new StringBuilder();
-
-                    Scanner sOutput = new Scanner( 
-                            new File( String.format( "%s/%s", baseDir, "output.txt" ) ) );
-
-                    boolean first = true;
-                    while ( sOutput.hasNextLine() ) {
-                        if ( first ) {
-                            first = false;
-                        } else {
-                            sbOutput.append( "\n" );
-                        }
-                        sbOutput.append( sOutput.nextLine() );
-                    }
-
-                    sOutput.close();
+                    File processOutputFile = new File( String.format( "%s/%s", baseDir, "output.txt" ) );
                     
-                    // change spaces to \u2334
-                    /*test = test.replace( " ", "\u2334" );
-                    cleanOutput = cleanOutput.replace( " ", "\u2334" );*/
-                        
-                    // trim end
-                    String cleanOutput = sbOutput.toString().replaceAll( "\\s+$", "" );
-                        
-                    TestCaseResult tcr = new TestCaseResult();
-                    tcr.setInput( tc.getInput() );
-                    tcr.setOutput( tc.getOutput() );
-                    tcr.setTestOutput( cleanOutput );
-                    tcr.setExecutionState( state );
-                    testResult.getTestCasesResult().add( tcr );
-                    
-                    if ( textPane == null ) {
-                        System.out.println( "|   |-- process test output: " );
-                        System.out.println( Utils.identText( test, 3 ) );
-                        System.out.println( "|   |" );
-                        System.out.println( "|   |-- process output: " );
-                        System.out.println( Utils.identText( cleanOutput, 3 ) );
-                        System.out.println( "|   |" );
+                    // file must be lesser tham 1MB
+                    if ( processOutputFile.length() > 1024 * 1024 ) {
+                        state = ExecutionState.RUNTIME_ERROR;
                     } else {
                         
-                        Utils.addFormattedText( 
-                                textPane, 
-                                "|   |   |-- process test output:\n", 
-                                Color.BLACK, false );
-                        
-                        if ( test.isEmpty() ) {
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    Utils.identText( "<empty>", 4 ) + "\n", 
-                                    Color.BLACK, false );
-                        } else {
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    Utils.identText( test, 4 ) + "\n", 
-                                    Color.BLACK, true );
+                        Scanner sOutput = new Scanner( processOutputFile );
+
+                        boolean first = true;
+                        while ( sOutput.hasNextLine() ) {
+                            if ( first ) {
+                                first = false;
+                            } else {
+                                sbOutput.append( "\n" );
+                            }
+                            sbOutput.append( sOutput.nextLine() );
                         }
-                        
-                        Utils.addFormattedText( 
-                                textPane, 
-                                "|   |   |\n", 
-                                Color.BLACK, false );
-                        
-                        Utils.addFormattedText( 
-                                textPane, 
-                                "|   |   |-- process output:\n", 
-                                Color.BLACK, false );
-                        
-                        if ( cleanOutput.isEmpty() ) {
-                            Utils.addFormattedText( 
-                                textPane, 
-                                Utils.identText( "<empty>", 4 ) + "\n", 
-                                Color.BLACK, false );
+
+                        sOutput.close();
+
+                        // change spaces to \u2334
+                        /*test = test.replace( " ", "\u2334" );
+                        cleanOutput = cleanOutput.replace( " ", "\u2334" );*/
+
+                        // trim end
+                        String cleanOutput = sbOutput.toString().replaceAll( "\\s+$", "" );
+
+                        TestCaseResult tcr = new TestCaseResult();
+                        tcr.setInput( tc.getInput() );
+                        tcr.setOutput( tc.getOutput() );
+                        tcr.setTestOutput( cleanOutput );
+                        tcr.setExecutionState( state );
+                        testResult.getTestCasesResult().add( tcr );
+
+                        if ( textPane == null ) {
+                            System.out.println( "|   |-- process test output: " );
+                            System.out.println( Utils.identText( test, 3 ) );
+                            System.out.println( "|   |" );
+                            System.out.println( "|   |-- process output: " );
+                            System.out.println( Utils.identText( cleanOutput, 3 ) );
+                            System.out.println( "|   |" );
                         } else {
-                            if ( state == ExecutionState.RUNTIME_ERROR || 
-                                    state == ExecutionState.TIMEOUT_ERROR ) {
+
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    "|   |   |-- process test output:\n", 
+                                    Color.BLACK, false );
+
+                            if ( test.isEmpty() ) {
                                 Utils.addFormattedText( 
                                         textPane, 
-                                        Utils.identText( cleanOutput, 4 ) + "\n", 
+                                        Utils.identText( "<empty>", 4 ) + "\n", 
                                         Color.BLACK, false );
                             } else {
                                 Utils.addFormattedText( 
                                         textPane, 
-                                        Utils.identText( cleanOutput, 4 ) + "\n", 
+                                        Utils.identText( test, 4 ) + "\n", 
                                         Color.BLACK, true );
                             }
-                        }
-                        
-                        Utils.addFormattedText( 
-                                textPane, 
-                                "|   |   |\n", 
-                                Color.BLACK, false );
-                    }
-                    
-                    // verify output with expected data...
-                    if ( state == null ) {
 
-                        if ( Utils.verifyBackwards( 
-                                cleanOutput, test ) ) {
-                            state = ExecutionState.PASSED;
-                            passedTestCases++;
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    "|   |   |\n", 
+                                    Color.BLACK, false );
+
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    "|   |   |-- process output:\n", 
+                                    Color.BLACK, false );
+
+                            if ( cleanOutput.isEmpty() ) {
+                                Utils.addFormattedText( 
+                                    textPane, 
+                                    Utils.identText( "<empty>", 4 ) + "\n", 
+                                    Color.BLACK, false );
+                            } else {
+                                if ( state == ExecutionState.RUNTIME_ERROR || 
+                                        state == ExecutionState.TIMEOUT_ERROR ) {
+                                    Utils.addFormattedText( 
+                                            textPane, 
+                                            Utils.identText( cleanOutput, 4 ) + "\n", 
+                                            Color.BLACK, false );
+                                } else {
+                                    Utils.addFormattedText( 
+                                            textPane, 
+                                            Utils.identText( cleanOutput, 4 ) + "\n", 
+                                            Color.BLACK, true );
+                                }
+                            }
+
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    "|   |   |\n", 
+                                    Color.BLACK, false );
+                        }
+
+                        // verify output with expected data...
+                        if ( state == null ) {
+
+                            if ( Utils.verifyBackwards( 
+                                    cleanOutput, test ) ) {
+                                state = ExecutionState.PASSED;
+                                passedTestCases++;
+                            } else {
+                                state = ExecutionState.NOT_PASSED;
+                            }
+
+                            tcr.setExecutionState( state );
+
+                        }
+
+                        if ( textPane == null ) {
+                            System.out.println( "|   |-- test case state: " + state + "\n|" );
                         } else {
-                            state = ExecutionState.NOT_PASSED;
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    "|   |   |-- test case state: ", 
+                                    Color.BLACK, false );
+
+                            Color color = Utils.retrieveStateColor( state );
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    state.toString(), 
+                                    color, false );
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    "\n|   |\n", 
+                                    Color.BLACK, false );
+
                         }
-                        
-                        tcr.setExecutionState( state );
-
-                    }
-
-                    if ( textPane == null ) {
-                        System.out.println( "|   |-- test case state: " + state + "\n|" );
-                    } else {
-                        Utils.addFormattedText( 
-                                textPane, 
-                                "|   |   |-- test case state: ", 
-                                Color.BLACK, false );
-
-                        Color color = Utils.retrieveStateColor( state );
-                        Utils.addFormattedText( 
-                                textPane, 
-                                state.toString(), 
-                                color, false );
-                        Utils.addFormattedText( 
-                                textPane, 
-                                "\n|   |\n", 
-                                Color.BLACK, false );
-                        
+                    
                     }
                     
-                }
-
-                if ( passedTestCases == testCases.size() ) {
-                    state = ExecutionState.APPROVED;
-                } else {
-                    state = ExecutionState.REPROVED;
+                    if ( state != ExecutionState.RUNTIME_ERROR ) {
+                        if ( passedTestCases == testCases.size() ) {
+                            state = ExecutionState.APPROVED;
+                        } else {
+                            state = ExecutionState.REPROVED;
+                        }
+                    }
+                    
                 }
             
             }
