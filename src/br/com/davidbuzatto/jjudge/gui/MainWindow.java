@@ -228,7 +228,7 @@ public class MainWindow extends javax.swing.JFrame {
         popupMenu.add(menuItemShowDetails);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("JJudge");
+        setTitle("JJudge - v1.16");
 
         panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder("Package(s) or File(s) to Test"));
 

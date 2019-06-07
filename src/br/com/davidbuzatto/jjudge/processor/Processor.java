@@ -70,7 +70,7 @@ public class Processor {
                 };
 
                 compilationCommands = new String[]{
-                    String.format( "gcc -c %s.c -o %s.o", fileName, fileName ),
+                    String.format( "gcc -Werror -Wfatal-errors -c %s.c -o %s.o", fileName, fileName ),
                     String.format( "g++ -o %s.exe %s.o", fileName, fileName )
                 };
 
@@ -95,7 +95,7 @@ public class Processor {
                 };
 
                 compilationCommands = new String[]{
-                    String.format( "g++ -c %s.cpp -o %s.o", fileName, fileName ),
+                    String.format( "g++ -Werror -Wfatal-errors -c %s.cpp -o %s.o", fileName, fileName ),
                     String.format( "g++ -o %s.exe %s.o", fileName, fileName )
                 };
 
