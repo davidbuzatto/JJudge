@@ -107,7 +107,7 @@ public class MainWindow extends javax.swing.JFrame {
                     jfc.setMultiSelectionEnabled( true );
                     jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
                     jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-                    jfc.setFileFilter( new FileNameExtensionFilter( "Source code files" , "c", "cpp", "java", "py" ) );
+                    jfc.setFileFilter( new FileNameExtensionFilter( "Source code files" , "c", "cpp", "java", "py", "txt" ) );
 
                     jfc.showOpenDialog( this );
                     File[] files = jfc.getSelectedFiles();
