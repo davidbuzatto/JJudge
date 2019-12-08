@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -46,6 +47,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
     
     private int selectedIndexUpDown;
     
+    private ResourceBundle bundle = Utils.bundle;
+    
     /**
      * Creates new form ResultDialog
      */
@@ -62,11 +65,13 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         
         this.testSets = new ArrayList<>();
         this.selectedIndexUpDown = -1;
-        
-        try {
             
-            for ( TestSet ts : testSets ) {
-                this.testSets.add( (TestSet) ts.clone() );
+        try {
+
+            if ( testSets != null ) {
+                for ( TestSet ts : testSets ) {
+                    this.testSets.add( (TestSet) ts.clone() );
+                }
             }
 
             listModelTestSets = new DefaultListModel<>();
@@ -78,15 +83,15 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             listTests.setModel( listModelTests );
             listTestCases.setModel( listModelTestCases );
             comboTestSetProgLanguage.setModel( comboModelTestProgLanguages );
-        
+
             for ( TestSet ts : this.testSets ) {
                 listModelTestSets.addElement( ts );
             }
-            
+
             for ( TestProgrammingLanguage tpl : TestProgrammingLanguage.class.getEnumConstants() ) {
                 comboModelTestProgLanguages.addElement( tpl.name() );
             }
-            
+
         } catch ( CloneNotSupportedException exc ) {
             exc.printStackTrace();
         }
@@ -209,14 +214,15 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         popupMenuUpDown.add(menuItemDown);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Edit Test Sets");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle"); // NOI18N
+        setTitle(bundle.getString("EditTestSetsDialog.title")); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
 
-        panelTestSets.setBorder(javax.swing.BorderFactory.createTitledBorder("Test Sets"));
+        panelTestSets.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("EditTestSetsDialog.panelTestSets.border.title"))); // NOI18N
 
         listTestSets.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         listTestSets.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -231,9 +237,9 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         });
         scrollTestSets.setViewportView(listTestSets);
 
-        lblTestSetDescription.setText("Description:");
+        lblTestSetDescription.setText(bundle.getString("EditTestSetsDialog.lblTestSetDescription.text")); // NOI18N
 
-        lblTestSetProgLanguage.setText("Prog. Language");
+        lblTestSetProgLanguage.setText(bundle.getString("EditTestSetsDialog.lblTestSetProgLanguage.text")); // NOI18N
 
         javax.swing.GroupLayout panelTestSetSetLayout = new javax.swing.GroupLayout(panelTestSetSet);
         panelTestSetSet.setLayout(panelTestSetSetLayout);
@@ -266,21 +272,21 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        btnNewTestSet.setText("New");
+        btnNewTestSet.setText(bundle.getString("EditTestSetsDialog.btnNewTestSet.text")); // NOI18N
         btnNewTestSet.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNewTestSetActionPerformed(evt);
             }
         });
 
-        btnSaveTestSet.setText("Save");
+        btnSaveTestSet.setText(bundle.getString("EditTestSetsDialog.btnSaveTestSet.text")); // NOI18N
         btnSaveTestSet.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveTestSetActionPerformed(evt);
             }
         });
 
-        btnDeleteTestSet.setText("Delete");
+        btnDeleteTestSet.setText(bundle.getString("EditTestSetsDialog.btnDeleteTestSet.text")); // NOI18N
         btnDeleteTestSet.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteTestSetActionPerformed(evt);
@@ -319,7 +325,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        panelTests.setBorder(javax.swing.BorderFactory.createTitledBorder("Tests"));
+        panelTests.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("EditTestSetsDialog.panelTests.border.title"))); // NOI18N
 
         listTests.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         listTests.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -334,28 +340,28 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         });
         scrollTests.setViewportView(listTests);
 
-        btnNewTest.setText("New");
+        btnNewTest.setText(bundle.getString("EditTestSetsDialog.btnNewTest.text")); // NOI18N
         btnNewTest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNewTestActionPerformed(evt);
             }
         });
 
-        btnSaveTest.setText("Save");
+        btnSaveTest.setText(bundle.getString("EditTestSetsDialog.btnSaveTest.text")); // NOI18N
         btnSaveTest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveTestActionPerformed(evt);
             }
         });
 
-        btnDeleteTest.setText("Delete");
+        btnDeleteTest.setText(bundle.getString("EditTestSetsDialog.btnDeleteTest.text")); // NOI18N
         btnDeleteTest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteTestActionPerformed(evt);
             }
         });
 
-        lblTestName.setText("Name:");
+        lblTestName.setText(bundle.getString("EditTestSetsDialog.lblTestName.text")); // NOI18N
 
         javax.swing.GroupLayout panelTestDataLayout = new javax.swing.GroupLayout(panelTestData);
         panelTestData.setLayout(panelTestDataLayout);
@@ -410,7 +416,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        panelTestCases.setBorder(javax.swing.BorderFactory.createTitledBorder("Test Cases"));
+        panelTestCases.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("EditTestSetsDialog.panelTestCases.border.title"))); // NOI18N
 
         listTestCases.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         listTestCases.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -425,30 +431,30 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         });
         scrollTestCases.setViewportView(listTestCases);
 
-        btnNewTestCase.setText("New");
+        btnNewTestCase.setText(bundle.getString("EditTestSetsDialog.btnNewTestCase.text")); // NOI18N
         btnNewTestCase.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNewTestCaseActionPerformed(evt);
             }
         });
 
-        btnSaveTestCase.setText("Save");
+        btnSaveTestCase.setText(bundle.getString("EditTestSetsDialog.btnSaveTestCase.text")); // NOI18N
         btnSaveTestCase.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveTestCaseActionPerformed(evt);
             }
         });
 
-        btnDeleteTestCase.setText("Delete");
+        btnDeleteTestCase.setText(bundle.getString("EditTestSetsDialog.btnDeleteTestCase.text")); // NOI18N
         btnDeleteTestCase.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteTestCaseActionPerformed(evt);
             }
         });
 
-        lblTestCaseInput.setText("Input:");
+        lblTestCaseInput.setText(bundle.getString("EditTestSetsDialog.lblTestCaseInput.text")); // NOI18N
 
-        lblTestCaseOutput.setText("Output:");
+        lblTestCaseOutput.setText(bundle.getString("EditTestSetsDialog.lblTestCaseOutput.text")); // NOI18N
 
         textAreaTestCaseInput.setColumns(20);
         textAreaTestCaseInput.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
@@ -523,7 +529,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         );
 
         btnOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
-        btnOK.setText("OK");
+        btnOK.setText(bundle.getString("EditTestSetsDialog.btnOK.text")); // NOI18N
         btnOK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnOKActionPerformed(evt);
@@ -531,7 +537,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         });
 
         btnOKAndSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/disk.png"))); // NOI18N
-        btnOKAndSave.setText("OK and Save");
+        btnOKAndSave.setText(bundle.getString("EditTestSetsDialog.btnOKAndSave.text")); // NOI18N
         btnOKAndSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnOKAndSaveActionPerformed(evt);
@@ -539,7 +545,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         });
 
         btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/stop.png"))); // NOI18N
-        btnCancel.setText("Cancel");
+        btnCancel.setText(bundle.getString("EditTestSetsDialog.btnCancel.text")); // NOI18N
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelActionPerformed(evt);
@@ -641,8 +647,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         if ( index != -1 ) {
             
             if ( JOptionPane.showConfirmDialog( this, 
-                    "Do you really want to delete the selected Test Set?", 
-                    "Delete Test Set", JOptionPane.YES_NO_OPTION ) == 
+                    bundle.getString( "EditTestSetsDialog.btnDeleteTestSetActionPerformed.confirmDeletion" ), 
+                    bundle.getString( "EditTestSetsDialog.btnDeleteTestSetActionPerformed.title" ), JOptionPane.YES_NO_OPTION ) == 
                     JOptionPane.YES_OPTION ) {
                 
                 listModelTestSets.remove( index );
@@ -698,7 +704,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             
             JOptionPane.showMessageDialog( 
                     this, 
-                    "Please, select a Test Set!", "ERROR", 
+                    bundle.getString( "EditTestSetsDialog.btnSaveTestActionPerformed." ),
+                    bundle.getString( "EditTestSetsDialog.errorTitle" ), 
                     JOptionPane.ERROR_MESSAGE );
             
         }
@@ -712,8 +719,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         if ( index != -1 ) {
             
             if ( JOptionPane.showConfirmDialog( this, 
-                    "Do you really want to delete the selected Test?", 
-                    "Delete Test", JOptionPane.YES_NO_OPTION ) == 
+                    bundle.getString( "EditTestSetsDialog.btnDeleteTestActionPerformed.deleteMessage" ), 
+                    bundle.getString( "EditTestSetsDialog.btnDeleteTestActionPerformed.title" ), JOptionPane.YES_NO_OPTION ) == 
                     JOptionPane.YES_OPTION ) {
                 
                 listModelTests.remove( index );
@@ -760,7 +767,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             
             JOptionPane.showMessageDialog( 
                     this, 
-                    "Please, select a Test!", "ERROR", 
+                    bundle.getString( "EditTestSetsDialog.btnSaveTestCaseActionPerformed.selectTest" ), 
+                    bundle.getString( "EditTestSetsDialog.errorTitle" ), 
                     JOptionPane.ERROR_MESSAGE );
             
         }
@@ -774,8 +782,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         if ( index != -1 ) {
             
             if ( JOptionPane.showConfirmDialog( this, 
-                    "Do you really want to delete the selected Test Case?", 
-                    "Delete Test Case", JOptionPane.YES_NO_OPTION ) == 
+                    bundle.getString( "EditTestSetsDialog.btnDeleteTestCaseActionPerformed.deleteMessage" ), 
+                    bundle.getString( "EditTestSetsDialog.btnDeleteTestCaseActionPerformed.title" ), JOptionPane.YES_NO_OPTION ) == 
                     JOptionPane.YES_OPTION ) {
                 
                 listModelTestCases.remove( index );
@@ -801,11 +809,11 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
 	String json = gson.toJson( testSets );
         
         JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "saveTestSets" ) ) );
-        jfc.setDialogTitle( "Save test sets" );
+        jfc.setDialogTitle( bundle.getString( "EditTestSetsDialog.btnOKAndSaveActionPerformed.save" ) );
         jfc.setMultiSelectionEnabled( false );
         jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
         jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-        jfc.setFileFilter( new FileNameExtensionFilter( "JSON file" , "json" ) );
+        jfc.setFileFilter( new FileNameExtensionFilter( bundle.getString( "EditTestSetsDialog.btnOKAndSaveActionPerformed.fileTypes" ), "json" ) );
         jfc.setSelectedFile( new File( "testSets.json" ) );
 
         if ( jfc.showSaveDialog( null ) == JFileChooser.APPROVE_OPTION ) {
@@ -815,8 +823,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
 
             if ( f.exists() ) {
                 if ( JOptionPane.showConfirmDialog( null, 
-                        "Do you whant to overwrite the existing file?", 
-                        "Confirm", 
+                        bundle.getString( "EditTestSetsDialog.btnOKAndSaveActionPerformed.overwriteMessage" ), 
+                        bundle.getString( "EditTestSetsDialog.btnOKAndSaveActionPerformed.confirm" ), 
                         JOptionPane.YES_NO_OPTION ) == JOptionPane.NO_OPTION ) {
                     save = false;
                 }
@@ -960,7 +968,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             
             JOptionPane.showMessageDialog( 
                     this, 
-                    "Please, select a Test Set!", "ERROR", 
+                    bundle.getString( "EditTestSetsDialog.btnNewTestActionPerformed.selectTestSet" ), 
+                    bundle.getString( "EditTestSetsDialog.errorTitle" ), 
                     JOptionPane.ERROR_MESSAGE );
             
         }
@@ -984,7 +993,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             
             JOptionPane.showMessageDialog( 
                     this, 
-                    "Please, select a Test!", "ERROR", 
+                    bundle.getString( "EditTestSetsDialog.btnNewTestCaseActionPerformed.selectTest" ), 
+                    bundle.getString( "EditTestSetsDialog.errorTitle" ), 
                     JOptionPane.ERROR_MESSAGE );
             
         }

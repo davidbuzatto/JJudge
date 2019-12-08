@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -35,6 +36,8 @@ public class MainWindow extends javax.swing.JFrame {
     private List<TestSet> testSets;
     private int secondsToTimeout;
     private boolean outputStreams;
+    
+    private ResourceBundle bundle = Utils.bundle;
     
     /**
      * Creates new form JJudge
@@ -63,10 +66,10 @@ public class MainWindow extends javax.swing.JFrame {
         DefaultCaret caret = (DefaultCaret) textPaneProcessOutput.getCaret();
         caret.setUpdatePolicy( DefaultCaret.ALWAYS_UPDATE );
         
-        //testSets = Utils.loadTestSets();
-        //buildTestSetsModel();
+        testSets = Utils.loadTestSets();
+        buildTestSetsModel();
         
-        //listPackagesModel.addElement( new File( "debugPackageC.zip" ) );
+        listPackagesModel.addElement( new File( "debugPackageC.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackageCPP.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackageJAVA.zip" ) );
         //listPackagesModel.addElement( new File( "debugPackagePYTHON.zip" ) );
@@ -82,7 +85,9 @@ public class MainWindow extends javax.swing.JFrame {
     
     private void buildTestPackage() {
         
-        String name = JOptionPane.showInputDialog( "Student full name:" );
+        String name = JOptionPane.showInputDialog( 
+                bundle.getString( 
+                        "MainWindow.buildTestPackage.studentFullName" ) );
         String code;
         String packageName;
         
@@ -90,24 +95,28 @@ public class MainWindow extends javax.swing.JFrame {
             
             name = name.trim();
             
-            code = JOptionPane.showInputDialog( "Student code:" );
+            code = JOptionPane.showInputDialog( 
+                    bundle.getString( 
+                            "MainWindow.buildTestPackage.studentCode" ) );
             
             if ( code != null ) {
                 
                 code = code.trim();
                 
-                packageName = JOptionPane.showInputDialog( "Package name:" );
+                packageName = JOptionPane.showInputDialog( 
+                        bundle.getString( 
+                                "MainWindow.buildTestPackage.packageName" ) );
                 
                 if ( packageName != null ) {
                     
                     packageName = packageName.trim();
                     
                     JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "buildTestPackagePath" ) ) );
-                    jfc.setDialogTitle( "Choose the files to insert into the test package" );
+                    jfc.setDialogTitle( bundle.getString( "MainWindow.buildTestPackage.filesToInsert" ) );
                     jfc.setMultiSelectionEnabled( true );
                     jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
                     jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-                    jfc.setFileFilter( new FileNameExtensionFilter( "Source code files" , "c", "cpp", "java", "py", "txt" ) );
+                    jfc.setFileFilter( new FileNameExtensionFilter( bundle.getString( "MainWindow.buildTestPackage.fileTypes" ), "c", "cpp", "java", "py", "txt" ) );
 
                     jfc.showOpenDialog( this );
                     File[] files = jfc.getSelectedFiles();
@@ -135,7 +144,7 @@ public class MainWindow extends javax.swing.JFrame {
                             
                             studentFile.delete();
                             
-                            JOptionPane.showMessageDialog( this, "The test package was built successfully!" );
+                            JOptionPane.showMessageDialog( this, bundle.getString( "MainWindow.buildTestPackage.success" ) );
                             
                         } catch ( IOException exc )  {
                             exc.printStackTrace();
@@ -154,11 +163,11 @@ public class MainWindow extends javax.swing.JFrame {
     private void loadTestSet() {
         
         JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "loadTestSets" ) ) );
-        jfc.setDialogTitle( "Choose a package of test sets" );
+        jfc.setDialogTitle( bundle.getString( "MainWindow.loadTestSet.testSetPackage" ) );
         jfc.setMultiSelectionEnabled( false );
         jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
         jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-        jfc.setFileFilter( new FileNameExtensionFilter( "Test Sets JSON File" , "json" ) );
+        jfc.setFileFilter( new FileNameExtensionFilter( bundle.getString( "MainWindow.loadTestSet.fileTypes" ), "json" ) );
         
         if ( jfc.showOpenDialog( this ) == JFileChooser.APPROVE_OPTION ) {
             
@@ -167,7 +176,14 @@ public class MainWindow extends javax.swing.JFrame {
             if ( file != null ) {
                 Utils.setPref( "loadTestSets", file.getParentFile().getAbsolutePath() );
                 testSets = Utils.loadTestSets( file );
-                buildTestSetsModel();
+                if ( testSets != null ) {
+                    buildTestSetsModel();
+                } else {
+                    JOptionPane.showMessageDialog( 
+                            this, 
+                            bundle.getString( "MainWindow.loadTestSet.invalidTestSetPackage" ), 
+                            bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
+                }
             }
             
         }
@@ -219,7 +235,8 @@ public class MainWindow extends javax.swing.JFrame {
         menuItemAbout = new javax.swing.JMenuItem();
 
         menuItemShowDetails.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/report.png"))); // NOI18N
-        menuItemShowDetails.setText("Show details...");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle"); // NOI18N
+        menuItemShowDetails.setText(bundle.getString("MainWindow.menuItemShowDetails.text")); // NOI18N
         menuItemShowDetails.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemShowDetailsActionPerformed(evt);
@@ -228,14 +245,14 @@ public class MainWindow extends javax.swing.JFrame {
         popupMenu.add(menuItemShowDetails);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("JJudge - v1.16.1");
+        setTitle(bundle.getString("MainWindow.title")); // NOI18N
 
-        panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder("Package(s) or File(s) to Test"));
+        panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("MainWindow.panelPackages.border.title"))); // NOI18N
 
         scrollPackages.setViewportView(listPackages);
 
         btnBuildTestPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/package.png"))); // NOI18N
-        btnBuildTestPackage.setText("Build");
+        btnBuildTestPackage.setText(bundle.getString("MainWindow.btnBuildTestPackage.text")); // NOI18N
         btnBuildTestPackage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBuildTestPackageActionPerformed(evt);
@@ -243,7 +260,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         btnAddPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/add.png"))); // NOI18N
-        btnAddPackage.setText("Add");
+        btnAddPackage.setText(bundle.getString("MainWindow.btnAddPackage.text")); // NOI18N
         btnAddPackage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddPackageActionPerformed(evt);
@@ -251,7 +268,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         btnRemovePackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/delete.png"))); // NOI18N
-        btnRemovePackage.setText("Remove");
+        btnRemovePackage.setText(bundle.getString("MainWindow.btnRemovePackage.text")); // NOI18N
         btnRemovePackage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemovePackageActionPerformed(evt);
@@ -287,7 +304,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelTestSets.setBorder(javax.swing.BorderFactory.createTitledBorder("Test Set(s) (right click each item for details)"));
+        panelTestSets.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("MainWindow.panelTestSets.border.title"))); // NOI18N
 
         listTestSets.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         listTestSets.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -300,10 +317,10 @@ public class MainWindow extends javax.swing.JFrame {
         lblStatus.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblStatus.setForeground(new java.awt.Color(0, 102, 204));
         lblStatus.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblStatus.setText("status");
+        lblStatus.setText(bundle.getString("MainWindow.lblStatus.text")); // NOI18N
 
         btnLoadTestSet.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/database_refresh.png"))); // NOI18N
-        btnLoadTestSet.setText("Load Test Sets");
+        btnLoadTestSet.setText(bundle.getString("MainWindow.btnLoadTestSet.text")); // NOI18N
         btnLoadTestSet.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoadTestSetActionPerformed(evt);
@@ -311,14 +328,14 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         btnRunTest.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
-        btnRunTest.setText("Run Test");
+        btnRunTest.setText(bundle.getString("MainWindow.btnRunTest.text")); // NOI18N
         btnRunTest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRunTestActionPerformed(evt);
             }
         });
 
-        checkGenerateResultsSpreadsheet.setText("Generate Results Spreadsheet");
+        checkGenerateResultsSpreadsheet.setText(bundle.getString("MainWindow.checkGenerateResultsSpreadsheet.text")); // NOI18N
 
         javax.swing.GroupLayout panelTestSetsLayout = new javax.swing.GroupLayout(panelTestSets);
         panelTestSets.setLayout(panelTestSetsLayout);
@@ -357,7 +374,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelProcessOutput.setBorder(javax.swing.BorderFactory.createTitledBorder("Process Output"));
+        panelProcessOutput.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("MainWindow.panelProcessOutput.border.title"))); // NOI18N
 
         textPaneProcessOutput.setEditable(false);
         textPaneProcessOutput.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
@@ -380,7 +397,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        panelResults.setBorder(javax.swing.BorderFactory.createTitledBorder("Results"));
+        panelResults.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("MainWindow.panelResults.border.title"))); // NOI18N
 
         resultPanel.setFocusable(false);
 
@@ -414,12 +431,12 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        menuFile.setMnemonic('F');
-        menuFile.setText("File");
+        menuFile.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuFile.m").charAt(0));
+        menuFile.setText(bundle.getString("MainWindow.menuFile.text")); // NOI18N
 
         menuItemBuildTestPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/package.png"))); // NOI18N
-        menuItemBuildTestPackage.setMnemonic('B');
-        menuItemBuildTestPackage.setText("Build Test Package");
+        menuItemBuildTestPackage.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemBuildTestPackage.m").charAt(0));
+        menuItemBuildTestPackage.setText(bundle.getString("MainWindow.menuItemBuildTestPackage.text")); // NOI18N
         menuItemBuildTestPackage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemBuildTestPackageActionPerformed(evt);
@@ -429,8 +446,8 @@ public class MainWindow extends javax.swing.JFrame {
         menuFile.add(sepMenuFile02);
 
         menuItemLoadTestSets.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/database_refresh.png"))); // NOI18N
-        menuItemLoadTestSets.setMnemonic('L');
-        menuItemLoadTestSets.setText("Load Test Sets");
+        menuItemLoadTestSets.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemLoadTestSets.m").charAt(0));
+        menuItemLoadTestSets.setText(bundle.getString("MainWindow.menuItemLoadTestSets.text")); // NOI18N
         menuItemLoadTestSets.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemLoadTestSetsActionPerformed(evt);
@@ -440,8 +457,8 @@ public class MainWindow extends javax.swing.JFrame {
         menuFile.add(sepMenuFile01);
 
         menuItemExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/door_out.png"))); // NOI18N
-        menuItemExit.setMnemonic('x');
-        menuItemExit.setText("Exit");
+        menuItemExit.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemExit.m").charAt(0));
+        menuItemExit.setText(bundle.getString("MainWindow.menuItemExit.text")); // NOI18N
         menuItemExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemExitActionPerformed(evt);
@@ -451,12 +468,12 @@ public class MainWindow extends javax.swing.JFrame {
 
         menuBar.add(menuFile);
 
-        menuEdit.setMnemonic('E');
-        menuEdit.setText("Edit");
+        menuEdit.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuEdit.m").charAt(0));
+        menuEdit.setText(bundle.getString("MainWindow.menuEdit.text")); // NOI18N
 
         menuItemTestSets.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/database_edit.png"))); // NOI18N
-        menuItemTestSets.setMnemonic('T');
-        menuItemTestSets.setText("Test Sets");
+        menuItemTestSets.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemTestSets.m").charAt(0));
+        menuItemTestSets.setText(bundle.getString("MainWindow.menuItemTestSets.text")); // NOI18N
         menuItemTestSets.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemTestSetsActionPerformed(evt);
@@ -466,12 +483,12 @@ public class MainWindow extends javax.swing.JFrame {
 
         menuBar.add(menuEdit);
 
-        menuHelp.setMnemonic('H');
-        menuHelp.setText("Help");
+        menuHelp.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuHelp.m").charAt(0));
+        menuHelp.setText(bundle.getString("MainWindow.menuHelp.text")); // NOI18N
 
         menuItemHowTo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/help.png"))); // NOI18N
-        menuItemHowTo.setMnemonic('c');
-        menuItemHowTo.setText("How to configure and use");
+        menuItemHowTo.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemHowTo.m").charAt(0));
+        menuItemHowTo.setText(bundle.getString("MainWindow.menuItemHowTo.text")); // NOI18N
         menuItemHowTo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemHowToActionPerformed(evt);
@@ -481,8 +498,8 @@ public class MainWindow extends javax.swing.JFrame {
         menuHelp.add(sepMenuHelp01);
 
         menuItemAbout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/information.png"))); // NOI18N
-        menuItemAbout.setMnemonic('A');
-        menuItemAbout.setText("About...");
+        menuItemAbout.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemAbout.m").charAt(0));
+        menuItemAbout.setText(bundle.getString("MainWindow.menuItemAbout.text")); // NOI18N
         menuItemAbout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuItemAboutActionPerformed(evt);
@@ -532,12 +549,12 @@ public class MainWindow extends javax.swing.JFrame {
     private void btnAddPackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPackageActionPerformed
         
         JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "addPackagePath" ) ) );
-        jfc.setDialogTitle( "Choose a package or a source code file" );
+        jfc.setDialogTitle( bundle.getString( "MainWindow.btnAddPackageActionPerformed.packageOrSource" ) );
         jfc.setMultiSelectionEnabled( true );
         jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
         jfc.removeChoosableFileFilter( jfc.getFileFilter() );
         jfc.setFileFilter( new FileNameExtensionFilter( 
-                "Test Package (Zip) or Source code" , 
+                bundle.getString( "MainWindow.btnAddPackageActionPerformed.fileTypes" ), 
                 "zip", "c", "cpp", "java", "py" ) );
         
         
@@ -609,8 +626,8 @@ public class MainWindow extends javax.swing.JFrame {
         if ( listPackages.getSelectedValue() != null ) {
             
             if ( JOptionPane.showConfirmDialog( 
-                    this, "Do you really want to remove the selected package(s)/file(s)?",
-                    "Remove package/file",
+                    this, bundle.getString( "MainWindow.btnRemovePackageActionPerformed.confirmMessage" ),
+                    bundle.getString( "MainWindow.btnRemovePackageActionPerformed.confirmTitle" ),
                     JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION ) {
                 
                 int[] indices = listPackages.getSelectedIndices();
@@ -663,7 +680,7 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemTestSets.setEnabled( false );
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
-                    lblStatus.setText( "Please wait while the tests are being executed." );
+                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
                     textPaneProcessOutput.setText( "" );
                     resultPanel.setMouseOverAllowed( false );
                     
@@ -675,7 +692,7 @@ public class MainWindow extends javax.swing.JFrame {
                             
                             Utils.addFormattedText( 
                                     textPaneProcessOutput, 
-                                    String.format( "Processing %s\n", file ),
+                                    String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
                                     Color.BLUE, false );
 
                             tSetResList.add( Utils.runTest( 
@@ -694,7 +711,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                                 Utils.addFormattedText( 
                                         textPaneProcessOutput, 
-                                        String.format( "Cleaning up...\n\n", file ),
+                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
                                         Color.BLACK, false );
 
                                 FileUtils.deleteDirectory( new File( 
@@ -714,7 +731,7 @@ public class MainWindow extends javax.swing.JFrame {
                     
                     Utils.addFormattedText( 
                             textPaneProcessOutput, 
-                            "Finished!!!",
+                            bundle.getString( "MainWindow.btnRunTestActionPerformed.finished" ),
                             Color.BLACK, false );
                     
                     listPackages.setEnabled( true );
@@ -731,7 +748,7 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemTestSets.setEnabled( true );
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
-                    lblStatus.setText( "Done!" );
+                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
                     resultPanel.setMouseOverAllowed( true );
                     
                 }
@@ -741,13 +758,13 @@ public class MainWindow extends javax.swing.JFrame {
         } else if ( tSet == null ) {
             JOptionPane.showMessageDialog( 
                     this, 
-                    "You must select a Test Set!", 
-                    "ERROR", JOptionPane.ERROR_MESSAGE );
+                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorSelectTestSet" ), 
+                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
         } else {
             JOptionPane.showMessageDialog( 
                     this, 
-                    "You must have at least one package or source code file to test!", 
-                    "ERROR", JOptionPane.ERROR_MESSAGE );
+                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorTest" ), 
+                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
         }
         
     }//GEN-LAST:event_btnRunTestActionPerformed
@@ -792,35 +809,23 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItemTestSetsActionPerformed
 
     private void menuItemHowToActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemHowToActionPerformed
-        
+
         JOptionPane.showMessageDialog( 
                 this, 
-                "JJudge uses external tools for compilation and/or execution of\n"
-              + "the tested programs.\n\n"
-              + "To make it possible, it's necessary to modify the PATH\n"
-              + "envinroment variable of your OS to point to the tools that are\n"
-              + "necessary or configure the run.bat file.\n\n"
-              + "These tools are:\n"
-              + "    GCC and G++ for C and C++ code;\n"
-              + "    JDK for Java code;\n"
-              + "    WinPython for Python code.\n\n"
-              + "Note that you will need the appropriate version of the tool\n"
-              + "based on the source code that will be compiled and tested.",
-                "How to configure and use", 
+                bundle.getString( "MainWindow.menuItemHowToActionPerformed.message" ),
+                bundle.getString( "MainWindow.menuItemHowToActionPerformed.title" ), 
                 JOptionPane.INFORMATION_MESSAGE );
         
     }//GEN-LAST:event_menuItemHowToActionPerformed
 
     private void menuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAboutActionPerformed
+                
         JOptionPane.showMessageDialog( 
                 this, 
-                "JJudge is a Java desktop application that aims to automate\n"
-              + "the checking of programs by compiling and executing them by\n"
-              + "providing inputs and testing for expected outputs.\n\n"
-              + "This tool was developed by Professor Dr. David Buzatto\n"
-              + "for application in the disciplines in which he teaches.", 
-                "About...", 
+                bundle.getString( "MainWindow.menuItemAboutActionPerformed.message" ), 
+                bundle.getString( "MainWindow.menuItemAboutActionPerformed.title" ), 
                 JOptionPane.INFORMATION_MESSAGE );
+        
     }//GEN-LAST:event_menuItemAboutActionPerformed
 
     private void menuItemLoadTestSetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLoadTestSetsActionPerformed

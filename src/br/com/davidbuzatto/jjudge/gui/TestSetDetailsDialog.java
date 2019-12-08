@@ -10,6 +10,7 @@ import br.com.davidbuzatto.jjudge.testsets.TestCase;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
+import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
@@ -18,6 +19,8 @@ import javax.swing.JFrame;
  * @author David
  */
 public class TestSetDetailsDialog extends javax.swing.JDialog {
+    
+    private ResourceBundle bundle = Utils.bundle;
     
     /**
      * Creates new form ResultDialog
@@ -43,7 +46,7 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
         
         Utils.addFormattedText( 
                 textPaneDetails, 
-                "Description: ",
+                bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.description" ),
                 Color.BLACK, false );
         Utils.addFormattedText( 
                 textPaneDetails, 
@@ -52,7 +55,7 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
         
         Utils.addFormattedText( 
                 textPaneDetails, 
-                "\nProgramming Language: ",
+                bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.programmingLanguage" ),
                 Color.BLACK, false );
         Utils.addFormattedText( 
                 textPaneDetails, 
@@ -61,14 +64,14 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
         
         Utils.addFormattedText( 
                 textPaneDetails, 
-                "\nTests:\n",
+                bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.tests" ),
                 Color.BLACK, false );
         
         for ( Test t : testSet.getTests() ) {    
             
             Utils.addFormattedText( 
                     textPaneDetails, 
-                    "|-- Name: ",
+                    bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.name" ),
                     Color.BLACK, false );
             Utils.addFormattedText( 
                     textPaneDetails, 
@@ -76,7 +79,7 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
                     Color.BLUE, false );
             Utils.addFormattedText( 
                     textPaneDetails, 
-                    "\n|   |-- file name: ",
+                    bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.fileName" ),
                     Color.BLACK, false );
             Utils.addFormattedText( 
                     textPaneDetails, 
@@ -99,7 +102,7 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
                     ext = ".py";
                     break;
                 default:
-                    ext = ".<undefined>";
+                    ext = bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.undefined" );
                     break;
             }
             
@@ -110,7 +113,7 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
             
             Utils.addFormattedText( 
                     textPaneDetails, 
-                    "\n|   |-- test cases:\n",
+                    bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.testCases" ),
                     Color.BLACK, false );
             
             int i = 1;
@@ -118,17 +121,17 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
-                        String.format( "|   |   |-- test case %02d:\n", i++ ),
+                        String.format( bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.testCase" ), i++ ),
                         Color.BLACK, false );
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
-                        "|   |   |   |-- input:\n",
+                        bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.input" ),
                         Color.BLACK, false );
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
-                        Utils.identText( tc.getInput().isEmpty() ? "<empty>" : tc.getInput(), 5 ),
+                        Utils.identText( tc.getInput().isEmpty() ? bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.empty" ) : tc.getInput(), 5 ),
                         Color.BLACK, false );
                 
                 Utils.addFormattedText( 
@@ -138,13 +141,13 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
-                        "|   |   |   |-- output:\n",
+                        bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.output" ),
                         Color.BLACK, false );
                 
                 if ( tc.getOutput().isEmpty() ) {
                     Utils.addFormattedText( 
                             textPaneDetails, 
-                            Utils.identText( "<empty>", 5 ),
+                            Utils.identText( bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.empty" ), 5 ),
                             Color.BLACK, false );
                     Utils.addFormattedText( 
                             textPaneDetails, 
@@ -197,7 +200,8 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
         textPaneDetails = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Test Set Details");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle"); // NOI18N
+        setTitle(bundle.getString("TestSetDetailsDialog.title")); // NOI18N
 
         panelDetails.setLayout(new java.awt.BorderLayout());
 

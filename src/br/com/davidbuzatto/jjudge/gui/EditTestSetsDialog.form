@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JPopupMenu" name="popupMenuUpDown">
       <Events>
@@ -36,7 +36,9 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
-    <Property name="title" type="java.lang.String" value="Edit Test Sets"/>
+    <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+      <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+    </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -46,11 +48,11 @@
     <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosing"/>
   </Events>
   <AuxValues>
-    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="1"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
@@ -95,7 +97,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Test Sets"/>
+            <TitledBorder title="Test Sets">
+              <ResourceString PropertyName="titleX" bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.panelTestSets.border.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -207,12 +211,16 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="lblTestSetDescription">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Description:"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.lblTestSetDescription.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lblTestSetProgLanguage">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Prog. Language"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.lblTestSetProgLanguage.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fieldTestSetDescription">
@@ -231,7 +239,9 @@
         </Container>
         <Component class="javax.swing.JButton" name="btnNewTestSet">
           <Properties>
-            <Property name="text" type="java.lang.String" value="New"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnNewTestSet.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNewTestSetActionPerformed"/>
@@ -239,7 +249,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnSaveTestSet">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Save"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnSaveTestSet.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSaveTestSetActionPerformed"/>
@@ -247,7 +259,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnDeleteTestSet">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Delete"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnDeleteTestSet.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteTestSetActionPerformed"/>
@@ -259,7 +273,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Tests"/>
+            <TitledBorder title="Tests">
+              <ResourceString PropertyName="titleX" bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.panelTests.border.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -329,7 +345,9 @@
         </Container>
         <Component class="javax.swing.JButton" name="btnNewTest">
           <Properties>
-            <Property name="text" type="java.lang.String" value="New"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnNewTest.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNewTestActionPerformed"/>
@@ -337,7 +355,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnSaveTest">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Save"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnSaveTest.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSaveTestActionPerformed"/>
@@ -345,7 +365,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnDeleteTest">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Delete"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnDeleteTest.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteTestActionPerformed"/>
@@ -381,7 +403,9 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="lblTestName">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Name:"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.lblTestName.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fieldTestName">
@@ -394,7 +418,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Test Cases"/>
+            <TitledBorder title="Test Cases">
+              <ResourceString PropertyName="titleX" bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.panelTestCases.border.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -465,7 +491,9 @@
         </Container>
         <Component class="javax.swing.JButton" name="btnNewTestCase">
           <Properties>
-            <Property name="text" type="java.lang.String" value="New"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnNewTestCase.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNewTestCaseActionPerformed"/>
@@ -473,7 +501,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnSaveTestCase">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Save"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnSaveTestCase.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSaveTestCaseActionPerformed"/>
@@ -481,7 +511,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnDeleteTestCase">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Delete"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnDeleteTestCase.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteTestCaseActionPerformed"/>
@@ -528,12 +560,16 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="lblTestCaseInput">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Input:"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.lblTestCaseInput.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lblTestCaseOutput">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Output:"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.lblTestCaseOutput.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="scrollTestCaseInput">
@@ -612,7 +648,9 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/accept.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="OK"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnOK.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOKActionPerformed"/>
@@ -623,7 +661,9 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/disk.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="OK and Save"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnOKAndSave.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOKAndSaveActionPerformed"/>
@@ -634,7 +674,9 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/stop.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Cancel"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="EditTestSetsDialog.btnCancel.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelActionPerformed"/>

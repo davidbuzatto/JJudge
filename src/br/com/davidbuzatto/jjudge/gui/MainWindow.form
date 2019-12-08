@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JPopupMenu" name="popupMenu">
 
@@ -13,7 +13,9 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/report.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Show details..."/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemShowDetails.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemShowDetailsActionPerformed"/>
@@ -25,8 +27,12 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="menuFile">
           <Properties>
-            <Property name="mnemonic" type="int" value="70"/>
-            <Property name="text" type="java.lang.String" value="File"/>
+            <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuFile.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuFile.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemBuildTestPackage">
@@ -34,8 +40,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/package.png"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="66"/>
-                <Property name="text" type="java.lang.String" value="Build Test Package"/>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemBuildTestPackage.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemBuildTestPackage.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemBuildTestPackageActionPerformed"/>
@@ -48,8 +58,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/database_refresh.png"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="76"/>
-                <Property name="text" type="java.lang.String" value="Load Test Sets"/>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemLoadTestSets.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemLoadTestSets.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemLoadTestSetsActionPerformed"/>
@@ -62,8 +76,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/door_out.png"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="120"/>
-                <Property name="text" type="java.lang.String" value="Exit"/>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemExit.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemExit.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemExitActionPerformed"/>
@@ -73,8 +91,12 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="menuEdit">
           <Properties>
-            <Property name="mnemonic" type="int" value="69"/>
-            <Property name="text" type="java.lang.String" value="Edit"/>
+            <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuEdit.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuEdit.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemTestSets">
@@ -82,8 +104,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/database_edit.png"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="84"/>
-                <Property name="text" type="java.lang.String" value="Test Sets"/>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemTestSets.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemTestSets.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemTestSetsActionPerformed"/>
@@ -93,8 +119,12 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="menuHelp">
           <Properties>
-            <Property name="mnemonic" type="int" value="72"/>
-            <Property name="text" type="java.lang.String" value="Help"/>
+            <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuHelp.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuHelp.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemHowTo">
@@ -102,8 +132,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/help.png"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="99"/>
-                <Property name="text" type="java.lang.String" value="How to configure and use"/>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemHowTo.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemHowTo.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemHowToActionPerformed"/>
@@ -116,8 +150,12 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/information.png"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="65"/>
-                <Property name="text" type="java.lang.String" value="About..."/>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemAbout.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemAbout.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemAboutActionPerformed"/>
@@ -130,7 +168,9 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="JJudge - v1.16.1"/>
+    <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+      <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+    </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="menuBar"/>
@@ -138,11 +178,11 @@
     <SyntheticProperty name="generateCenter" type="boolean" value="true"/>
   </SyntheticProperties>
   <AuxValues>
-    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="1"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
@@ -193,7 +233,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Package(s) or File(s) to Test"/>
+            <TitledBorder title="Package(s) or File(s) to Test">
+              <ResourceString PropertyName="titleX" bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.panelPackages.border.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -258,7 +300,9 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/package.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Build"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.btnBuildTestPackage.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBuildTestPackageActionPerformed"/>
@@ -269,7 +313,9 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/add.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Add"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.btnAddPackage.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddPackageActionPerformed"/>
@@ -280,7 +326,9 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/delete.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Remove"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.btnRemovePackage.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemovePackageActionPerformed"/>
@@ -292,7 +340,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Test Set(s) (right click each item for details)"/>
+            <TitledBorder title="Test Set(s) (right click each item for details)">
+              <ResourceString PropertyName="titleX" bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.panelTestSets.border.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -376,7 +426,9 @@
               <Color blue="cc" green="66" red="0" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="4"/>
-            <Property name="text" type="java.lang.String" value="status"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.lblStatus.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnLoadTestSet">
@@ -384,7 +436,9 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/database_refresh.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Load Test Sets"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.btnLoadTestSet.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLoadTestSetActionPerformed"/>
@@ -395,7 +449,9 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/accept.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Run Test"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.btnRunTest.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRunTestActionPerformed"/>
@@ -403,7 +459,9 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="checkGenerateResultsSpreadsheet">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Generate Results Spreadsheet"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.checkGenerateResultsSpreadsheet.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
         </Component>
       </SubComponents>
@@ -412,7 +470,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Process Output"/>
+            <TitledBorder title="Process Output">
+              <ResourceString PropertyName="titleX" bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.panelProcessOutput.border.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>
@@ -461,7 +521,9 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Results"/>
+            <TitledBorder title="Results">
+              <ResourceString PropertyName="titleX" bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.panelResults.border.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </TitledBorder>
           </Border>
         </Property>
       </Properties>

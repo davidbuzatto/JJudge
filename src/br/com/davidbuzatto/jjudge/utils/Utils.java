@@ -14,6 +14,7 @@ import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import java.awt.Color;
@@ -36,6 +37,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -61,6 +63,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 public class Utils {
 
     private static final String PREFERENCES_PATH = "br.com.davidbuzatto.jjudge";
+    public static final ResourceBundle bundle = ResourceBundle.getBundle( "br/com/davidbuzatto/jjudge/gui/Bundle" );
     
     public static void zipFile( File fileToZip, File zipFile ) throws IOException {
         
@@ -278,6 +281,8 @@ public class Utils {
             
         } catch ( FileNotFoundException exc ) {
             exc.printStackTrace();
+        } catch ( JsonSyntaxException exc ) {
+            //exc.printStackTrace();
         }
         
         return testSets;
@@ -610,11 +615,11 @@ public class Utils {
             }
             
             JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "saveSheetPath" ) ) );
-            jfc.setDialogTitle( "Save test results" );
+            jfc.setDialogTitle( bundle.getString( "Utils.processResultsToExcel.saveResults" ) );
             jfc.setMultiSelectionEnabled( false );
             jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
             jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-            jfc.setFileFilter( new FileNameExtensionFilter( "MS Excel File" , "xlsx" ) );
+            jfc.setFileFilter( new FileNameExtensionFilter( bundle.getString( "Utils.processResultsToExcel.fileTypes" ), "xlsx" ) );
             jfc.setSelectedFile( new File( testSet.getDescription() + ".xlsx" ) );
             
             if ( jfc.showSaveDialog( null ) == JFileChooser.APPROVE_OPTION ) {
@@ -624,8 +629,8 @@ public class Utils {
                 
                 if ( f.exists() ) {
                     if ( JOptionPane.showConfirmDialog( null, 
-                            "Do you whant to overwrite the existing file?", 
-                            "Confirm", 
+                            bundle.getString( "Utils.processResultsToExcel.confirmOverwrite" ), 
+                            bundle.getString( "Utils.processResultsToExcel.confirm" ), 
                             JOptionPane.YES_NO_OPTION ) == JOptionPane.NO_OPTION ) {
                         save = false;
                     }
@@ -750,6 +755,10 @@ public class Utils {
         
         return Colors.ERROR;
         
+    }
+    
+    public static String getExecutionStateIntString( ExecutionState state ) {
+        return bundle.getString( "ExecutionState." + state.toString() );
     }
 
 }

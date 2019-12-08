@@ -11,6 +11,7 @@ import br.com.davidbuzatto.jjudge.testsets.TestCaseResult;
 import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
+import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
@@ -19,6 +20,8 @@ import javax.swing.JFrame;
  * @author David
  */
 public class ResultDialog extends javax.swing.JDialog {
+    
+    private ResourceBundle bundle = Utils.bundle;
     
     /**
      * Creates new form ResultDialog
@@ -42,7 +45,7 @@ public class ResultDialog extends javax.swing.JDialog {
         
         Utils.addFormattedText( 
                     textPaneResult, 
-                    String.format( "test %s: \n", testResult.getName() ), 
+                    String.format( bundle.getString( "ResultDialog.processResults.test" ), testResult.getName() ), 
                     Color.BLUE, false );
         
         int testCase = 1;
@@ -51,17 +54,17 @@ public class ResultDialog extends javax.swing.JDialog {
             
             Utils.addFormattedText( 
                     textPaneResult, 
-                    String.format( "|-- test case %02d:\n", testCase++ ), 
+                    String.format( bundle.getString( "ResultDialog.processResults.testCase" ), testCase++ ), 
                     Color.BLACK, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
-                    "|   |-- process test input:\n", 
+                    bundle.getString( "ResultDialog.processResults.processTestInput" ), 
                     Color.BLACK, false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
-                    Utils.identText( tcr.getInput().isEmpty() ? "<empty>" : tcr.getInput(), 3 ) + "\n", 
+                    Utils.identText( tcr.getInput().isEmpty() ? bundle.getString( "ResultDialog.processResults.empty" ) : tcr.getInput(), 3 ) + "\n", 
                     Color.BLACK, false );
                     
             Utils.addFormattedText( 
@@ -71,13 +74,13 @@ public class ResultDialog extends javax.swing.JDialog {
             
             Utils.addFormattedText( 
                     textPaneResult, 
-                    "|   |-- process test output:\n", 
+                    bundle.getString( "ResultDialog.processResults.processTestOutput" ), 
                     Color.BLACK, false );
             
             if ( tcr.getOutput().isEmpty() ) {
                 Utils.addFormattedText( 
                         textPaneResult, 
-                        Utils.identText( "<empty>", 3 ) + "\n",
+                        Utils.identText( bundle.getString( "ResultDialog.processResults.empty" ), 3 ) + "\n",
                         Color.BLACK, false );
             } else {
                 Utils.addFormattedText( 
@@ -93,13 +96,13 @@ public class ResultDialog extends javax.swing.JDialog {
             
             Utils.addFormattedText( 
                     textPaneResult, 
-                    "|   |-- process output:\n", 
+                    bundle.getString( "ResultDialog.processResults.processOutput" ), 
                     Color.BLACK, false );
             
             if ( tcr.getTestOutput().isEmpty() ) {
                 Utils.addFormattedText( 
                         textPaneResult, 
-                        Utils.identText( "<empty>", 3 ) + "\n",
+                        Utils.identText( bundle.getString( "ResultDialog.processResults.empty" ), 3 ) + "\n",
                         Color.BLACK, false );
             } else {
                 if ( tcr.getExecutionState() == ExecutionState.RUNTIME_ERROR || 
@@ -123,14 +126,14 @@ public class ResultDialog extends javax.swing.JDialog {
             
             Utils.addFormattedText( 
                     textPaneResult, 
-                    "|   |-- test case state: ", 
+                    bundle.getString( "ResultDialog.processResults.testCaseState" ), 
                     Color.BLACK, false );
             
             Color color = Utils.retrieveStateColor( tcr.getExecutionState() );
             
             Utils.addFormattedText( 
                     textPaneResult, 
-                    tcr.getExecutionState().toString(), 
+                    Utils.getExecutionStateIntString( tcr.getExecutionState() ), 
                     color, false );
             
             Utils.addFormattedText( 
@@ -149,7 +152,7 @@ public class ResultDialog extends javax.swing.JDialog {
 
             Utils.addFormattedText( 
                     textPaneResult, 
-                    "compilation error!\n", 
+                    bundle.getString( "ResultDialog.processResults.compilationError" ), 
                     Colors.COMPILATION_ERROR.darker(), false );
 
             Utils.addFormattedText( 
@@ -161,14 +164,14 @@ public class ResultDialog extends javax.swing.JDialog {
         
         Utils.addFormattedText( 
                 textPaneResult, 
-                "|-- test state: ", 
+                bundle.getString( "ResultDialog.processResults.testState" ), 
                 Color.BLACK, false );
         
         Color color = Utils.retrieveStateColor( testResult.getExecutionState() );
             
         Utils.addFormattedText( 
                 textPaneResult, 
-                testResult.getExecutionState().toString(), 
+                Utils.getExecutionStateIntString( testResult.getExecutionState() ), 
                 color, false );
         
     }
@@ -187,7 +190,8 @@ public class ResultDialog extends javax.swing.JDialog {
         textPaneResult = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Test Results");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle"); // NOI18N
+        setTitle(bundle.getString("ResultDialog.title")); // NOI18N
 
         panelResult.setLayout(new java.awt.BorderLayout());
 
