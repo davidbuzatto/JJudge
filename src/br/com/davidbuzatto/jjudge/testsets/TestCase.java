@@ -6,6 +6,7 @@
 package br.com.davidbuzatto.jjudge.testsets;
 
 import br.com.davidbuzatto.jjudge.utils.Utils;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -15,6 +16,8 @@ public class TestCase implements Cloneable {
     
     private String input;
     private String output;
+    
+    private transient ResourceBundle bundle = Utils.bundle;
 
     public String getInput() {
         return input;
@@ -35,7 +38,7 @@ public class TestCase implements Cloneable {
     @Override
     public String toString() {
         
-        return String.format( "<html>input: <strong><font color='#0000FF'>%s</font></strong> - output: <strong><font color='#00CC00'>%s</font></strong></html>", 
+        return String.format( bundle.getString( "TestCase.toString.format" ), 
                 input.isEmpty() ? "&lt;empty&gt;" : input.length() > 10 ? Utils.showScapeChars( input.substring( 0, 10 ) ) + "..." : Utils.showScapeChars( input ), 
                 output.isEmpty() ? "&lt;empty&gt;" : output.length() > 10 ? Utils.showScapeChars( output.substring( 0, 10 ) ) + "..." : Utils.showScapeChars( output ) );
         

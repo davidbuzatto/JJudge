@@ -5,8 +5,10 @@
  */
 package br.com.davidbuzatto.jjudge.testsets;
 
+import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -17,6 +19,8 @@ public class TestSet implements Cloneable {
     private String description;
     private TestProgrammingLanguage programmingLanguage;
     private List<Test> tests;
+    
+    private transient ResourceBundle bundle = Utils.bundle;
 
     public String getDescription() {
         return description;
@@ -44,7 +48,8 @@ public class TestSet implements Cloneable {
 
     @Override
     public String toString() {
-        return String.format(  "%s (%s) - %02d test(s)", description, programmingLanguage, tests.size() );
+        return String.format( bundle.getString( "TestSet.toString.format" ), 
+                description, programmingLanguage, tests.size() );
     }
     
     @Override

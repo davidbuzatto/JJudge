@@ -555,22 +555,27 @@ public class Utils {
             
             InputStream inp = Utils.class.getResourceAsStream( "/template.xlsx" );
             XSSFWorkbook workbook = XSSFWorkbookFactory.createWorkbook( inp );
-            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFSheet gradeSheet = workbook.getSheetAt( 0 );
+            XSSFSheet labelSheet = workbook.getSheetAt( 1 );
             
-            Row r = sheet.getRow( 0 );
-            r.getCell( 0 ).setCellValue( "student" );
-            r.getCell( 1 ).setCellValue( "code" );
+            workbook.setSheetName( 0, bundle.getString( "Utils.processResultsToExcel.gradeSheet.name" ) );
+            workbook.setSheetName( 1, bundle.getString( "Utils.processResultsToExcel.labelSheet.name" ) );
+            
+            // grades
+            Row r = gradeSheet.getRow( 0 );
+            r.getCell( 0 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.gradeSheet.student" ) );
+            r.getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.gradeSheet.code" ) );
             int cc = 2;   // current cell
             int cr = 1;   // current row
             
             for ( TestResult tr : tSetResList.get( 0 ).getTestResults() ) {
                 r.getCell( cc++ ).setCellValue( tr.getName() );
             }
-            r.getCell( cc ).setCellValue( "grade" );
+            r.getCell( cc ).setCellValue( bundle.getString( "Utils.processResultsToExcel.gradeSheet.grade" ) );
             
             for ( TestSetResult tsr : tSetResList ) {
             
-                r = sheet.getRow( cr++ );
+                r = gradeSheet.getRow( cr++ );
                 r.getCell( 0 ).setCellValue( tsr.getStudent().getName() );
                 r.getCell( 1 ).setCellValue( tsr.getStudent().getCode() );
                 cc = 2;
@@ -613,6 +618,19 @@ public class Utils {
                 r.getCell( cc ).setCellValue( tsr.getGrade() );
 
             }
+            
+            // labels
+            r = labelSheet.getRow( 0 );
+            r.getCell( 0 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.label" ) );
+            r.getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning" ) );
+            
+            labelSheet.getRow( 1 ).getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning.A" ) );
+            labelSheet.getRow( 2 ).getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning.R" ) );
+            labelSheet.getRow( 3 ).getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning.CE" ) );
+            labelSheet.getRow( 4 ).getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning.RE" ) );
+            labelSheet.getRow( 5 ).getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning.TE" ) );
+            labelSheet.getRow( 6 ).getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning.FE" ) );
+            labelSheet.getRow( 7 ).getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning.DC" ) );
             
             JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "saveSheetPath" ) ) );
             jfc.setDialogTitle( bundle.getString( "Utils.processResultsToExcel.saveResults" ) );

@@ -6,7 +6,9 @@
 package br.com.davidbuzatto.jjudge.testsets;
 
 import br.com.davidbuzatto.jjudge.processor.ExecutionState;
+import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -18,6 +20,8 @@ public class TestResult {
     private List<TestCaseResult> testCasesResult;
     private ExecutionState executionState;
     private String errorMessage;
+    
+    private transient ResourceBundle bundle = Utils.bundle;
 
     public String getName() {
         return name;
@@ -57,7 +61,8 @@ public class TestResult {
     
     @Override
     public String toString() {
-        return String.format(  "%s - %02d test case(s) result: %s", name, testCasesResult.size(), executionState );
+        return String.format( bundle.getString( "TestResult.toString.format" ), 
+                name, testCasesResult.size(), executionState );
     }
     
 }
