@@ -54,7 +54,7 @@ public class Processor {
         sourceExt = sourceExt.equals( "python" ) ? "py" : sourceExt;
         
         String cmdExec = "";
-        File[] filesToRemove = {};
+        String[] filesToRemoveByExtension = { "o", "exe", "class", "out" };
         String[] compilationCommands = {};
         String[] threadId = {};
         
@@ -64,13 +64,6 @@ public class Processor {
             case C:
                 
                 cmdExec = String.format( "%s/%s.exe", baseDir, fileName );
-                
-                filesToRemove = new File[]{
-                    new File( String.format( "%s/%s.o", baseDir, fileName ) ),
-                    new File( String.format( "%s/%s.exe", baseDir, fileName ) ),
-                    new File( String.format( "%s/output.txt", baseDir ) ),
-                    new File( String.format( "%s/error.txt", baseDir ) )
-                };
 
                 compilationCommands = new String[]{
                     String.format( "gcc -Werror -Wfatal-errors -c %s.c -o %s.o", fileName, fileName ),
@@ -89,13 +82,6 @@ public class Processor {
             case CPP:
                 
                 cmdExec = String.format( "%s/%s.exe", baseDir, fileName );
-                
-                filesToRemove = new File[]{
-                    new File( String.format( "%s/%s.o", baseDir, fileName ) ),
-                    new File( String.format( "%s/%s.exe", baseDir, fileName ) ),
-                    new File( String.format( "%s/output.txt", baseDir ) ),
-                    new File( String.format( "%s/error.txt", baseDir ) )
-                };
 
                 compilationCommands = new String[]{
                     String.format( "g++ -Werror -Wfatal-errors -c %s.cpp -o %s.o", fileName, fileName ),
@@ -114,12 +100,6 @@ public class Processor {
             case JAVA:
                 
                 cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s", fileName );
-                
-                filesToRemove = new File[]{
-                    new File( String.format( "%s/%s.class", baseDir, fileName ) ),
-                    new File( String.format( "%s/output.txt", baseDir ) ),
-                    new File( String.format( "%s/error.txt", baseDir ) )
-                };
 
                 compilationCommands = new String[]{
                     String.format( "javac %s.java", fileName )
@@ -161,7 +141,7 @@ public class Processor {
                 Process p = rt.exec( compilationCommands[i], null, dir );
                 
                 FileOutputStream fosOutput = new FileOutputStream( 
-                        new File( String.format(  "%s/error.txt" , baseDir ) ) );
+                        new File( String.format(  "%s/error.out" , baseDir ) ) );
                 
                 StreamGobbler sg = new StreamGobbler( 
                         p.getInputStream(), 
@@ -181,7 +161,7 @@ public class Processor {
                     // reading process output from file
                     StringBuilder sbOutput = new StringBuilder();
                     Scanner sOutput = new Scanner( 
-                            new File( String.format( "%s/%s", baseDir, "error.txt" ) ) );
+                            new File( String.format( "%s/%s", baseDir, "error.out" ) ) );
 
                     boolean first = true;
                     while ( sOutput.hasNextLine() ) {
@@ -260,7 +240,7 @@ public class Processor {
                     Process pExec = rt.exec( cmdExec, null, dir );
                     PrintWriter pwExec = new PrintWriter( pExec.getOutputStream() );
                     FileOutputStream fosOutput = new FileOutputStream( 
-                            new File( String.format(  "%s/output.txt" , baseDir ) ) );
+                            new File( String.format(  "%s/output.out" , baseDir ) ) );
                     StreamGobbler sgExec = new StreamGobbler( 
                             pExec.getInputStream(), 
                             pExec.getErrorStream(), 
@@ -332,7 +312,7 @@ public class Processor {
                     
                     // reading process output from file
                     StringBuilder sbOutput = new StringBuilder();
-                    File processOutputFile = new File( String.format( "%s/%s", baseDir, "output.txt" ) );
+                    File processOutputFile = new File( String.format( "%s/%s", baseDir, "output.out" ) );
                     
                     // file must be lesser tham 1MB
                     if ( processOutputFile.length() > 1024 * 1024 ) {
@@ -504,9 +484,14 @@ public class Processor {
         }
         
         // clean files
-        for ( File f : filesToRemove ) {
-            if ( f.exists() ) {
-                f.delete();
+        File baseDirFile = new File( baseDir );
+        for ( File cFile : baseDirFile.listFiles() ) {
+            if ( cFile.exists() && !cFile.isDirectory() ) {
+                for ( String ext : filesToRemoveByExtension ) {
+                    if ( cFile.getName().endsWith( "." + ext ) ) {
+                        cFile.delete();
+                    }
+                }
             }
         }
                 
