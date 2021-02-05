@@ -1,7 +1,7 @@
 @ECHO OFF
 
-SET GCC_PATH=C:\Program Files\CodeBlocks\MinGW\bin
-SET GPP_PATH=C:\Program Files\CodeBlocks\MinGW\bin
+SET GCC_PATH=C:\Program Files (x86)\CodeBlocks\MinGW\bin
+SET GPP_PATH=C:\Program Files (x86)\CodeBlocks\MinGW\bin
 SET JDK_PATH=C:\Program Files\Java\jdk-15.0.2\bin
 SET PYTHON_PATH=C:\WinPython-64bit-2.7.13.1Zero\python-2.7.13.amd64
 
