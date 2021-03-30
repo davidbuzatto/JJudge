@@ -11,7 +11,19 @@ package br.com.davidbuzatto.jjudge;
  */
 public class JJudge {
 
+    private static int secondsToTimeout = 5;
+    
     public static void main( String args[] ) {
+        
+        if ( args.length == 2 ) {
+            if ( args[0].equals( "-stt" ) ) {
+                try {
+                    secondsToTimeout = Integer.parseInt( args[1] );
+                } catch ( NumberFormatException exc ) {
+                }
+            }
+        }
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -38,9 +50,10 @@ public class JJudge {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater( new Runnable() {
             public void run() {
-                new br.com.davidbuzatto.jjudge.gui.MainWindow().setVisible( true );
+                new br.com.davidbuzatto.jjudge.gui.MainWindow( secondsToTimeout ).setVisible( true );
             }
         });
+        
     }
     
 }

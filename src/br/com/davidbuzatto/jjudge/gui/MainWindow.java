@@ -43,13 +43,20 @@ public class MainWindow extends javax.swing.JFrame {
      * Creates new form JJudge
      */
     public MainWindow() {
+        this ( 5 );
+    }
+    
+    /**
+     * Creates new form JJudge
+     */
+    public MainWindow( int secondsToTimeout ) {
+        this.secondsToTimeout = secondsToTimeout;
         initComponents();
         customInit();
     }
 
     private void customInit() {
         
-        secondsToTimeout = 5;
         outputStreams = false;
         
         setIconImage( new ImageIcon( getClass().getResource(
