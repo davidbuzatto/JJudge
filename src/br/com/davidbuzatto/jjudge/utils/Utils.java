@@ -249,6 +249,7 @@ public class Utils {
                 }
             }
         }
+        
     }
     
     public static List<TestSet> loadTestSets() {
@@ -424,7 +425,7 @@ public class Utils {
             try {
                 //Utils.unzip( file, destDir );
                 Utils.completeUnzip( file, destDir );
-            } catch ( IllegalArgumentException exc ) {
+            } catch ( IllegalArgumentException | IOException exc ) {
                 errorUnzipping = true;
             }
             
@@ -450,7 +451,7 @@ public class Utils {
             tsResult.setStudent( student );
             tsResult.setGrade( 0 );
             tsResult.setTestResults( new ArrayList<>() );
-            tsResult.setError( "wrong file format..." );
+            tsResult.setError( bundle.getString( "MainWindow.resultPanel.wrongFileFormat" ) );
             
             return tsResult;
             
