@@ -252,7 +252,7 @@ public class MainWindow extends javax.swing.JFrame {
         popupMenu.add(menuItemShowDetails);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle(bundle.getString("MainWindow.title")); // NOI18N
+        setTitle("JJudge - " + java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("JJudge.version"));
 
         panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("MainWindow.panelPackages.border.title"))); // NOI18N
 

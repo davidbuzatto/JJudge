@@ -72,9 +72,30 @@
     -->
     
     <target name="-post-jar">
-        <copy todir="${dist.dir}">
-            <fileset dir="runbat"/>
+        
+        <copy file="runbat/RunBuilder.bat" todir="${dist.dir}"/>
+        <delete file="${dist.dir}/README.TXT"/>
+        
+        <loadproperties srcFile="${src.dir}/br/com/davidbuzatto/jjudge/gui/Bundle.properties"/>
+        
+        <mkdir dir="${dist.dir}/../JJudge - ${JJudge.version}"/>
+        <copy todir="${dist.dir}/../JJudge - ${JJudge.version}">
+            <fileset dir="${dist.dir}"/>
         </copy>
+        
+        <zip destfile="${dist.dir}/../JJudge - ${JJudge.version}.zip"
+             basedir="${dist.dir}/../JJudge - ${JJudge.version}"/>
+        
+        <!--delete includeemptydirs="true">
+            <fileset dir="${dist.dir}" includes="**/*"/>
+        </delete-->
+        
+        <move file="${dist.dir}/../JJudge - ${JJudge.version}.zip" todir="${dist.dir}"/>
+        
+        <delete includeEmptyDirs="true">
+           <fileset dir="${dist.dir}/../JJudge - ${JJudge.version}"/>
+        </delete>
+
     </target>
     
 </project>
