@@ -5,10 +5,10 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>JJudge</name>
             <source-roots>
-                <root id="src.excelTemplate.dir" name="Excel Template"/>
+                <root id="src.dir"/>
                 <root id="src.testSets.dir" name="Test Sets"/>
                 <root id="src.runbat.dir" name="Run Bat"/>
-                <root id="src.dir"/>
+                <root id="src.excelTemplate.dir" name="Excel Template"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>

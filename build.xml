@@ -73,27 +73,34 @@
     
     <target name="-post-jar">
         
+        <loadproperties srcFile="${src.dir}/br/com/davidbuzatto/jjudge/gui/Bundle.properties"/>
+        <property name="artefato" value="JJudge - ${JJudge.version}"/>
+        <property name="caminho" value="${dist.dir}/../${artefato}"/>
+        
+        <!-- cópia do arquivo em lotes para criação do carregador -->
         <copy file="runbat/RunBuilder.bat" todir="${dist.dir}"/>
+        
+        <!-- remoção do readme -->
         <delete file="${dist.dir}/README.TXT"/>
         
-        <loadproperties srcFile="${src.dir}/br/com/davidbuzatto/jjudge/gui/Bundle.properties"/>
+        <!-- cria diretório para montar o arquivo zip -->
+        <mkdir dir="${caminho}/${artefato}"/>
         
-        <mkdir dir="${dist.dir}/../JJudge - ${JJudge.version}"/>
-        <copy todir="${dist.dir}/../JJudge - ${JJudge.version}">
+        <!-- copia arquivos a serem zipados -->
+        <copy todir="${caminho}/${artefato}">
             <fileset dir="${dist.dir}"/>
         </copy>
         
-        <zip destfile="${dist.dir}/../JJudge - ${JJudge.version}.zip"
-             basedir="${dist.dir}/../JJudge - ${JJudge.version}"/>
+        <!-- compacta -->
+        <zip destfile="${artefato}.zip"
+             basedir="${caminho}"/>
         
-        <!--delete includeemptydirs="true">
-            <fileset dir="${dist.dir}" includes="**/*"/>
-        </delete-->
+        <!-- move para pasta dist (pode ser apagada no clean, não deixando rastro) -->
+        <move file="${artefato}.zip" todir="${dist.dir}"/>
         
-        <move file="${dist.dir}/../JJudge - ${JJudge.version}.zip" todir="${dist.dir}"/>
-        
+        <!-- apaga o diretório usado temporáriamente -->
         <delete includeEmptyDirs="true">
-           <fileset dir="${dist.dir}/../JJudge - ${JJudge.version}"/>
+           <fileset dir="${caminho}"/>
         </delete>
 
     </target>

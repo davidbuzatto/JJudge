@@ -10,6 +10,7 @@ import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -73,6 +75,9 @@ public class MainWindow extends javax.swing.JFrame {
         DefaultCaret caret = (DefaultCaret) textPaneProcessOutput.getCaret();
         caret.setUpdatePolicy( DefaultCaret.ALWAYS_UPDATE );
         
+        setExtendedState( JFrame.MAXIMIZED_BOTH );
+        resultPanel.setMouseOverAllowed( true );
+        
         //testSets = Utils.loadTestSets();
         //buildTestSetsModel();
         
@@ -123,7 +128,9 @@ public class MainWindow extends javax.swing.JFrame {
                     jfc.setMultiSelectionEnabled( true );
                     jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
                     jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-                    jfc.setFileFilter( new FileNameExtensionFilter( bundle.getString( "MainWindow.buildTestPackage.fileTypes" ), "c", "cpp", "java", "py", "txt" ) );
+                    jfc.setFileFilter( new FileNameExtensionFilter( 
+                            bundle.getString( "MainWindow.buildTestPackage.fileTypes" ), 
+                            "c", "cpp", "java", "py", "txt" ) );
 
                     jfc.showOpenDialog( this );
                     File[] files = jfc.getSelectedFiles();
@@ -678,7 +685,7 @@ public class MainWindow extends javax.swing.JFrame {
                     btnBuildTestPackage.setEnabled( false );
                     btnAddPackage.setEnabled( false );
                     btnRemovePackage.setEnabled( false );
-                    checkGenerateResultsSpreadsheet.setEnabled( false );
+                    //checkGenerateResultsSpreadsheet.setEnabled( false );
                     btnLoadTestSet.setEnabled( false );
                     btnRunTest.setEnabled( false );
                     menuItemBuildTestPackage.setEnabled( false );
@@ -689,7 +696,7 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
                     textPaneProcessOutput.setText( "" );
-                    resultPanel.setMouseOverAllowed( false );
+                    //resultPanel.setMouseOverAllowed( false );
                     
                     try {
                         
@@ -729,7 +736,19 @@ public class MainWindow extends javax.swing.JFrame {
                         }
                         
                         if ( checkGenerateResultsSpreadsheet.isSelected() ) {
-                            Utils.processResultsToExcel( tSetResList, tSet );
+                            
+                            File f = Utils.processResultsToExcel( tSetResList, tSet );
+                            
+                            if ( f != null && 
+                                 JOptionPane.showConfirmDialog( null, 
+                                     bundle.getString( "MainWindow.confirmOpenExcelFile" ), 
+                                     bundle.getString( "MainWindow.confirm" ), 
+                                     JOptionPane.YES_NO_OPTION ) == JOptionPane.OK_OPTION ) {
+                                
+                                Desktop.getDesktop().open( f );
+                                
+                            }
+                            
                         }
                         
                     } catch ( IOException | InterruptedException exc ) {
@@ -746,7 +765,7 @@ public class MainWindow extends javax.swing.JFrame {
                     btnBuildTestPackage.setEnabled( true );
                     btnAddPackage.setEnabled( true );
                     btnRemovePackage.setEnabled( true );
-                    checkGenerateResultsSpreadsheet.setEnabled( true );
+                    //checkGenerateResultsSpreadsheet.setEnabled( true );
                     btnLoadTestSet.setEnabled( true );
                     btnRunTest.setEnabled( true );
                     menuItemBuildTestPackage.setEnabled( true );
@@ -756,7 +775,7 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
-                    resultPanel.setMouseOverAllowed( true );
+                    //resultPanel.setMouseOverAllowed( true );
                     
                 }
                 

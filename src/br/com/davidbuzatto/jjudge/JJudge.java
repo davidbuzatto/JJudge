@@ -5,7 +5,8 @@
  */
 package br.com.davidbuzatto.jjudge;
 
-import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import java.awt.SplashScreen;
 import javax.swing.UIManager;
 
 /**
@@ -27,12 +28,12 @@ public class JJudge {
             }
         }
         
-        /*try {
-            UIManager.setLookAndFeel( new FlatDarkLaf() );
-        } catch ( Exception exc ) {
-        }*/
-        
         try {
+            UIManager.setLookAndFeel( new FlatIntelliJLaf() );
+        } catch ( Exception exc ) {
+        }
+        
+        /*try {
             for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() ) {
                 if ( "Nimbus".equals( info.getName() ) ) {
                     javax.swing.UIManager.setLookAndFeel( info.getClassName() );
@@ -47,7 +48,7 @@ public class JJudge {
             java.util.logging.Logger.getLogger( br.com.davidbuzatto.jjudge.gui.MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
         } catch ( javax.swing.UnsupportedLookAndFeelException ex ) {
             java.util.logging.Logger.getLogger( br.com.davidbuzatto.jjudge.gui.MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }
+        }*/
 
         java.awt.EventQueue.invokeLater( new Runnable() {
             public void run() {

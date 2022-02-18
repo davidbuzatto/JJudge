@@ -507,7 +507,7 @@ public class Utils {
                     textPane.getDocument().insertString( 
                                 textPane.getDocument().getLength(), textToFormat, attr );
                     
-                    StyleConstants.setBackground( attr, Color.WHITE );
+                    StyleConstants.setBackground( attr, textPane.getBackground() );
                     StyleConstants.setForeground( attr, color );
                     textPane.getDocument().insertString( 
                                 textPane.getDocument().getLength(), "\n", attr );
@@ -550,7 +550,7 @@ public class Utils {
         
     }
     
-    public static void processResultsToExcel( List<TestSetResult> tSetResList, TestSet testSet ) {
+    public static File processResultsToExcel( List<TestSetResult> tSetResList, TestSet testSet ) {
         
         try {
             
@@ -663,6 +663,7 @@ public class Utils {
                     Utils.setPref( "saveSheetPath", f.getParentFile().getAbsolutePath() );
                     try ( OutputStream fileOut = new FileOutputStream( f ) ) {
                         workbook.write( fileOut );
+                        return f;
                     }
                 }
             }
@@ -670,6 +671,8 @@ public class Utils {
         } catch ( IOException | InvalidFormatException exc ) {
             exc.printStackTrace();
         }
+        
+        return null;
         
     }
     
