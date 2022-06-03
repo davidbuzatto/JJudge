@@ -156,10 +156,6 @@ public class ResultPanel extends JPanel {
                 int studentWidth = fm.stringWidth( tsr.getStudent().toString() );
                 
                 g2d.setColor( Color.BLACK );
-                g2d.drawString( tsr.getStudent().toString(), 
-                        15 + maxStudentWidth - studentWidth, 
-                        y + (int) ( RES_WIDTH / 1.3 ) );
-                
                 if ( firstTestSetResult ) {
                     
                     int currLabel = 0;
@@ -186,8 +182,12 @@ public class ResultPanel extends JPanel {
                     g2d.setColor( Color.RED );
                     g2d.drawString( tsr.getError(), 
                             maxStudentWidth + RES_WIDTH, 
-                            y + RES_HEIGHT - 1 );
+                            y + (int) ( RES_HEIGHT / 1.3 ) );
                 }
+                
+                g2d.drawString( tsr.getStudent().toString(), 
+                        15 + maxStudentWidth - studentWidth, 
+                        y + (int) ( RES_HEIGHT / 1.3 ) );
                 
                 currTestSetResult++;
                 
