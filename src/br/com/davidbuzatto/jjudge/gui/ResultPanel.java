@@ -32,8 +32,9 @@ public class ResultPanel extends JPanel {
     private List<TestSetResult> testSetResultList;
     private List<TestResultRectangle> resRects;
     
-    private final int RES_WIDTH = 25;
-    private final int RES_HEIGHT = 25;
+    private static final int RES_WIDTH = 25;
+    private static final int RES_HEIGHT = 25;
+    private static final Font DEFAULT_FONT = new Font( Font.SANS_SERIF, Font.BOLD, 12 );
     
     private boolean mouseOverAllowed;
     
@@ -122,6 +123,7 @@ public class ResultPanel extends JPanel {
     
     private void draw( Graphics2D g2d ) {
         
+        g2d.setFont( DEFAULT_FONT );
         g2d.setColor( Color.WHITE );
         g2d.fillRect( 0, 0, getWidth(), getHeight() );
         
@@ -156,7 +158,7 @@ public class ResultPanel extends JPanel {
                 g2d.setColor( Color.BLACK );
                 g2d.drawString( tsr.getStudent().toString(), 
                         15 + maxStudentWidth - studentWidth, 
-                        y + RES_HEIGHT - 1 );
+                        y + (int) ( RES_WIDTH / 1.3 ) );
                 
                 if ( firstTestSetResult ) {
                     
@@ -169,7 +171,7 @@ public class ResultPanel extends JPanel {
                         
                         g2dt.translate( x, y );
                         g2dt.rotate( Math.toRadians( -90 ) );
-                        g2dt.drawString( tr.getName(), 10, 23 + RES_WIDTH * currLabel );
+                        g2dt.drawString( tr.getName(), 10, (int) ( RES_WIDTH / 1.5 ) + RES_WIDTH * currLabel );
                         
                         currLabel++;
                         g2dt.dispose();
@@ -240,8 +242,7 @@ public class ResultPanel extends JPanel {
         
         resRects.clear();
         
-        Font f = new Font( "sansserif", Font.PLAIN, 12 );
-        FontMetrics fm = this.getFontMetrics( f );
+        FontMetrics fm = this.getFontMetrics( DEFAULT_FONT );
         
         int maxStudentWidth = 0;
         int maxTestNameWidth = 0;
@@ -269,7 +270,7 @@ public class ResultPanel extends JPanel {
                 int y = currTestSetResult * RES_HEIGHT + maxTestNameWidth;
                 
                 for ( TestResult tr : tsr.getTestResults() ) {
-                    
+                            
                     int x = maxStudentWidth + currTestResult * RES_WIDTH;
                     resRects.add( new TestResultRectangle( x, y, RES_WIDTH, RES_HEIGHT, tr ) );
                         
@@ -300,7 +301,7 @@ public class ResultPanel extends JPanel {
         
         boolean mouseOver;
 
-        public TestResultRectangle( int x, int y, int width, int height, TestResult testResult ) {
+        TestResultRectangle( int x, int y, int width, int height, TestResult testResult ) {
             this.x = x;
             this.y = y;
             this.width = width;

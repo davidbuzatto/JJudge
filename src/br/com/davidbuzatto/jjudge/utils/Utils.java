@@ -18,6 +18,11 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.SplashScreen;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +35,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -224,7 +230,7 @@ public class Utils {
              
             String uncompressedDirectory = destDir.getPath();
             Files.createDirectory( fileSystem.getPath( uncompressedDirectory ) );
-             
+            
             while ( entries.hasMoreElements() ) {
                 
                 ZipEntry entry = entries.nextElement();
@@ -275,12 +281,14 @@ public class Utils {
         try {
             
             JsonReader reader = new JsonReader(
-                    new FileReader( file ) );
+                    new FileReader( file, StandardCharsets.UTF_8 ) );
 
             Type listType = new TypeToken<ArrayList<TestSet>>(){}.getType();
             testSets = new Gson().fromJson( reader, listType );
             
         } catch ( FileNotFoundException exc ) {
+            exc.printStackTrace();
+        } catch ( IOException exc ) {
             exc.printStackTrace();
         } catch ( JsonSyntaxException exc ) {
             //exc.printStackTrace();
@@ -295,7 +303,7 @@ public class Utils {
         Gson gson = new Gson();
         JsonReader reader = new JsonReader(
                 new FileReader( 
-                        new File( String.format( "%s/student.json", baseDir ))));
+                        new File( String.format( "%s/student.json", baseDir )), StandardCharsets.UTF_8 ));
         Student student = gson.fromJson( reader, Student.class );
         reader.close();
         
@@ -308,7 +316,7 @@ public class Utils {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	String json = gson.toJson( student );
         
-        PrintWriter writer = new PrintWriter( file );
+        PrintWriter writer = new PrintWriter( file, StandardCharsets.UTF_8 );
         writer.print( json );
         
         writer.close();
@@ -781,6 +789,62 @@ public class Utils {
     
     public static String getExecutionStateIntString( ExecutionState state ) {
         return bundle.getString( "ExecutionState." + state.toString() );
+    }
+    
+    public static void updateSplashScreen( int millisecondsToWait ) {
+        
+        SplashScreen sp = SplashScreen.getSplashScreen();
+        if ( sp != null ) {
+            
+            Graphics2D g2d = (Graphics2D) sp.createGraphics();
+            g2d.setRenderingHint( 
+                    RenderingHints.KEY_ANTIALIASING, 
+                    RenderingHints.VALUE_ANTIALIAS_ON );
+            g2d.setColor( new Color( 51, 0, 102 ) );
+            
+            Font f = new Font( "Century Gothic", Font.BOLD, 30 ) ;
+            if ( f.getFamily().equals( Font.DIALOG ) ) {
+                f = new Font( Font.MONOSPACED, Font.BOLD, 30 ) ;
+            }
+            g2d.setFont( f );
+            
+            FontMetrics fm = g2d.getFontMetrics();
+            String v = Utils.bundle.getString( "JJudge.version" );
+            int vWidth = fm.stringWidth( v );
+            
+            g2d.drawString( v, 306 - vWidth, 134 );
+            g2d.dispose();
+            
+            sp.update();
+            
+            try {
+                Thread.sleep( millisecondsToWait );
+            } catch ( InterruptedException exc ) {
+            }
+            
+        }
+        
+    }
+    
+    public static File renameFileToValidName( File file ) {
+        
+        String oldName = file.getName().trim();
+        String newName = oldName.replaceAll( "[^a-zA-Z0-9[.]\\_]", "x" );
+        String oldPath = file.getPath().trim();
+        String newPath = oldPath.replace( oldName, newName );
+
+        file = new File( oldPath );
+        file.renameTo( new File( newPath ) );
+        return new File( newPath );
+        
+    }
+    
+    public static void renameFilesToValidName( File[] files ) {
+        
+        for ( int i = 0; i < files.length; i++ ) {
+            files[i] = renameFileToValidName( files[i] );
+        }
+        
     }
 
 }

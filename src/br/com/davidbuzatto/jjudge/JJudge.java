@@ -5,8 +5,9 @@
  */
 package br.com.davidbuzatto.jjudge;
 
+import br.com.davidbuzatto.jjudge.gui.MainWindow;
+import br.com.davidbuzatto.jjudge.utils.Utils;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import java.awt.SplashScreen;
 import javax.swing.UIManager;
 
 /**
@@ -33,26 +34,11 @@ public class JJudge {
         } catch ( Exception exc ) {
         }
         
-        /*try {
-            for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() ) {
-                if ( "Nimbus".equals( info.getName() ) ) {
-                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
-                    break;
-                }
-            }
-        } catch ( ClassNotFoundException ex ) {
-            java.util.logging.Logger.getLogger( br.com.davidbuzatto.jjudge.gui.MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        } catch ( InstantiationException ex ) {
-            java.util.logging.Logger.getLogger( br.com.davidbuzatto.jjudge.gui.MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        } catch ( IllegalAccessException ex ) {
-            java.util.logging.Logger.getLogger( br.com.davidbuzatto.jjudge.gui.MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        } catch ( javax.swing.UnsupportedLookAndFeelException ex ) {
-            java.util.logging.Logger.getLogger( br.com.davidbuzatto.jjudge.gui.MainWindow.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-        }*/
+        Utils.updateSplashScreen( 6000 );
 
         java.awt.EventQueue.invokeLater( new Runnable() {
             public void run() {
-                new br.com.davidbuzatto.jjudge.gui.MainWindow( secondsToTimeout ).setVisible( true );
+                new MainWindow( secondsToTimeout ).setVisible( true );
             }
         });
         

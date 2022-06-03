@@ -577,9 +577,11 @@ public class MainWindow extends javax.swing.JFrame {
             File[] files = jfc.getSelectedFiles();
         
             if ( files != null && files.length > 0 ) {
-
+                
+                Utils.renameFilesToValidName( files );
+                
                 Utils.setPref( "addPackagePath", files[0].getParentFile().getAbsolutePath() );
-
+                
                 Arrays.sort( files, ( File f1, File f2 ) -> {
 
                     String n1 = f1.getName();
