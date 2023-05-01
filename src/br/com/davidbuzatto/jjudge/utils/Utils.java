@@ -73,37 +73,14 @@ public class Utils {
     
     public static void zipFile( File fileToZip, File zipFile ) throws IOException {
         
-        FileOutputStream fos = new FileOutputStream( zipFile );
-        ZipOutputStream zipOut = new ZipOutputStream( fos );
-        FileInputStream fis = new FileInputStream( fileToZip );
-        ZipEntry zipEntry = new ZipEntry( fileToZip.getName() );
-        
-        zipOut.putNextEntry( zipEntry );
-        
-        byte[] bytes = new byte[1024];
-        int length;
-        
-        while( ( length = fis.read( bytes ) ) >= 0 ) {
-            zipOut.write( bytes, 0, length );
-        }
-        
-        zipOut.close();
-        fis.close();
-        fos.close();
-        
-    }
-    
-    public static void zipFiles( File[] filesToZip, File zipFile ) throws IOException {
-        
-        FileOutputStream fos = new FileOutputStream( zipFile );
-        ZipOutputStream zipOut = new ZipOutputStream( fos );
-        
-        for ( File fileToZip : filesToZip ) {
+        try ( FileOutputStream fos = new FileOutputStream( zipFile );
+                FileInputStream fis = new FileInputStream( fileToZip );
+                ZipOutputStream zipOut = new ZipOutputStream( fos ) ) {
             
-            FileInputStream fis = new FileInputStream( fileToZip );
             ZipEntry zipEntry = new ZipEntry( fileToZip.getName() );
+            
             zipOut.putNextEntry( zipEntry );
- 
+            
             byte[] bytes = new byte[1024];
             int length;
             
@@ -111,23 +88,45 @@ public class Utils {
                 zipOut.write( bytes, 0, length );
             }
             
-            fis.close();
-            
         }
         
-        zipOut.close();
-        fos.close();
+    }
+    
+    public static void zipFiles( File[] filesToZip, File zipFile ) throws IOException {
+        
+        try ( FileOutputStream fos = new FileOutputStream( zipFile );
+                ZipOutputStream zipOut = new ZipOutputStream( fos ) ) {
+            
+            for ( File fileToZip : filesToZip ) {
+                
+                try ( FileInputStream fis = new FileInputStream( fileToZip ) ) {
+                    
+                    ZipEntry zipEntry = new ZipEntry( fileToZip.getName() );
+                    zipOut.putNextEntry( zipEntry );
+                    
+                    byte[] bytes = new byte[1024];
+                    int length;
+                    
+                    while( ( length = fis.read( bytes ) ) >= 0 ) {
+                        zipOut.write( bytes, 0, length );
+                    }
+                    
+                }
+                
+            }
+            
+        }
         
     }
     
     public static void zipDirectory( File dirToZip, File zipFile ) throws IOException {
         
-        FileOutputStream fos = new FileOutputStream( zipFile );
-        ZipOutputStream zipOut = new ZipOutputStream( fos );
- 
-        recursiveZipFile( dirToZip, dirToZip.getName(), zipOut );
-        zipOut.close();
-        fos.close();
+        try ( FileOutputStream fos = new FileOutputStream( zipFile );
+                ZipOutputStream zipOut = new ZipOutputStream( fos ) ) {
+            
+            recursiveZipFile( dirToZip, dirToZip.getName(), zipOut );
+            
+        }
         
     }
     
@@ -157,19 +156,20 @@ public class Utils {
             
         }
         
-        FileInputStream fis = new FileInputStream( fileToZip );
-        ZipEntry zipEntry = new ZipEntry( fileName );
-        
-        zipOut.putNextEntry( zipEntry );
-        
-        byte[] bytes = new byte[1024];
-        int length;
-        
-        while ( ( length = fis.read( bytes ) ) >= 0 ) {
-            zipOut.write( bytes, 0, length );
+        try ( FileInputStream fis = new FileInputStream( fileToZip ) ) {
+            
+            ZipEntry zipEntry = new ZipEntry( fileName );
+            
+            zipOut.putNextEntry( zipEntry );
+            
+            byte[] bytes = new byte[1024];
+            int length;
+            
+            while ( ( length = fis.read( bytes ) ) >= 0 ) {
+                zipOut.write( bytes, 0, length );
+            }
+            
         }
-        
-        fis.close();
         
     }
     
@@ -177,31 +177,30 @@ public class Utils {
         
         byte[] buffer = new byte[1024];
         
-        ZipInputStream zis = new ZipInputStream( new FileInputStream( file ) );
-        ZipEntry zipEntry = zis.getNextEntry();
-        
-        if ( !destDir.exists() ) {
-            destDir.mkdir();
-        }
-        
-        while ( zipEntry != null ) {
+        try ( ZipInputStream zis = new ZipInputStream( new FileInputStream( file ) ) ) {
             
-            File newFile = newFile( destDir, zipEntry );
-            FileOutputStream fos = new FileOutputStream( newFile );
+            ZipEntry zipEntry = zis.getNextEntry();
             
-            int len;
-            
-            while ( ( len = zis.read( buffer ) ) > 0 ) {
-                fos.write( buffer, 0, len );
+            if ( !destDir.exists() ) {
+                destDir.mkdir();
             }
             
-            fos.close();
-            zipEntry = zis.getNextEntry();
+            while ( zipEntry != null ) {
+                
+                File newFile = newFile( destDir, zipEntry );
+                try (FileOutputStream fos = new FileOutputStream( newFile )) {
+                    int len;
+                    while ( ( len = zis.read( buffer ) ) > 0 ) {
+                        fos.write( buffer, 0, len );
+                    }
+                }
+                zipEntry = zis.getNextEntry();
+                
+            }
+            
+            zis.closeEntry();
             
         }
-        
-        zis.closeEntry();
-        zis.close();
         
     }
 
@@ -236,12 +235,12 @@ public class Utils {
                 ZipEntry entry = entries.nextElement();
                 
                 if ( entry.isDirectory() ) {
-                    Files.createDirectories( fileSystem.getPath( uncompressedDirectory + "\\" + entry.getName() ) );
+                    Files.createDirectories( fileSystem.getPath( uncompressedDirectory + "/" + entry.getName() ) );
                 } else {
                     try ( InputStream is = zipFile.getInputStream( entry );
                           BufferedInputStream bis = new BufferedInputStream( is ) ) {
                         
-                        String uncompressedFileName = uncompressedDirectory + "\\" + entry.getName();
+                        String uncompressedFileName = uncompressedDirectory + "/" + entry.getName();
                         Path uncompressedFilePath = fileSystem.getPath( uncompressedFileName );
                         Files.createFile( uncompressedFilePath );
                         
@@ -260,7 +259,7 @@ public class Utils {
     
     public static List<TestSet> loadTestSets() {
         
-        List<TestSet> testSets = null;
+        List<TestSet> testSets;
 
         JsonReader reader = new JsonReader(
                 new InputStreamReader( 
@@ -301,11 +300,13 @@ public class Utils {
     public static Student loadStudent( String baseDir ) throws IOException {
         
         Gson gson = new Gson();
-        JsonReader reader = new JsonReader(
-                new FileReader( 
-                        new File( String.format( "%s/student.json", baseDir )), StandardCharsets.UTF_8 ));
-        Student student = gson.fromJson( reader, Student.class );
-        reader.close();
+        Student student;
+        
+        try (JsonReader reader = new JsonReader(
+                new FileReader(
+                        new File( String.format( "%s/student.json", baseDir )), StandardCharsets.UTF_8 ))) {
+            student = gson.fromJson( reader, Student.class );
+        }
         
         return student;
         
@@ -316,10 +317,9 @@ public class Utils {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	String json = gson.toJson( student );
         
-        PrintWriter writer = new PrintWriter( file, StandardCharsets.UTF_8 );
-        writer.print( json );
-        
-        writer.close();
+        try (PrintWriter writer = new PrintWriter( file, StandardCharsets.UTF_8 )) {
+            writer.print( json );
+        }
         
     }
     
@@ -591,7 +591,7 @@ public class Utils {
                 
                 for ( TestResult tr : tsr.getTestResults() ) {
 
-                    String result = "-";
+                    String result;
 
                     switch ( tr.getExecutionState() ) {
                         case APPROVED:

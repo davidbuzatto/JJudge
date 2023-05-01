@@ -55,7 +55,7 @@ public class Processor {
         
         String cmdExec = "";
         String[] filesToRemoveByExtension = { "o", "exe", "class", "out" };
-        String[] compilationCommands = {};
+        String[][] compilationCommands = {};
         String[] threadId = {};
         
         
@@ -65,9 +65,9 @@ public class Processor {
                 
                 cmdExec = String.format( "%s/%s.exe", baseDir, fileName );
 
-                compilationCommands = new String[]{
-                    String.format( "gcc -Werror -Wfatal-errors -c %s.c -o %s.o", fileName, fileName ),
-                    String.format( "g++ -o %s.exe %s.o", fileName, fileName )
+                compilationCommands = new String[][]{
+                    String.format( "gcc -Werror -Wfatal-errors -c %s.c -o %s.o", fileName, fileName ).split( "\\s+" ),
+                    String.format( "g++ -o %s.exe %s.o", fileName, fileName ).split( "\\s+" )
                 };
 
                 threadId = new String[]{
@@ -83,9 +83,9 @@ public class Processor {
                 
                 cmdExec = String.format( "%s/%s.exe", baseDir, fileName );
 
-                compilationCommands = new String[]{
-                    String.format( "g++ -Werror -Wfatal-errors -c %s.cpp -o %s.o", fileName, fileName ),
-                    String.format( "g++ -o %s.exe %s.o", fileName, fileName )
+                compilationCommands = new String[][]{
+                    String.format( "g++ -Werror -Wfatal-errors -c %s.cpp -o %s.o", fileName, fileName ).split( "\\s+" ),
+                    String.format( "g++ -o %s.exe %s.o", fileName, fileName ).split( "\\s+" )
                 };
 
                 threadId = new String[]{
@@ -101,8 +101,8 @@ public class Processor {
                 
                 cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s", fileName );
 
-                compilationCommands = new String[]{
-                    String.format( "javac %s.java", fileName )
+                compilationCommands = new String[][]{
+                    String.format( "javac %s.java", fileName ).split( "\\s+" )
                 };
 
                 threadId = new String[]{
@@ -139,21 +139,22 @@ public class Processor {
             for ( int i = 0; i < compilationCommands.length; i++ ) {
                 
                 Process p = rt.exec( compilationCommands[i], null, dir );
+                StreamGobbler sg;
                 
-                FileOutputStream fosOutput = new FileOutputStream( 
-                        new File( String.format(  "%s/error.out" , baseDir ) ) );
-                
-                StreamGobbler sg = new StreamGobbler( 
-                        p.getInputStream(), 
-                        p.getErrorStream(), 
-                        fosOutput, 
-                        threadId[i], 
-                        outputStreams );
-                Thread t = new Thread( sg );
-                t.start();
-                t.join();
-                
-                fosOutput.close();
+                try ( FileOutputStream fosOutput = new FileOutputStream( 
+                        new File( String.format(  "%s/error.out" , baseDir ) ) ) ) {
+                    
+                    sg = new StreamGobbler( 
+                            p.getInputStream(),
+                            p.getErrorStream(),
+                            fosOutput,
+                            threadId[i],
+                            outputStreams );
+                    Thread t = new Thread( sg );
+                    t.start();
+                    t.join();
+                    
+                }
                 
                 // if error...
                 if ( sg.isProcessErrorStreamDataAvailable() ) {

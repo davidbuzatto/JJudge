@@ -753,7 +753,13 @@ public class MainWindow extends javax.swing.JFrame {
                             
                         }
                         
-                    } catch ( IOException | InterruptedException exc ) {
+                    } catch ( IOException exc ) {
+                        Utils.addFormattedText( 
+                                textPaneProcessOutput, 
+                                bundle.getString( "MainWindow.btnRunTestActionPerformed.errorCompileAndRun" ),
+                                Color.RED, false );
+                        exc.printStackTrace();
+                    } catch ( InterruptedException exc ) {
                         exc.printStackTrace();
                     }
                     
