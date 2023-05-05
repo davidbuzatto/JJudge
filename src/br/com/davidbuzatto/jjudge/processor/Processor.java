@@ -161,19 +161,22 @@ public class Processor {
                     
                     // reading process output from file
                     StringBuilder sbOutput = new StringBuilder();
-                    Scanner sOutput = new Scanner( 
-                            new File( String.format( "%s/%s", baseDir, "error.out" ) ) );
-
-                    boolean first = true;
-                    while ( sOutput.hasNextLine() ) {
-                        if ( first ) {
-                            first = false;
-                        } else {
-                            sbOutput.append( "\n" );
+                    
+                    try ( Scanner sOutput = new Scanner( 
+                            new File( String.format( "%s/%s", baseDir, "error.out" ) ) ) ) {
+                        
+                        boolean first = true;
+                        while ( sOutput.hasNextLine() ) {
+                            if ( first ) {
+                                first = false;
+                            } else {
+                                sbOutput.append( "\n" );
+                            }
+                            sbOutput.append( sOutput.nextLine() );
                         }
-                        sbOutput.append( sOutput.nextLine() );
+                        
                     }
-                    sOutput.close();
+                    
                     testResult.setErrorMessage( sbOutput.toString() );
                     
                     if ( textPane == null ) {

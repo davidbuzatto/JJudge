@@ -82,8 +82,8 @@ public class StreamGobbler extends Thread {
                 pw.close();
             }
             
-        } catch ( IOException ioe ) {
-            ioe.printStackTrace();
+        } catch ( IOException exc ) {
+            Utils.showException( exc );
         }
         
     }

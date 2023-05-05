@@ -34,7 +34,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -51,11 +55,14 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -286,11 +293,11 @@ public class Utils {
             testSets = new Gson().fromJson( reader, listType );
             
         } catch ( FileNotFoundException exc ) {
-            exc.printStackTrace();
+            Utils.showException( exc );
         } catch ( IOException exc ) {
-            exc.printStackTrace();
+            Utils.showException( exc );
         } catch ( JsonSyntaxException exc ) {
-            //exc.printStackTrace();
+            Utils.showException( exc );
         }
         
         return testSets;
@@ -431,7 +438,9 @@ public class Utils {
             destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
             
             try {
-                //Utils.unzip( file, destDir );
+                if ( destDir.exists() ) {
+                    FileUtils.deleteDirectory( destDir );
+                }
                 Utils.completeUnzip( file, destDir );
             } catch ( IllegalArgumentException | IOException exc ) {
                 errorUnzipping = true;
@@ -528,7 +537,7 @@ public class Utils {
             }
             
         } catch ( BadLocationException exc ) {
-            exc.printStackTrace();
+            Utils.showException( exc );
         }
         
     }
@@ -553,7 +562,7 @@ public class Utils {
                                 offset, text, attr );
             
         } catch ( BadLocationException exc ) {
-            exc.printStackTrace();
+            Utils.showException( exc );
         }
         
     }
@@ -677,7 +686,7 @@ public class Utils {
             }
             
         } catch ( IOException | InvalidFormatException exc ) {
-            exc.printStackTrace();
+            Utils.showException( exc );
         }
         
         return null;
@@ -843,6 +852,25 @@ public class Utils {
         
         for ( int i = 0; i < files.length; i++ ) {
             files[i] = renameFileToValidName( files[i] );
+        }
+        
+    }
+    
+    public static void showException( Exception exc ) {
+        
+        try ( StringWriter sw = new StringWriter();
+              PrintWriter pw = new PrintWriter( sw ) ) {
+            
+            exc.printStackTrace( pw );
+            
+            JOptionPane.showMessageDialog( 
+                    null, 
+                    new JScrollPane( new JTextArea( sw.toString(), 15, 40 ) ), 
+                    bundle.getString( "Utils.processResultsToExcel.exceptionErrorMessage" ), 
+                    JOptionPane.ERROR_MESSAGE );
+            
+        } catch ( IOException iexc ) {
+            iexc.printStackTrace();
         }
         
     }

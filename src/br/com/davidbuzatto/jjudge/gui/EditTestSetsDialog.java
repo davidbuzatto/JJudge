@@ -93,7 +93,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             }
 
         } catch ( CloneNotSupportedException exc ) {
-            exc.printStackTrace();
+            Utils.showException( exc );
         }
         
     }
@@ -839,7 +839,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                 try ( PrintStream ps = new PrintStream( new FileOutputStream( f ) ) ) {
                     ps.print( json );
                 } catch ( FileNotFoundException exc ) {
-                    exc.printStackTrace();
+                    Utils.showException( exc );
                 }
             }
         }

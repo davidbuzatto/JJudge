@@ -161,7 +161,7 @@ public class MainWindow extends javax.swing.JFrame {
                             JOptionPane.showMessageDialog( this, bundle.getString( "MainWindow.buildTestPackage.success" ) );
                             
                         } catch ( IOException exc )  {
-                            exc.printStackTrace();
+                            Utils.showException( exc );
                         }
 
                     }
@@ -705,6 +705,7 @@ public class MainWindow extends javax.swing.JFrame {
                         for ( int i = 0; i < listPackagesModel.size(); i++ ) {
                             
                             File file = listPackagesModel.get( i );
+                            File destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
                             
                             Utils.addFormattedText( 
                                     textPaneProcessOutput, 
@@ -730,8 +731,7 @@ public class MainWindow extends javax.swing.JFrame {
                                         String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
                                         Color.BLACK, false );
 
-                                FileUtils.deleteDirectory( new File( 
-                                        file.getAbsolutePath().replace( ".zip", "" ).trim() ) );
+                                FileUtils.deleteDirectory( destDir );
                                 
                             }
                             
@@ -758,9 +758,9 @@ public class MainWindow extends javax.swing.JFrame {
                                 textPaneProcessOutput, 
                                 bundle.getString( "MainWindow.btnRunTestActionPerformed.errorCompileAndRun" ),
                                 Color.RED, false );
-                        exc.printStackTrace();
+                        Utils.showException( exc );
                     } catch ( InterruptedException exc ) {
-                        exc.printStackTrace();
+                        Utils.showException( exc );
                     }
                     
                     Utils.addFormattedText( 
