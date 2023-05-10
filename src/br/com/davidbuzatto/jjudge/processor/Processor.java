@@ -12,6 +12,8 @@ import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.StreamGobbler;
 import br.com.davidbuzatto.jjudge.utils.Utils;
+import static br.com.davidbuzatto.jjudge.utils.Utils.PREF_THEME;
+import static br.com.davidbuzatto.jjudge.utils.Utils.getPref;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -58,6 +60,7 @@ public class Processor {
         String[][] compilationCommands = {};
         String[] threadId = {};
         
+        Color textColor = Color.BLACK; // variavel para a cor
         
         switch ( pLang ) {
             
@@ -120,7 +123,16 @@ public class Processor {
             
         }
         
-        
+        //SWITCH pra mudar as cores do output de acordo com o tema
+        switch (getPref(PREF_THEME)){
+            case "light":
+                textColor = Color.BLACK;
+                break;
+            case "dark":
+                textColor = Color.WHITE;
+                break;      
+        }
+                
         
         
         if ( textPane == null ) {
@@ -129,7 +141,7 @@ public class Processor {
             Utils.addFormattedText( 
                     textPane, 
                     String.format( bundle.getString( "Processor.compileAndRun.processing" ), baseDir, fileName, sourceExt ), 
-                    Color.BLACK, false );
+                    textColor, false );
         }
 
         
@@ -186,7 +198,7 @@ public class Processor {
                         Utils.addFormattedText( 
                                 textPane, 
                                 "|   |-- ", 
-                                Color.BLACK, false );
+                                textColor, false );
                         
                         Utils.addFormattedText( 
                                 textPane, 
@@ -196,7 +208,7 @@ public class Processor {
                         Utils.addFormattedText( 
                                 textPane, 
                                 Utils.identText( sbOutput.toString(), 3 ) + "\n", 
-                                Color.BLACK, false );
+                                textColor, false );
 
                     }
                         
@@ -223,13 +235,13 @@ public class Processor {
                         Utils.addFormattedText( 
                             textPane, 
                             bundle.getString( "Processor.compileAndRun.compiled" ), 
-                            Color.BLACK, false );
+                            textColor, false );
                     }
                     
                     Utils.addFormattedText( 
                             textPane, 
                             bundle.getString( "Processor.compileAndRun.executing" ), 
-                            Color.BLACK, false );
+                            textColor, false );
                     
                 }
 
@@ -267,26 +279,26 @@ public class Processor {
                         Utils.addFormattedText( 
                                 textPane, 
                                 String.format( bundle.getString( "Processor.compileAndRun.testCase" ), i++ ), 
-                                Color.BLACK, false );
+                                textColor, false );
                         Utils.addFormattedText( 
                                 textPane, 
                                 bundle.getString( "Processor.compileAndRun.processTestInput" ), 
-                                Color.BLACK, false );
+                                textColor, false );
                         if ( input.isEmpty() ) {
                             Utils.addFormattedText( 
                                     textPane, 
                                     Utils.identText( bundle.getString( "Processor.compileAndRun.empty" ), 4 ) + "\n", 
-                                    Color.BLACK, false );
+                                    textColor, false );
                         } else {
                             Utils.addFormattedText( 
                                     textPane, 
                                     Utils.identText( input, 4 ) + "\n", 
-                                    Color.BLACK, false );
+                                    textColor, false );
                         }
                         Utils.addFormattedText( 
                                 textPane, 
                                 "|   |   |\n", 
-                                Color.BLACK, false );
+                                textColor, false );
 
                     }
 
@@ -363,54 +375,54 @@ public class Processor {
                             Utils.addFormattedText( 
                                     textPane, 
                                     bundle.getString( "Processor.compileAndRun.processTestOutput" ), 
-                                    Color.BLACK, false );
+                                    textColor, false );
 
                             if ( test.isEmpty() ) {
                                 Utils.addFormattedText( 
                                         textPane, 
                                         Utils.identText( bundle.getString( "Processor.compileAndRun.empty" ), 4 ) + "\n", 
-                                        Color.BLACK, false );
+                                        textColor, false );
                             } else {
                                 Utils.addFormattedText( 
                                         textPane, 
                                         Utils.identText( test, 4 ) + "\n", 
-                                        Color.BLACK, true );
+                                        textColor, true );
                             }
 
                             Utils.addFormattedText( 
                                     textPane, 
                                     "|   |   |\n", 
-                                    Color.BLACK, false );
+                                    textColor, false );
 
                             Utils.addFormattedText( 
                                     textPane, 
                                     bundle.getString( "Processor.compileAndRun.processOutput" ), 
-                                    Color.BLACK, false );
+                                    textColor, false );
 
                             if ( cleanOutput.isEmpty() ) {
                                 Utils.addFormattedText( 
                                     textPane, 
                                     Utils.identText( bundle.getString( "Processor.compileAndRun.empty" ), 4 ) + "\n", 
-                                    Color.BLACK, false );
+                                    textColor, false );
                             } else {
                                 if ( state == ExecutionState.RUNTIME_ERROR || 
                                         state == ExecutionState.TIMEOUT_ERROR ) {
                                     Utils.addFormattedText( 
                                             textPane, 
                                             Utils.identText( cleanOutput, 4 ) + "\n", 
-                                            Color.BLACK, false );
+                                            textColor, false );
                                 } else {
                                     Utils.addFormattedText( 
                                             textPane, 
                                             Utils.identText( cleanOutput, 4 ) + "\n", 
-                                            Color.BLACK, true );
+                                            textColor, true );
                                 }
                             }
 
                             Utils.addFormattedText( 
                                     textPane, 
                                     "|   |   |\n", 
-                                    Color.BLACK, false );
+                                    textColor, false );
                         }
 
                         // verify output with expected data...
@@ -434,7 +446,7 @@ public class Processor {
                             Utils.addFormattedText( 
                                     textPane, 
                                     bundle.getString( "Processor.compileAndRun.testCaseState" ), 
-                                    Color.BLACK, false );
+                                    textColor, false );
 
                             Color color = Utils.retrieveStateColor( state );
                             Utils.addFormattedText( 
@@ -444,7 +456,7 @@ public class Processor {
                             Utils.addFormattedText( 
                                     textPane, 
                                     "\n|   |\n", 
-                                    Color.BLACK, false );
+                                    textColor, false );
 
                         }
                     
@@ -472,7 +484,7 @@ public class Processor {
             Utils.addFormattedText( 
                     textPane, 
                     bundle.getString( "Processor.compileAndRun.testState" ), 
-                    Color.BLACK, false );
+                    textColor, false );
             
             Color color = Utils.retrieveStateColor( state );
             
@@ -483,7 +495,7 @@ public class Processor {
             Utils.addFormattedText( 
                     textPane, 
                     "\n|\n", 
-                    Color.BLACK, false );
+                    textColor, false );
                     
         }
         

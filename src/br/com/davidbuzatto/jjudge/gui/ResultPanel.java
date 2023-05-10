@@ -9,6 +9,8 @@ import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import br.com.davidbuzatto.jjudge.utils.Cursors;
 import br.com.davidbuzatto.jjudge.utils.Utils;
+import static br.com.davidbuzatto.jjudge.utils.Utils.PREF_THEME;
+import static br.com.davidbuzatto.jjudge.utils.Utils.getPref;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -37,6 +39,9 @@ public class ResultPanel extends JPanel {
     private static final Font DEFAULT_FONT = new Font( Font.SANS_SERIF, Font.BOLD, 12 );
     
     private boolean mouseOverAllowed;
+    
+    private Color bgColor = Color.WHITE;
+    private Color textColor = Color.BLACK;
     
     public ResultPanel() {
         
@@ -123,8 +128,20 @@ public class ResultPanel extends JPanel {
     
     private void draw( Graphics2D g2d ) {
         
+        // bgColor e textColor
+        switch (getPref(PREF_THEME)) {
+            case "light":
+                bgColor = Color.WHITE;
+                textColor = Color.BLACK;
+                break;
+            case "dark":
+                bgColor = Color.decode("#46494b");
+                textColor = Color.WHITE;
+                break;
+        }
+        
         g2d.setFont( DEFAULT_FONT );
-        g2d.setColor( Color.WHITE );
+        g2d.setColor( bgColor );
         g2d.fillRect( 0, 0, getWidth(), getHeight() );
         
         FontMetrics fm = g2d.getFontMetrics();
@@ -155,7 +172,7 @@ public class ResultPanel extends JPanel {
                 int y = currTestSetResult * RES_HEIGHT + maxTestNameWidth;
                 int studentWidth = fm.stringWidth( tsr.getStudent().toString() );
                 
-                g2d.setColor( Color.BLACK );
+                g2d.setColor( textColor );
                 if ( firstTestSetResult ) {
                     
                     int currLabel = 0;

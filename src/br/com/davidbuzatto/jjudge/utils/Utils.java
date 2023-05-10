@@ -76,6 +76,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 public class Utils {
 
     private static final String PREFERENCES_PATH = "br.com.davidbuzatto.jjudge";
+    private static final Preferences PREFS = Preferences.userRoot().node( PREFERENCES_PATH ); // cria o prefs
+    public static final String PREF_THEME = "THEME";
+    
     public static final ResourceBundle bundle = ResourceBundle.getBundle( "br/com/davidbuzatto/jjudge/gui/Bundle" );
     
     public static void zipFile( File fileToZip, File zipFile ) throws IOException {
@@ -755,6 +758,7 @@ public class Utils {
         prefs.get( "loadTestSets", new File( "" ).getAbsolutePath() );
         prefs.get( "saveTestSets", new File( "" ).getAbsolutePath() );
         prefs.get( "buildTestPackagePath", new File( "" ).getAbsolutePath() );
+        prefs.get(PREF_THEME, PREFS.get(PREF_THEME, "dark")); // pref de theme
     }
     
     public static String getPref( String key ) {

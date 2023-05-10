@@ -9,6 +9,11 @@ import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import br.com.davidbuzatto.jjudge.utils.Utils;
+import static br.com.davidbuzatto.jjudge.utils.Utils.PREF_THEME;
+import static br.com.davidbuzatto.jjudge.utils.Utils.getPref;
+import static br.com.davidbuzatto.jjudge.utils.Utils.setPref;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.io.File;
@@ -38,6 +43,8 @@ public class MainWindow extends javax.swing.JFrame {
     private List<TestSet> testSets;
     private int secondsToTimeout;
     private boolean outputStreams;
+    private Color textColor = Color.BLACK; // textColor
+    private Color blueTextColor = Color.BLUE; // blueTextColor
     
     private ResourceBundle bundle = Utils.bundle;
     
@@ -77,6 +84,21 @@ public class MainWindow extends javax.swing.JFrame {
         
         setExtendedState( JFrame.MAXIMIZED_BOTH );
         resultPanel.setMouseOverAllowed( true );
+        
+        switch ( getPref( PREF_THEME ) ) {
+        case "light": {
+            setLightTheme();
+            menuItemRLightTheme.setSelected( true );
+            textColor = Color.BLACK;
+            blueTextColor = Color.BLUE;
+            }
+        case "dark": {
+            setDarkTheme();
+            menuItemRDarkTheme.setSelected( true );
+            textColor = Color.WHITE;
+            blueTextColor = Color.CYAN;
+            }
+        }
         
         //testSets = Utils.loadTestSets();
         //buildTestSetsModel();
@@ -204,6 +226,24 @@ public class MainWindow extends javax.swing.JFrame {
         
     }
     
+    private void setLightTheme() {
+        FlatIntelliJLaf.setup();
+        SwingUtilities.updateComponentTreeUI(this);
+        setPref(PREF_THEME, "light");
+        if (listTestSetsModel.getSize() != 0) {
+            btnRunTest.doClick(); // roda o teste denovo para reescrever no output
+        }
+        
+    }
+    
+    private void setDarkTheme() {
+        FlatDarculaLaf.setup();
+        SwingUtilities.updateComponentTreeUI(this);
+        setPref(PREF_THEME, "dark");
+        if (listTestSetsModel.getSize() != 0) {
+            btnRunTest.doClick(); // roda o teste denovo para reescrever no output
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -215,6 +255,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         popupMenu = new javax.swing.JPopupMenu();
         menuItemShowDetails = new javax.swing.JMenuItem();
+        btnGroupThemes = new javax.swing.ButtonGroup();
         panelPackages = new javax.swing.JPanel();
         scrollPackages = new javax.swing.JScrollPane();
         listPackages = new javax.swing.JList<>();
@@ -237,9 +278,14 @@ public class MainWindow extends javax.swing.JFrame {
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemBuildTestPackage = new javax.swing.JMenuItem();
+        sepMenuFile01 = new javax.swing.JPopupMenu.Separator();
+        menuItemAddPackage = new javax.swing.JMenuItem();
+        menuItemRemovePackage = new javax.swing.JMenuItem();
         sepMenuFile02 = new javax.swing.JPopupMenu.Separator();
         menuItemLoadTestSets = new javax.swing.JMenuItem();
-        sepMenuFile01 = new javax.swing.JPopupMenu.Separator();
+        sepMenuFile03 = new javax.swing.JPopupMenu.Separator();
+        menuItemRunTest = new javax.swing.JMenuItem();
+        sepMenuFile04 = new javax.swing.JPopupMenu.Separator();
         menuItemExit = new javax.swing.JMenuItem();
         menuEdit = new javax.swing.JMenu();
         menuItemTestSets = new javax.swing.JMenuItem();
@@ -247,6 +293,9 @@ public class MainWindow extends javax.swing.JFrame {
         menuItemHowTo = new javax.swing.JMenuItem();
         sepMenuHelp01 = new javax.swing.JPopupMenu.Separator();
         menuItemAbout = new javax.swing.JMenuItem();
+        menuTheme = new javax.swing.JMenu();
+        menuItemRLightTheme = new javax.swing.JRadioButtonMenuItem();
+        menuItemRDarkTheme = new javax.swing.JRadioButtonMenuItem();
 
         menuItemShowDetails.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/report.png"))); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle"); // NOI18N
@@ -448,6 +497,7 @@ public class MainWindow extends javax.swing.JFrame {
         menuFile.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuFile.m").charAt(0));
         menuFile.setText(bundle.getString("MainWindow.menuFile.text")); // NOI18N
 
+        menuItemBuildTestPackage.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
         menuItemBuildTestPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/package.png"))); // NOI18N
         menuItemBuildTestPackage.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemBuildTestPackage.m").charAt(0));
         menuItemBuildTestPackage.setText(bundle.getString("MainWindow.menuItemBuildTestPackage.text")); // NOI18N
@@ -457,8 +507,30 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         menuFile.add(menuItemBuildTestPackage);
+        menuFile.add(sepMenuFile01);
+
+        menuItemAddPackage.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        menuItemAddPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/add.png"))); // NOI18N
+        menuItemAddPackage.setText(bundle.getString("MainWindow.menuItemAddPackage.text")); // NOI18N
+        menuItemAddPackage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemAddPackageActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemAddPackage);
+
+        menuItemRemovePackage.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, 0));
+        menuItemRemovePackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/delete.png"))); // NOI18N
+        menuItemRemovePackage.setText(bundle.getString("MainWindow.menuItemRemovePackage.text")); // NOI18N
+        menuItemRemovePackage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemRemovePackageActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemRemovePackage);
         menuFile.add(sepMenuFile02);
 
+        menuItemLoadTestSets.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
         menuItemLoadTestSets.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/database_refresh.png"))); // NOI18N
         menuItemLoadTestSets.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemLoadTestSets.m").charAt(0));
         menuItemLoadTestSets.setText(bundle.getString("MainWindow.menuItemLoadTestSets.text")); // NOI18N
@@ -468,7 +540,18 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         menuFile.add(menuItemLoadTestSets);
-        menuFile.add(sepMenuFile01);
+        menuFile.add(sepMenuFile03);
+
+        menuItemRunTest.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3, 0));
+        menuItemRunTest.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
+        menuItemRunTest.setText(bundle.getString("MainWindow.menuItemRunTest.text")); // NOI18N
+        menuItemRunTest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemRunTestActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemRunTest);
+        menuFile.add(sepMenuFile04);
 
         menuItemExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/door_out.png"))); // NOI18N
         menuItemExit.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemExit.m").charAt(0));
@@ -522,6 +605,29 @@ public class MainWindow extends javax.swing.JFrame {
         menuHelp.add(menuItemAbout);
 
         menuBar.add(menuHelp);
+
+        menuTheme.setText(bundle.getString("MainWindow.menuTheme.text")); // NOI18N
+
+        btnGroupThemes.add(menuItemRLightTheme);
+        menuItemRLightTheme.setText(bundle.getString("MainWindow.menuItemRLightTheme.text")); // NOI18N
+        menuItemRLightTheme.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemRLightThemeActionPerformed(evt);
+            }
+        });
+        menuTheme.add(menuItemRLightTheme);
+
+        btnGroupThemes.add(menuItemRDarkTheme);
+        menuItemRDarkTheme.setSelected(true);
+        menuItemRDarkTheme.setText(bundle.getString("MainWindow.menuItemRDarkTheme.text")); // NOI18N
+        menuItemRDarkTheme.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemRDarkThemeActionPerformed(evt);
+            }
+        });
+        menuTheme.add(menuItemRDarkTheme);
+
+        menuBar.add(menuTheme);
 
         setJMenuBar(menuBar);
 
@@ -689,7 +795,7 @@ public class MainWindow extends javax.swing.JFrame {
                     btnRemovePackage.setEnabled( false );
                     //checkGenerateResultsSpreadsheet.setEnabled( false );
                     btnLoadTestSet.setEnabled( false );
-                    btnRunTest.setEnabled( false );
+                    btnRunTest.setEnabled( false ); 
                     menuItemBuildTestPackage.setEnabled( false );
                     menuItemLoadTestSets.setEnabled( false );
                     menuItemExit.setEnabled( false );
@@ -710,7 +816,7 @@ public class MainWindow extends javax.swing.JFrame {
                             Utils.addFormattedText( 
                                     textPaneProcessOutput, 
                                     String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
-                                    Color.BLUE, false );
+                                    blueTextColor, false );
 
                             tSetResList.add( Utils.runTest( 
                                     file, 
@@ -729,7 +835,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 Utils.addFormattedText( 
                                         textPaneProcessOutput, 
                                         String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
-                                        Color.BLACK, false );
+                                        textColor, false );
 
                                 FileUtils.deleteDirectory( destDir );
                                 
@@ -766,7 +872,7 @@ public class MainWindow extends javax.swing.JFrame {
                     Utils.addFormattedText( 
                             textPaneProcessOutput, 
                             bundle.getString( "MainWindow.btnRunTestActionPerformed.finished" ),
-                            Color.BLACK, false );
+                            textColor, false );
                     
                     listPackages.setEnabled( true );
                     listTestSets.setEnabled( true );
@@ -878,9 +984,30 @@ public class MainWindow extends javax.swing.JFrame {
         loadTestSet();
     }//GEN-LAST:event_btnLoadTestSetActionPerformed
 
+    private void menuItemRLightThemeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRLightThemeActionPerformed
+        setLightTheme();
+    }//GEN-LAST:event_menuItemRLightThemeActionPerformed
+
+    private void menuItemRDarkThemeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRDarkThemeActionPerformed
+        setDarkTheme();
+    }//GEN-LAST:event_menuItemRDarkThemeActionPerformed
+
+    private void menuItemAddPackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAddPackageActionPerformed
+        btnAddPackage.doClick();
+    }//GEN-LAST:event_menuItemAddPackageActionPerformed
+
+    private void menuItemRemovePackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRemovePackageActionPerformed
+        btnRemovePackage.doClick();
+    }//GEN-LAST:event_menuItemRemovePackageActionPerformed
+
+    private void menuItemRunTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRunTestActionPerformed
+        btnRunTest.doClick();
+    }//GEN-LAST:event_menuItemRunTestActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddPackage;
     private javax.swing.JButton btnBuildTestPackage;
+    private javax.swing.ButtonGroup btnGroupThemes;
     private javax.swing.JButton btnLoadTestSet;
     private javax.swing.JButton btnRemovePackage;
     private javax.swing.JButton btnRunTest;
@@ -893,12 +1020,18 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu menuFile;
     private javax.swing.JMenu menuHelp;
     private javax.swing.JMenuItem menuItemAbout;
+    private javax.swing.JMenuItem menuItemAddPackage;
     private javax.swing.JMenuItem menuItemBuildTestPackage;
     private javax.swing.JMenuItem menuItemExit;
     private javax.swing.JMenuItem menuItemHowTo;
     private javax.swing.JMenuItem menuItemLoadTestSets;
+    private javax.swing.JRadioButtonMenuItem menuItemRDarkTheme;
+    private javax.swing.JRadioButtonMenuItem menuItemRLightTheme;
+    private javax.swing.JMenuItem menuItemRemovePackage;
+    private javax.swing.JMenuItem menuItemRunTest;
     private javax.swing.JMenuItem menuItemShowDetails;
     private javax.swing.JMenuItem menuItemTestSets;
+    private javax.swing.JMenu menuTheme;
     private javax.swing.JPanel panelPackages;
     private javax.swing.JPanel panelProcessOutput;
     private javax.swing.JPanel panelResults;
@@ -911,6 +1044,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollTestSets;
     private javax.swing.JPopupMenu.Separator sepMenuFile01;
     private javax.swing.JPopupMenu.Separator sepMenuFile02;
+    private javax.swing.JPopupMenu.Separator sepMenuFile03;
+    private javax.swing.JPopupMenu.Separator sepMenuFile04;
     private javax.swing.JPopupMenu.Separator sepMenuHelp01;
     private javax.swing.JTextPane textPaneProcessOutput;
     // End of variables declaration//GEN-END:variables
