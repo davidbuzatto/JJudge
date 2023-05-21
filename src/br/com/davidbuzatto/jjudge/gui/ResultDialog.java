@@ -22,13 +22,16 @@ import javax.swing.JFrame;
 public class ResultDialog extends javax.swing.JDialog {
     
     private ResourceBundle bundle = Utils.bundle;
+    private Color backgroundColor = Color.WHITE;
     
     /**
      * Creates new form ResultDialog
      */
-    public ResultDialog( JFrame parent, boolean modal, TestResult testResult ) {
+    public ResultDialog( JFrame parent, boolean modal, TestResult testResult, Color backgroundColor ) {
         super( parent, modal );
         initComponents();
+        this.backgroundColor = backgroundColor;
+        textPaneResult.setBackground( backgroundColor );
         customInit( testResult );
     }
     

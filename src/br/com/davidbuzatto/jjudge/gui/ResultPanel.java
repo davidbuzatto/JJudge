@@ -37,6 +37,7 @@ public class ResultPanel extends JPanel {
     private static final Font DEFAULT_FONT = new Font( Font.SANS_SERIF, Font.BOLD, 12 );
     
     private boolean mouseOverAllowed;
+    private Color backgroundColor = Color.WHITE;
     
     public ResultPanel() {
         
@@ -61,7 +62,7 @@ public class ResultPanel extends JPanel {
                     }
                     
                     if ( selectedResRect != null ) {
-                        ResultDialog rd = new ResultDialog( null, true, selectedResRect.testResult );
+                        ResultDialog rd = new ResultDialog( null, true, selectedResRect.testResult, backgroundColor );
                         rd.setVisible( true );
                     }
                     
@@ -124,7 +125,7 @@ public class ResultPanel extends JPanel {
     private void draw( Graphics2D g2d ) {
         
         g2d.setFont( DEFAULT_FONT );
-        g2d.setColor( Color.WHITE );
+        g2d.setColor( backgroundColor );
         g2d.fillRect( 0, 0, getWidth(), getHeight() );
         
         FontMetrics fm = g2d.getFontMetrics();
@@ -337,6 +338,10 @@ public class ResultPanel extends JPanel {
             
         }
         
+    }
+
+    public void setBackgroundColor( Color backgroundColor ) {
+        this.backgroundColor = backgroundColor;
     }
     
 }

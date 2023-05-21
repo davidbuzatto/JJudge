@@ -14,7 +14,6 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.EventQueue;
-import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +43,10 @@ public class MainWindow extends javax.swing.JFrame {
     private boolean outputStreams;
     
     private ResourceBundle bundle = Utils.bundle;
+    
+    private Color textPaneProcessOutputBackgroundColor;
+    private Color resultPanelBackgroundColor;
+    private Color testSetDetailsDialogBackgroundColor;
     
     /**
      * Creates new form JJudge
@@ -323,6 +326,7 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemRunTest.setEnabled( false );
                     menuItemExit.setEnabled( false );
                     menuItemTestSets.setEnabled( false );
+                    menuItemTheme.setEnabled( false );
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
@@ -411,6 +415,7 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemRunTest.setEnabled( true );
                     menuItemExit.setEnabled( true );
                     menuItemTestSets.setEnabled( true );
+                    menuItemTheme.setEnabled( true );
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
@@ -438,8 +443,19 @@ public class MainWindow extends javax.swing.JFrame {
 
         FlatIntelliJLaf.setup();
         Utils.setPref( Utils.PREF_CURRENT_THEME, "light" );
+        
+        Color background = new Color( 255, 255, 255 );
+        textPaneProcessOutputBackgroundColor = background;
+        resultPanelBackgroundColor = background;
+        testSetDetailsDialogBackgroundColor = background;
+    
+        textPaneProcessOutput.setBackground( textPaneProcessOutputBackgroundColor );
+        resultPanel.setBackgroundColor( resultPanelBackgroundColor );
+        
         SwingUtilities.updateComponentTreeUI( this );
         SwingUtilities.updateComponentTreeUI( popupMenu );
+        
+        resultPanel.repaint();
             
     }
 
@@ -447,8 +463,19 @@ public class MainWindow extends javax.swing.JFrame {
 
         FlatDarculaLaf.setup();
         Utils.setPref( Utils.PREF_CURRENT_THEME, "dark" );
+        
+        Color background = new Color( 180, 180, 180 );
+        textPaneProcessOutputBackgroundColor = background;
+        resultPanelBackgroundColor = background;
+        testSetDetailsDialogBackgroundColor = background;
+        
+        textPaneProcessOutput.setBackground( textPaneProcessOutputBackgroundColor );
+        resultPanel.setBackgroundColor( resultPanelBackgroundColor );
+        
         SwingUtilities.updateComponentTreeUI( this );
         SwingUtilities.updateComponentTreeUI( popupMenu );
+        
+        resultPanel.repaint();
         
     }
     
@@ -777,6 +804,7 @@ public class MainWindow extends javax.swing.JFrame {
         menuEdit.add(menuItemTestSets);
         menuEdit.add(sepMenuEdit01);
 
+        menuItemTheme.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/palette.png"))); // NOI18N
         menuItemTheme.setText(bundle.getString("MainWindow.menuItemTheme.text")); // NOI18N
 
         btnGroupTheme.add(menuItemRadioLightTheme);
@@ -913,7 +941,8 @@ public class MainWindow extends javax.swing.JFrame {
         TestSetDetailsDialog r = new TestSetDetailsDialog( 
                 this, 
                 true, 
-                listTestSets.getSelectedValue() );
+                listTestSets.getSelectedValue(),
+                testSetDetailsDialogBackgroundColor );
         r.setVisible( true );
         
     }//GEN-LAST:event_menuItemShowDetailsActionPerformed

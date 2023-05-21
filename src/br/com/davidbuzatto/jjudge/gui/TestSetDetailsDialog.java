@@ -21,13 +21,16 @@ import javax.swing.JFrame;
 public class TestSetDetailsDialog extends javax.swing.JDialog {
     
     private ResourceBundle bundle = Utils.bundle;
+    private Color backgroundColor = Color.WHITE;
     
     /**
      * Creates new form ResultDialog
      */
-    public TestSetDetailsDialog( JFrame parent, boolean modal, TestSet testSet ) {
+    public TestSetDetailsDialog( JFrame parent, boolean modal, TestSet testSet, Color backgroundColor ) {
         super( parent, modal );
         initComponents();
+        this.backgroundColor = backgroundColor;
+        textPaneDetails.setBackground( backgroundColor );
         customInit( testSet );
     }
     
