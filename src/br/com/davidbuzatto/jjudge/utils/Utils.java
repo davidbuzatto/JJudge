@@ -36,9 +36,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -76,6 +73,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 public class Utils {
 
     private static final String PREFERENCES_PATH = "br.com.davidbuzatto.jjudge";
+    private static final Preferences PREFS = Preferences.userRoot().node( PREFERENCES_PATH );
+    
+    public static final String PREF_ADD_PACKAGE_PATH = "PREF_ADD_PACKAGE_PATH";
+    public static final String PREF_SAVE_SHEET_PATH = "PREF_SAVE_SHEET_PATH";
+    public static final String PREF_LOAD_TEST_SETS_PATH = "PREF_LOAD_TEST_SETS_PATH";
+    public static final String PREF_SAVE_TEST_SETS_PATH = "PREF_SAVE_TEST_SETS_PATH";
+    public static final String PREF_BUILD_TEST_PACKAGE_PATH = "PREF_BUILD_TEST_PACKAGE_PATH";
+    public static final String PREF_CURRENT_THEME = "PREF_CURRENT_THEME";
+        
     public static final ResourceBundle bundle = ResourceBundle.getBundle( "br/com/davidbuzatto/jjudge/gui/Bundle" );
     
     public static void zipFile( File fileToZip, File zipFile ) throws IOException {
@@ -650,7 +656,7 @@ public class Utils {
             labelSheet.getRow( 6 ).getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning.FE" ) );
             labelSheet.getRow( 7 ).getCell( 1 ).setCellValue( bundle.getString( "Utils.processResultsToExcel.labelSheet.meaning.DC" ) );
             
-            JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "saveSheetPath" ) ) );
+            JFileChooser jfc = new JFileChooser( new File( Utils.getPref( Utils.PREF_SAVE_SHEET_PATH ) ) );
             jfc.setDialogTitle( bundle.getString( "Utils.processResultsToExcel.saveResults" ) );
             jfc.setMultiSelectionEnabled( false );
             jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
@@ -677,7 +683,7 @@ public class Utils {
                 }
                 
                 if ( save ) {
-                    Utils.setPref( "saveSheetPath", f.getParentFile().getAbsolutePath() );
+                    Utils.setPref( Utils.PREF_SAVE_SHEET_PATH, f.getParentFile().getAbsolutePath() );
                     try ( OutputStream fileOut = new FileOutputStream( f ) ) {
                         workbook.write( fileOut );
                         return f;
@@ -748,25 +754,32 @@ public class Utils {
         
     }
     
-    private static void preparePreferences() {
-        Preferences prefs = Preferences.userRoot().node( PREFERENCES_PATH );
-        prefs.get( "addPackagePath", new File( "" ).getAbsolutePath() );
-        prefs.get( "saveSheetPath", new File( "" ).getAbsolutePath() );
-        prefs.get( "loadTestSets", new File( "" ).getAbsolutePath() );
-        prefs.get( "saveTestSets", new File( "" ).getAbsolutePath() );
-        prefs.get( "buildTestPackagePath", new File( "" ).getAbsolutePath() );
+    public static void preparePreferences( boolean reset ) {
+        
+        if ( reset ) {
+            PREFS.remove( PREF_ADD_PACKAGE_PATH );
+            PREFS.remove( PREF_SAVE_SHEET_PATH );
+            PREFS.remove( PREF_LOAD_TEST_SETS_PATH );
+            PREFS.remove( PREF_SAVE_TEST_SETS_PATH );
+            PREFS.remove( PREF_BUILD_TEST_PACKAGE_PATH );
+            PREFS.remove( PREF_CURRENT_THEME );
+        }
+        
+        PREFS.put( PREF_ADD_PACKAGE_PATH, PREFS.get( PREF_ADD_PACKAGE_PATH, new File( "" ).getAbsolutePath() ) );
+        PREFS.put( PREF_SAVE_SHEET_PATH, PREFS.get( PREF_SAVE_SHEET_PATH, new File( "" ).getAbsolutePath() ) );
+        PREFS.put( PREF_LOAD_TEST_SETS_PATH, PREFS.get( PREF_LOAD_TEST_SETS_PATH, new File( "" ).getAbsolutePath() ) );
+        PREFS.put( PREF_SAVE_TEST_SETS_PATH, PREFS.get( PREF_SAVE_TEST_SETS_PATH, new File( "" ).getAbsolutePath() ) );
+        PREFS.put( PREF_BUILD_TEST_PACKAGE_PATH, PREFS.get( PREF_BUILD_TEST_PACKAGE_PATH, new File( "" ).getAbsolutePath() ) );
+        PREFS.put( PREF_CURRENT_THEME, PREFS.get( PREF_CURRENT_THEME, "light" ) );
+        
     }
     
     public static String getPref( String key ) {
-        preparePreferences();
-        Preferences prefs = Preferences.userRoot().node( PREFERENCES_PATH );
-        return prefs.get( key, "" );
+        return PREFS.get( key, "" );
     }
     
     public static void setPref( String key, String value ) {
-        preparePreferences();
-        Preferences prefs = Preferences.userRoot().node( PREFERENCES_PATH );
-        prefs.put( key, value );
+        PREFS.put( key, value );
     }
     
     public static Color retrieveStateColor( ExecutionState state ) {

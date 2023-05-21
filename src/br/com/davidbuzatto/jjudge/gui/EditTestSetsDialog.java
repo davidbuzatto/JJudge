@@ -808,7 +808,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	String json = gson.toJson( testSets );
         
-        JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "saveTestSets" ) ) );
+        JFileChooser jfc = new JFileChooser( new File( Utils.getPref( Utils.PREF_SAVE_TEST_SETS_PATH ) ) );
         jfc.setDialogTitle( bundle.getString( "EditTestSetsDialog.btnOKAndSaveActionPerformed.save" ) );
         jfc.setMultiSelectionEnabled( false );
         jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
@@ -835,7 +835,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             }
 
             if ( save ) {
-                Utils.setPref( "saveTestSets", f.getParentFile().getAbsolutePath() );
+                Utils.setPref( Utils.PREF_SAVE_TEST_SETS_PATH, f.getParentFile().getAbsolutePath() );
                 try ( PrintStream ps = new PrintStream( new FileOutputStream( f ) ) ) {
                     ps.print( json );
                 } catch ( FileNotFoundException exc ) {

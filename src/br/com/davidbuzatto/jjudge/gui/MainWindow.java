@@ -9,8 +9,12 @@ import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import br.com.davidbuzatto.jjudge.utils.Utils;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.EventQueue;
+import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +36,7 @@ import org.apache.commons.io.FileUtils;
  * @author David
  */
 public class MainWindow extends javax.swing.JFrame {
-
+    
     private DefaultListModel<File> listPackagesModel;
     private DefaultListModel<TestSet> listTestSetsModel;
     private List<TestSet> testSets;
@@ -123,7 +127,7 @@ public class MainWindow extends javax.swing.JFrame {
                     
                     packageName = packageName.trim();
                     
-                    JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "buildTestPackagePath" ) ) );
+                    JFileChooser jfc = new JFileChooser( new File( Utils.getPref( Utils.PREF_BUILD_TEST_PACKAGE_PATH ) ) );
                     jfc.setDialogTitle( bundle.getString( "MainWindow.buildTestPackage.filesToInsert" ) );
                     jfc.setMultiSelectionEnabled( true );
                     jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
@@ -138,7 +142,7 @@ public class MainWindow extends javax.swing.JFrame {
                     if ( files != null && files.length > 0 ) {
 
                         String absolutePath = files[0].getParentFile().getAbsolutePath();
-                        Utils.setPref( "buildTestPackagePath", absolutePath );
+                        Utils.setPref( Utils.PREF_BUILD_TEST_PACKAGE_PATH, absolutePath );
                         
                         Student s = new Student();
                         s.setName( name );
@@ -174,9 +178,86 @@ public class MainWindow extends javax.swing.JFrame {
         
     }
     
+    private void addPackage() {
+        
+        JFileChooser jfc = new JFileChooser( new File( Utils.getPref( Utils.PREF_ADD_PACKAGE_PATH ) ) );
+        jfc.setDialogTitle( bundle.getString( "MainWindow.btnAddPackageActionPerformed.packageOrSource" ) );
+        jfc.setMultiSelectionEnabled( true );
+        jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
+        jfc.removeChoosableFileFilter( jfc.getFileFilter() );
+        jfc.setFileFilter( new FileNameExtensionFilter( 
+                bundle.getString( "MainWindow.btnAddPackageActionPerformed.fileTypes" ), 
+                "zip", "c", "cpp", "java", "py" ) );
+        
+        
+        if ( jfc.showOpenDialog( this ) == JFileChooser.APPROVE_OPTION ) {
+            
+            File[] files = jfc.getSelectedFiles();
+        
+            if ( files != null && files.length > 0 ) {
+                
+                Utils.renameFilesToValidName( files );
+                
+                Utils.setPref( Utils.PREF_ADD_PACKAGE_PATH, files[0].getParentFile().getAbsolutePath() );
+                
+                Arrays.sort( files, ( File f1, File f2 ) -> {
+
+                    String n1 = f1.getName();
+                    String n2 = f2.getName();
+
+                    if ( ( n1.startsWith( "ex" ) || n1.startsWith( "de" ) || n1.startsWith( "pr" ) ) && 
+                         ( n2.startsWith( "ex" ) || n2.startsWith( "de" ) || n2.startsWith( "pr" ) ) && 
+                           n1.contains( "." ) && n2.contains( "." ) ) {
+
+                        String t1 = n1.substring( 0, n1.indexOf( "." ) );
+                        String t2 = n2.substring( 0, n2.indexOf( "." ) );
+
+                        String v1;
+                        String v2;
+
+                        try {
+                            v1 = n1.substring( n1.indexOf( "." ) + 1, n1.lastIndexOf( "." ) );
+                            v2 = n2.substring( n2.indexOf( "." ) + 1, n2.lastIndexOf( "." ) );
+                        } catch ( StringIndexOutOfBoundsException exc ) {
+                            return n1.compareTo( n2 );
+                        }
+
+                        try {
+
+                            int num1 = Integer.parseInt( v1 );
+                            int num2 = Integer.parseInt( v2 );
+
+                            int compT = t1.compareTo( t2 );
+
+                            if ( compT == 0 ) {
+                                return num1 - num2;
+                            } else {
+                                return compT;
+                            }
+
+                        } catch ( NumberFormatException exc ) {
+                            return n1.compareTo( n2 );
+                        }
+
+                    } else {
+                        return n1.compareTo( n2 );
+                    }
+
+                });
+
+                for ( File f : files ) {
+                    listPackagesModel.addElement( f );
+                }
+                
+            }
+        
+        }
+        
+    }
+    
     private void loadTestSet() {
         
-        JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "loadTestSets" ) ) );
+        JFileChooser jfc = new JFileChooser( new File( Utils.getPref( Utils.PREF_LOAD_TEST_SETS_PATH ) ) );
         jfc.setDialogTitle( bundle.getString( "MainWindow.loadTestSet.testSetPackage" ) );
         jfc.setMultiSelectionEnabled( false );
         jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
@@ -188,7 +269,7 @@ public class MainWindow extends javax.swing.JFrame {
             File file = jfc.getSelectedFile();
 
             if ( file != null ) {
-                Utils.setPref( "loadTestSets", file.getParentFile().getAbsolutePath() );
+                Utils.setPref( Utils.PREF_LOAD_TEST_SETS_PATH, file.getParentFile().getAbsolutePath() );
                 testSets = Utils.loadTestSets( file );
                 if ( testSets != null ) {
                     buildTestSetsModel();
@@ -204,6 +285,173 @@ public class MainWindow extends javax.swing.JFrame {
         
     }
     
+    private void runTest() {
+        
+        final TestSet tSet;
+        
+        if ( listTestSetsModel.getSize() == 1 ) {
+            tSet = listTestSetsModel.get( 0 );
+        } else {
+            tSet = listTestSets.getSelectedValue();
+        }
+        List<TestSetResult> tSetResList = new ArrayList<>();
+        
+        resultPanel.setTestSetResultList( tSetResList );
+        resultPanel.generateRects();
+        resultPanel.repaint();
+        resultPanel.updateSize();
+        scrollResults.updateUI();
+        
+        if ( tSet != null && !listPackagesModel.isEmpty() ) {
+            
+            new Thread( new Runnable() {
+                
+                @Override
+                public void run() {
+                    
+                    listPackages.setEnabled( false );
+                    listTestSets.setEnabled( false );
+                    btnBuildTestPackage.setEnabled( false );
+                    btnAddPackage.setEnabled( false );
+                    btnRemovePackage.setEnabled( false );
+                    //checkGenerateResultsSpreadsheet.setEnabled( false );
+                    btnLoadTestSet.setEnabled( false );
+                    btnRunTest.setEnabled( false );
+                    menuItemBuildTestPackage.setEnabled( false );
+                    menuItemAddPackage.setEnabled( false );
+                    menuItemLoadTestSets.setEnabled( false );
+                    menuItemRunTest.setEnabled( false );
+                    menuItemExit.setEnabled( false );
+                    menuItemTestSets.setEnabled( false );
+                    menuItemHowTo.setEnabled( false );
+                    menuItemAbout.setEnabled( false );
+                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
+                    textPaneProcessOutput.setText( "" );
+                    //resultPanel.setMouseOverAllowed( false );
+                    
+                    try {
+                        
+                        for ( int i = 0; i < listPackagesModel.size(); i++ ) {
+                            
+                            File file = listPackagesModel.get( i );
+                            File destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
+                            
+                            Utils.addFormattedText( 
+                                    textPaneProcessOutput, 
+                                    String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
+                                    Color.BLUE, false );
+
+                            tSetResList.add( Utils.runTest( 
+                                    file, 
+                                    tSet, 
+                                    outputStreams, 
+                                    secondsToTimeout, 
+                                    textPaneProcessOutput ) );
+
+                            resultPanel.generateRects();
+                            resultPanel.updateSize();
+                            resultPanel.repaint();
+                            scrollResults.updateUI();
+                                
+                            if ( file.getName().endsWith( ".zip" ) ) {
+
+                                Utils.addFormattedText( 
+                                        textPaneProcessOutput, 
+                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
+                                        Color.BLACK, false );
+
+                                FileUtils.deleteDirectory( destDir );
+                                
+                            }
+                            
+                        }
+                        
+                        if ( checkGenerateResultsSpreadsheet.isSelected() ) {
+                            
+                            File f = Utils.processResultsToExcel( tSetResList, tSet );
+                            
+                            if ( f != null && 
+                                 JOptionPane.showConfirmDialog( null, 
+                                     bundle.getString( "MainWindow.confirmOpenExcelFile" ), 
+                                     bundle.getString( "MainWindow.confirm" ), 
+                                     JOptionPane.YES_NO_OPTION ) == JOptionPane.OK_OPTION ) {
+                                
+                                Desktop.getDesktop().open( f );
+                                
+                            }
+                            
+                        }
+                        
+                    } catch ( IOException exc ) {
+                        Utils.addFormattedText( 
+                                textPaneProcessOutput, 
+                                bundle.getString( "MainWindow.btnRunTestActionPerformed.errorCompileAndRun" ),
+                                Color.RED, false );
+                        Utils.showException( exc );
+                    } catch ( InterruptedException exc ) {
+                        Utils.showException( exc );
+                    }
+                    
+                    Utils.addFormattedText( 
+                            textPaneProcessOutput, 
+                            bundle.getString( "MainWindow.btnRunTestActionPerformed.finished" ),
+                            Color.BLACK, false );
+                    
+                    listPackages.setEnabled( true );
+                    listTestSets.setEnabled( true );
+                    btnBuildTestPackage.setEnabled( true );
+                    btnAddPackage.setEnabled( true );
+                    btnRemovePackage.setEnabled( true );
+                    //checkGenerateResultsSpreadsheet.setEnabled( true );
+                    btnLoadTestSet.setEnabled( true );
+                    btnRunTest.setEnabled( true );
+                    menuItemBuildTestPackage.setEnabled( true );
+                    menuItemAddPackage.setEnabled( true );
+                    menuItemLoadTestSets.setEnabled( true);
+                    menuItemRunTest.setEnabled( true );
+                    menuItemExit.setEnabled( true );
+                    menuItemTestSets.setEnabled( true );
+                    menuItemHowTo.setEnabled( true );
+                    menuItemAbout.setEnabled( true );
+                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
+                    //resultPanel.setMouseOverAllowed( true );
+                    
+                }
+                
+            }).start();
+            
+        } else if ( tSet == null ) {
+            JOptionPane.showMessageDialog( 
+                    this, 
+                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorSelectTestSet" ), 
+                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
+        } else {
+            JOptionPane.showMessageDialog( 
+                    this, 
+                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorTest" ), 
+                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
+        }
+        
+    }
+    
+    private void configureLightTheme() {
+
+        FlatIntelliJLaf.setup();
+        Utils.setPref( Utils.PREF_CURRENT_THEME, "light" );
+        SwingUtilities.updateComponentTreeUI( this );
+        SwingUtilities.updateComponentTreeUI( popupMenu );
+            
+    }
+
+    private void configureDarkTheme() {
+
+        FlatDarculaLaf.setup();
+        Utils.setPref( Utils.PREF_CURRENT_THEME, "dark" );
+        SwingUtilities.updateComponentTreeUI( this );
+        SwingUtilities.updateComponentTreeUI( popupMenu );
+        
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -215,6 +463,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         popupMenu = new javax.swing.JPopupMenu();
         menuItemShowDetails = new javax.swing.JMenuItem();
+        btnGroupTheme = new javax.swing.ButtonGroup();
         panelPackages = new javax.swing.JPanel();
         scrollPackages = new javax.swing.JScrollPane();
         listPackages = new javax.swing.JList<>();
@@ -237,12 +486,18 @@ public class MainWindow extends javax.swing.JFrame {
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuItemBuildTestPackage = new javax.swing.JMenuItem();
-        sepMenuFile02 = new javax.swing.JPopupMenu.Separator();
-        menuItemLoadTestSets = new javax.swing.JMenuItem();
+        menuItemAddPackage = new javax.swing.JMenuItem();
         sepMenuFile01 = new javax.swing.JPopupMenu.Separator();
+        menuItemLoadTestSets = new javax.swing.JMenuItem();
+        menuItemRunTest = new javax.swing.JMenuItem();
+        sepMenuFile02 = new javax.swing.JPopupMenu.Separator();
         menuItemExit = new javax.swing.JMenuItem();
         menuEdit = new javax.swing.JMenu();
         menuItemTestSets = new javax.swing.JMenuItem();
+        sepMenuEdit01 = new javax.swing.JPopupMenu.Separator();
+        menuItemTheme = new javax.swing.JMenu();
+        menuItemRadioLightTheme = new javax.swing.JRadioButtonMenuItem();
+        menuItemRadioDarkTheme = new javax.swing.JRadioButtonMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemHowTo = new javax.swing.JMenuItem();
         sepMenuHelp01 = new javax.swing.JPopupMenu.Separator();
@@ -448,6 +703,7 @@ public class MainWindow extends javax.swing.JFrame {
         menuFile.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuFile.m").charAt(0));
         menuFile.setText(bundle.getString("MainWindow.menuFile.text")); // NOI18N
 
+        menuItemBuildTestPackage.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
         menuItemBuildTestPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/package.png"))); // NOI18N
         menuItemBuildTestPackage.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemBuildTestPackage.m").charAt(0));
         menuItemBuildTestPackage.setText(bundle.getString("MainWindow.menuItemBuildTestPackage.text")); // NOI18N
@@ -457,8 +713,20 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         menuFile.add(menuItemBuildTestPackage);
-        menuFile.add(sepMenuFile02);
 
+        menuItemAddPackage.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F12, 0));
+        menuItemAddPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/add.png"))); // NOI18N
+        menuItemAddPackage.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemAddPackage.m").charAt(0));
+        menuItemAddPackage.setText(bundle.getString("MainWindow.menuItemAddPackage.text")); // NOI18N
+        menuItemAddPackage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemAddPackageActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemAddPackage);
+        menuFile.add(sepMenuFile01);
+
+        menuItemLoadTestSets.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         menuItemLoadTestSets.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/database_refresh.png"))); // NOI18N
         menuItemLoadTestSets.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemLoadTestSets.m").charAt(0));
         menuItemLoadTestSets.setText(bundle.getString("MainWindow.menuItemLoadTestSets.text")); // NOI18N
@@ -468,8 +736,20 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         menuFile.add(menuItemLoadTestSets);
-        menuFile.add(sepMenuFile01);
 
+        menuItemRunTest.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F6, 0));
+        menuItemRunTest.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
+        menuItemRunTest.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemRunTest.m").charAt(0));
+        menuItemRunTest.setText(bundle.getString("MainWindow.menuItemRunTest.text")); // NOI18N
+        menuItemRunTest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemRunTestActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemRunTest);
+        menuFile.add(sepMenuFile02);
+
+        menuItemExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuItemExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/door_out.png"))); // NOI18N
         menuItemExit.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemExit.m").charAt(0));
         menuItemExit.setText(bundle.getString("MainWindow.menuItemExit.text")); // NOI18N
@@ -485,6 +765,7 @@ public class MainWindow extends javax.swing.JFrame {
         menuEdit.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuEdit.m").charAt(0));
         menuEdit.setText(bundle.getString("MainWindow.menuEdit.text")); // NOI18N
 
+        menuItemTestSets.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3, 0));
         menuItemTestSets.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/database_edit.png"))); // NOI18N
         menuItemTestSets.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemTestSets.m").charAt(0));
         menuItemTestSets.setText(bundle.getString("MainWindow.menuItemTestSets.text")); // NOI18N
@@ -494,12 +775,37 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         menuEdit.add(menuItemTestSets);
+        menuEdit.add(sepMenuEdit01);
+
+        menuItemTheme.setText(bundle.getString("MainWindow.menuItemTheme.text")); // NOI18N
+
+        btnGroupTheme.add(menuItemRadioLightTheme);
+        menuItemRadioLightTheme.setSelected(true);
+        menuItemRadioLightTheme.setText(bundle.getString("MainWindow.menuItemRadioLightTheme.text")); // NOI18N
+        menuItemRadioLightTheme.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemRadioLightThemeActionPerformed(evt);
+            }
+        });
+        menuItemTheme.add(menuItemRadioLightTheme);
+
+        btnGroupTheme.add(menuItemRadioDarkTheme);
+        menuItemRadioDarkTheme.setText(bundle.getString("MainWindow.menuItemRadioDarkTheme.text")); // NOI18N
+        menuItemRadioDarkTheme.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemRadioDarkThemeActionPerformed(evt);
+            }
+        });
+        menuItemTheme.add(menuItemRadioDarkTheme);
+
+        menuEdit.add(menuItemTheme);
 
         menuBar.add(menuEdit);
 
         menuHelp.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuHelp.m").charAt(0));
         menuHelp.setText(bundle.getString("MainWindow.menuHelp.text")); // NOI18N
 
+        menuItemHowTo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
         menuItemHowTo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/help.png"))); // NOI18N
         menuItemHowTo.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemHowTo.m").charAt(0));
         menuItemHowTo.setText(bundle.getString("MainWindow.menuItemHowTo.text")); // NOI18N
@@ -561,80 +867,7 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddPackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPackageActionPerformed
-        
-        JFileChooser jfc = new JFileChooser( new File( Utils.getPref( "addPackagePath" ) ) );
-        jfc.setDialogTitle( bundle.getString( "MainWindow.btnAddPackageActionPerformed.packageOrSource" ) );
-        jfc.setMultiSelectionEnabled( true );
-        jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
-        jfc.removeChoosableFileFilter( jfc.getFileFilter() );
-        jfc.setFileFilter( new FileNameExtensionFilter( 
-                bundle.getString( "MainWindow.btnAddPackageActionPerformed.fileTypes" ), 
-                "zip", "c", "cpp", "java", "py" ) );
-        
-        
-        if ( jfc.showOpenDialog( this ) == JFileChooser.APPROVE_OPTION ) {
-            
-            File[] files = jfc.getSelectedFiles();
-        
-            if ( files != null && files.length > 0 ) {
-                
-                Utils.renameFilesToValidName( files );
-                
-                Utils.setPref( "addPackagePath", files[0].getParentFile().getAbsolutePath() );
-                
-                Arrays.sort( files, ( File f1, File f2 ) -> {
-
-                    String n1 = f1.getName();
-                    String n2 = f2.getName();
-
-                    if ( ( n1.startsWith( "ex" ) || n1.startsWith( "de" ) || n1.startsWith( "pr" ) ) && 
-                         ( n2.startsWith( "ex" ) || n2.startsWith( "de" ) || n2.startsWith( "pr" ) ) && 
-                           n1.contains( "." ) && n2.contains( "." ) ) {
-
-                        String t1 = n1.substring( 0, n1.indexOf( "." ) );
-                        String t2 = n2.substring( 0, n2.indexOf( "." ) );
-
-                        String v1;
-                        String v2;
-
-                        try {
-                            v1 = n1.substring( n1.indexOf( "." ) + 1, n1.lastIndexOf( "." ) );
-                            v2 = n2.substring( n2.indexOf( "." ) + 1, n2.lastIndexOf( "." ) );
-                        } catch ( StringIndexOutOfBoundsException exc ) {
-                            return n1.compareTo( n2 );
-                        }
-
-                        try {
-
-                            int num1 = Integer.parseInt( v1 );
-                            int num2 = Integer.parseInt( v2 );
-
-                            int compT = t1.compareTo( t2 );
-
-                            if ( compT == 0 ) {
-                                return num1 - num2;
-                            } else {
-                                return compT;
-                            }
-
-                        } catch ( NumberFormatException exc ) {
-                            return n1.compareTo( n2 );
-                        }
-
-                    } else {
-                        return n1.compareTo( n2 );
-                    }
-
-                });
-
-                for ( File f : files ) {
-                    listPackagesModel.addElement( f );
-                }
-                
-            }
-        
-        }
-        
+        addPackage();
     }//GEN-LAST:event_btnAddPackageActionPerformed
 
     private void btnRemovePackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemovePackageActionPerformed
@@ -659,148 +892,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRemovePackageActionPerformed
 
     private void btnRunTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRunTestActionPerformed
-        
-        final TestSet tSet;
-        
-        if ( listTestSetsModel.getSize() == 1 ) {
-            tSet = listTestSetsModel.get( 0 );
-        } else {
-            tSet = listTestSets.getSelectedValue();
-        }
-        List<TestSetResult> tSetResList = new ArrayList<>();
-        
-        resultPanel.setTestSetResultList( tSetResList );
-        resultPanel.generateRects();
-        resultPanel.repaint();
-        resultPanel.updateSize();
-        scrollResults.updateUI();
-        
-        if ( tSet != null && !listPackagesModel.isEmpty() ) {
-            
-            new Thread( new Runnable() {
-                
-                @Override
-                public void run() {
-                    
-                    listPackages.setEnabled( false );
-                    listTestSets.setEnabled( false );
-                    btnBuildTestPackage.setEnabled( false );
-                    btnAddPackage.setEnabled( false );
-                    btnRemovePackage.setEnabled( false );
-                    //checkGenerateResultsSpreadsheet.setEnabled( false );
-                    btnLoadTestSet.setEnabled( false );
-                    btnRunTest.setEnabled( false );
-                    menuItemBuildTestPackage.setEnabled( false );
-                    menuItemLoadTestSets.setEnabled( false );
-                    menuItemExit.setEnabled( false );
-                    menuItemTestSets.setEnabled( false );
-                    menuItemHowTo.setEnabled( false );
-                    menuItemAbout.setEnabled( false );
-                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
-                    textPaneProcessOutput.setText( "" );
-                    //resultPanel.setMouseOverAllowed( false );
-                    
-                    try {
-                        
-                        for ( int i = 0; i < listPackagesModel.size(); i++ ) {
-                            
-                            File file = listPackagesModel.get( i );
-                            File destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
-                            
-                            Utils.addFormattedText( 
-                                    textPaneProcessOutput, 
-                                    String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
-                                    Color.BLUE, false );
-
-                            tSetResList.add( Utils.runTest( 
-                                    file, 
-                                    tSet, 
-                                    outputStreams, 
-                                    secondsToTimeout, 
-                                    textPaneProcessOutput ) );
-
-                            resultPanel.generateRects();
-                            resultPanel.updateSize();
-                            resultPanel.repaint();
-                            scrollResults.updateUI();
-                                
-                            if ( file.getName().endsWith( ".zip" ) ) {
-
-                                Utils.addFormattedText( 
-                                        textPaneProcessOutput, 
-                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
-                                        Color.BLACK, false );
-
-                                FileUtils.deleteDirectory( destDir );
-                                
-                            }
-                            
-                        }
-                        
-                        if ( checkGenerateResultsSpreadsheet.isSelected() ) {
-                            
-                            File f = Utils.processResultsToExcel( tSetResList, tSet );
-                            
-                            if ( f != null && 
-                                 JOptionPane.showConfirmDialog( null, 
-                                     bundle.getString( "MainWindow.confirmOpenExcelFile" ), 
-                                     bundle.getString( "MainWindow.confirm" ), 
-                                     JOptionPane.YES_NO_OPTION ) == JOptionPane.OK_OPTION ) {
-                                
-                                Desktop.getDesktop().open( f );
-                                
-                            }
-                            
-                        }
-                        
-                    } catch ( IOException exc ) {
-                        Utils.addFormattedText( 
-                                textPaneProcessOutput, 
-                                bundle.getString( "MainWindow.btnRunTestActionPerformed.errorCompileAndRun" ),
-                                Color.RED, false );
-                        Utils.showException( exc );
-                    } catch ( InterruptedException exc ) {
-                        Utils.showException( exc );
-                    }
-                    
-                    Utils.addFormattedText( 
-                            textPaneProcessOutput, 
-                            bundle.getString( "MainWindow.btnRunTestActionPerformed.finished" ),
-                            Color.BLACK, false );
-                    
-                    listPackages.setEnabled( true );
-                    listTestSets.setEnabled( true );
-                    btnBuildTestPackage.setEnabled( true );
-                    btnAddPackage.setEnabled( true );
-                    btnRemovePackage.setEnabled( true );
-                    //checkGenerateResultsSpreadsheet.setEnabled( true );
-                    btnLoadTestSet.setEnabled( true );
-                    btnRunTest.setEnabled( true );
-                    menuItemBuildTestPackage.setEnabled( true );
-                    menuItemLoadTestSets.setEnabled( true );
-                    menuItemExit.setEnabled( true );
-                    menuItemTestSets.setEnabled( true );
-                    menuItemHowTo.setEnabled( true );
-                    menuItemAbout.setEnabled( true );
-                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
-                    //resultPanel.setMouseOverAllowed( true );
-                    
-                }
-                
-            }).start();
-            
-        } else if ( tSet == null ) {
-            JOptionPane.showMessageDialog( 
-                    this, 
-                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorSelectTestSet" ), 
-                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
-        } else {
-            JOptionPane.showMessageDialog( 
-                    this, 
-                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorTest" ), 
-                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
-        }
-        
+        runTest();
     }//GEN-LAST:event_btnRunTestActionPerformed
 
     private void listTestSetsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listTestSetsMousePressed
@@ -878,9 +970,65 @@ public class MainWindow extends javax.swing.JFrame {
         loadTestSet();
     }//GEN-LAST:event_btnLoadTestSetActionPerformed
 
+    private void menuItemAddPackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAddPackageActionPerformed
+        addPackage();
+    }//GEN-LAST:event_menuItemAddPackageActionPerformed
+
+    private void menuItemRunTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRunTestActionPerformed
+        runTest();
+    }//GEN-LAST:event_menuItemRunTestActionPerformed
+
+    private void menuItemRadioLightThemeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRadioLightThemeActionPerformed
+        configureLightTheme();
+    }//GEN-LAST:event_menuItemRadioLightThemeActionPerformed
+
+    private void menuItemRadioDarkThemeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRadioDarkThemeActionPerformed
+        configureDarkTheme();
+    }//GEN-LAST:event_menuItemRadioDarkThemeActionPerformed
+    
+    public static void main( String[] args ) {
+        
+        EventQueue.invokeLater( new Runnable() {
+            public void run() {
+                
+                int secondsToTimeout = 5;
+                
+                if ( args.length == 2 ) {
+                    if ( args[0].equals( "-stt" ) ) {
+                        try {
+                            secondsToTimeout = Integer.parseInt( args[1] );
+                        } catch ( NumberFormatException exc ) {
+                        }
+                    }
+                }
+                
+                Utils.preparePreferences( false );
+                MainWindow mainWindow = new MainWindow( secondsToTimeout );
+
+                switch ( Utils.getPref( Utils.PREF_CURRENT_THEME ) ) {
+                    case "light":
+                        mainWindow.configureLightTheme();
+                        mainWindow.menuItemRadioLightTheme.setSelected( true );
+                        break;
+                    case "dark":
+                        mainWindow.configureDarkTheme();
+                        mainWindow.menuItemRadioDarkTheme.setSelected( true );
+                        break;
+                }
+                
+                Utils.updateSplashScreen( 6000 );
+                mainWindow.setVisible( true );
+
+            }
+            
+        } );
+        
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddPackage;
     private javax.swing.JButton btnBuildTestPackage;
+    private javax.swing.ButtonGroup btnGroupTheme;
     private javax.swing.JButton btnLoadTestSet;
     private javax.swing.JButton btnRemovePackage;
     private javax.swing.JButton btnRunTest;
@@ -893,12 +1041,17 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu menuFile;
     private javax.swing.JMenu menuHelp;
     private javax.swing.JMenuItem menuItemAbout;
+    private javax.swing.JMenuItem menuItemAddPackage;
     private javax.swing.JMenuItem menuItemBuildTestPackage;
     private javax.swing.JMenuItem menuItemExit;
     private javax.swing.JMenuItem menuItemHowTo;
     private javax.swing.JMenuItem menuItemLoadTestSets;
+    private javax.swing.JRadioButtonMenuItem menuItemRadioDarkTheme;
+    private javax.swing.JRadioButtonMenuItem menuItemRadioLightTheme;
+    private javax.swing.JMenuItem menuItemRunTest;
     private javax.swing.JMenuItem menuItemShowDetails;
     private javax.swing.JMenuItem menuItemTestSets;
+    private javax.swing.JMenu menuItemTheme;
     private javax.swing.JPanel panelPackages;
     private javax.swing.JPanel panelProcessOutput;
     private javax.swing.JPanel panelResults;
@@ -909,6 +1062,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollProcessOutput;
     private javax.swing.JScrollPane scrollResults;
     private javax.swing.JScrollPane scrollTestSets;
+    private javax.swing.JPopupMenu.Separator sepMenuEdit01;
     private javax.swing.JPopupMenu.Separator sepMenuFile01;
     private javax.swing.JPopupMenu.Separator sepMenuFile02;
     private javax.swing.JPopupMenu.Separator sepMenuHelp01;
