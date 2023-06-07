@@ -535,12 +535,16 @@ public class Utils {
                     textPane.getDocument().insertString( 
                                 textPane.getDocument().getLength(), "\n", attr );
                     
+                    textPane.setCaretPosition(textPane.getDocument().getLength());
+                    
                 }
                 
             } else {
                 textPane.getDocument().insertString( 
                         textPane.getDocument().getLength(), text, attr );
             }
+            
+            textPane.setCaretPosition(textPane.getDocument().getLength());
             
         } catch ( BadLocationException exc ) {
             Utils.showException( exc );

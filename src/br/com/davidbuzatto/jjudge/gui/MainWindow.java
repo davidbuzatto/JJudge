@@ -356,7 +356,7 @@ public class MainWindow extends javax.swing.JFrame {
                             resultPanel.updateSize();
                             resultPanel.repaint();
                             scrollResults.updateUI();
-                                
+                            
                             if ( file.getName().endsWith( ".zip" ) ) {
 
                                 Utils.addFormattedText( 
