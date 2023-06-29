@@ -855,7 +855,7 @@ public class Utils {
     public static File renameFileToValidName( File file ) {
         
         String oldName = file.getName().trim();
-        String newName = oldName.replaceAll( "[^a-zA-Z0-9[.]\\_]", "x" );
+        String newName = oldName.replaceAll( "[^a-zA-Z0-9[.]\\$\\_]", "x" );
         String oldPath = file.getPath().trim();
         String newPath = oldPath.replace( oldName, newName );
 
