@@ -1,0 +1,26 @@
+[
+  {
+    "description": "testes diretórios",
+    "programmingLanguage": "JAVA",
+    "tests": [
+      {
+        "name": "Driver",
+        "testCases": [
+          {
+            "input": "",
+            "output": "teste"
+          }
+        ]
+      },
+      {
+        "name": "ex1$1/Driver2$OR$Driver2",
+        "testCases": [
+          {
+            "input": "",
+            "output": "100 xyz"
+          }
+        ]
+      }
+    ]
+  }
+]

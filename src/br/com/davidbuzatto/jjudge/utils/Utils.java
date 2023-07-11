@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.davidbuzatto.jjudge.utils;
 
 import br.com.davidbuzatto.jjudge.processor.ExecutionState;
@@ -68,7 +63,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 
 /**
  *
- * @author David
+ * @author Prof. Dr. David Buzatto
  */
 public class Utils {
 
@@ -130,6 +125,58 @@ public class Utils {
             
         }
         
+    }
+    
+    public static void newZipFiles( File[] filesToZip, File zipFile ) throws IOException {
+
+        try ( FileOutputStream fos = new FileOutputStream( zipFile ); ZipOutputStream zipOut = new ZipOutputStream( fos ) ) {
+
+            for ( File fileToZip : filesToZip ) {
+                newZipFilesHelper( fileToZip, fileToZip.getName(), zipOut );
+            }
+
+        }
+
+    }
+    
+    private static void newZipFilesHelper( File fileToZip, String fileName, ZipOutputStream zipOut ) throws IOException {
+
+        if ( fileToZip.isHidden() ) {
+            return;
+        }
+
+        if ( fileToZip.isDirectory() ) {
+            
+            if ( fileName.endsWith( "/" ) ) {
+                zipOut.putNextEntry( new ZipEntry( fileName ) );
+                zipOut.closeEntry();
+            } else {
+                zipOut.putNextEntry( new ZipEntry( fileName + "/" ) );
+                zipOut.closeEntry();
+            }
+            
+            for ( File childFile : fileToZip.listFiles() ) {
+                newZipFilesHelper( childFile, fileName + "/" + childFile.getName(), zipOut );
+            }
+            
+            return;
+            
+        }
+        
+        try ( FileInputStream fis = new FileInputStream( fileToZip ) ) {
+            
+            ZipEntry zipEntry = new ZipEntry( fileName );
+            zipOut.putNextEntry( zipEntry );
+            
+            byte[] bytes = new byte[1024];
+            int length;
+            
+            while ( ( length = fis.read( bytes ) ) >= 0 ) {
+                zipOut.write( bytes, 0, length );
+            }
+            
+        }
+
     }
     
     public static void zipDirectory( File dirToZip, File zipFile ) throws IOException {
@@ -358,12 +405,14 @@ public class Utils {
         testSetResult.setTestResults( new ArrayList<>() );
         
         // run all
-        if ( file == null ) {
+        if ( file == null ) { // se for zip
             
             for ( Test t : testSet.getTests() ) {
 
+                String fileName = lookupTestName( t, baseDir, testSet );
+                
                 TestResult testResult = Processor.compileAndRun( 
-                        t.getName(), 
+                        fileName, 
                         baseDir, 
                         secondsToTimeout, 
                         outputStreams,
@@ -382,12 +431,14 @@ public class Utils {
                 String filenameWithoutExt = file.getName();
                 filenameWithoutExt = filenameWithoutExt.substring( 0, filenameWithoutExt.lastIndexOf( "." ) );
                 
+                String fileName = lookupTestName( t, baseDir, testSet );
+                
                 TestResult testResult;
                 
-                if ( filenameWithoutExt.equals( t.getName() ) ) {
+                if ( filenameWithoutExt.equals( fileName ) ) {
                     
                     testResult = Processor.compileAndRun( 
-                            t.getName(), 
+                            fileName, 
                             baseDir, 
                             secondsToTimeout, 
                             outputStreams,
@@ -890,6 +941,39 @@ public class Utils {
             iexc.printStackTrace();
         }
         
+    }
+    
+    public static String lookupTestName( Test t, String baseDir, TestSet testSet ) {
+        
+        String testName = t.getName();
+        int ind = testName.indexOf( "$OR$" );
+
+        if ( ind != -1 ) {
+
+            String fileName1 = testName.substring( 0, ind );
+            String fileName2 = testName.substring( ind + 4 );
+
+            String fileNameDir = fileName1.contains( "/" ) ? fileName1 : fileName2;
+            String fileNameFile = fileName1.contains( "/" ) ? fileName2 : fileName1;
+
+            File fileNameDirT = new File( baseDir + "/" + fileNameDir + "." + 
+                    testSet.getProgrammingLanguage().extension );
+            File fileNameFileT = new File( baseDir + "/" + fileNameFile + "." + 
+                    testSet.getProgrammingLanguage().extension );
+
+            //System.out.println( fileNameDirT + " " + fileNameDirT.exists() );
+            //System.out.println( fileNameFileT + " " + fileNameFileT.exists() );
+
+            if ( fileNameDirT.exists() ) {
+                testName = fileNameDir;
+            } else if ( fileNameFileT.exists() ) {
+                testName = fileNameFile;
+            }
+
+        }
+        
+        return testName;
+                
     }
 
 }

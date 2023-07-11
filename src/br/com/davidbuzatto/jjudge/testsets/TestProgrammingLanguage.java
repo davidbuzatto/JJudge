@@ -1,19 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.davidbuzatto.jjudge.testsets;
 
 /**
  *
- * @author David
+ * @author Prof. Dr. David Buzatto
  */
 public enum TestProgrammingLanguage {
     
-    C,
-    CPP,
-    JAVA,
-    PYTHON
+    C( "c" ),
+    CPP( "cpp" ),
+    JAVA( "java" ),
+    PYTHON( "py" );
+    
+    public final String extension;
+    
+    private TestProgrammingLanguage( String extension ) {
+        this.extension = extension;
+    }
     
 }

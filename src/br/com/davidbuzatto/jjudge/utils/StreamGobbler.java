@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.davidbuzatto.jjudge.utils;
 
 import java.io.BufferedReader;
@@ -15,7 +10,7 @@ import java.io.PrintWriter;
 /**
  * A class to consume processed streams.
  * 
- * @author David Buzatto
+ * @author Prof. Dr. David Buzatto
  * Based on: When Runtime.exe() Won't
  * URL: http://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=1
  */

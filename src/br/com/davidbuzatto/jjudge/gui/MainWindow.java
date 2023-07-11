@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.davidbuzatto.jjudge.gui;
 
 import br.com.davidbuzatto.jjudge.testsets.Student;
@@ -32,7 +27,7 @@ import org.apache.commons.io.FileUtils;
 
 /**
  *
- * @author David
+ * @author Prof. Dr. David Buzatto
  */
 public class MainWindow extends javax.swing.JFrame {
     
@@ -133,7 +128,7 @@ public class MainWindow extends javax.swing.JFrame {
                     JFileChooser jfc = new JFileChooser( new File( Utils.getPref( Utils.PREF_BUILD_TEST_PACKAGE_PATH ) ) );
                     jfc.setDialogTitle( bundle.getString( "MainWindow.buildTestPackage.filesToInsert" ) );
                     jfc.setMultiSelectionEnabled( true );
-                    jfc.setFileSelectionMode( JFileChooser.FILES_ONLY );
+                    jfc.setFileSelectionMode( JFileChooser.FILES_AND_DIRECTORIES );
                     jfc.removeChoosableFileFilter( jfc.getFileFilter() );
                     jfc.setFileFilter( new FileNameExtensionFilter( 
                             bundle.getString( "MainWindow.buildTestPackage.fileTypes" ), 
@@ -161,7 +156,7 @@ public class MainWindow extends javax.swing.JFrame {
                             filesList.add( studentFile );
                             files = filesList.toArray( files );
                             
-                            Utils.zipFiles( files, new File( absolutePath + "/" + packageName + ".zip" )  );
+                            Utils.newZipFiles( files, new File( absolutePath + "/" + packageName + ".zip" )  );
                             
                             studentFile.delete();
                             

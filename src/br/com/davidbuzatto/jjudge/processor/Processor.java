@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.davidbuzatto.jjudge.processor;
 
 import br.com.davidbuzatto.jjudge.testsets.TestCase;
@@ -26,7 +21,7 @@ import javax.swing.JTextPane;
 
 /**
  *
- * @author David
+ * @author Prof. Dr. David Buzatto
  */
 public class Processor {
     
@@ -99,11 +94,32 @@ public class Processor {
                 
             case JAVA:
                 
-                cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s", fileName );
+                if ( fileName.contains( "/" ) ) {
+                        
+                    int ind = fileName.lastIndexOf( '/' );
+                    String fileDir = fileName.substring( 0, ind );
+                    String justName = fileName.substring( ind + 1 );
 
-                compilationCommands = new String[][]{
-                    String.format( "javac %s.java", fileName ).split( "\\s+" )
-                };
+                    /*System.out.println( baseDir );
+                    System.out.println( fileDir );
+                    System.out.println( fileName );*/
+
+                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp %s/%s %s", baseDir, fileDir, justName );
+                    //System.out.println( cmdExec );
+
+                    compilationCommands = new String[][]{
+                        String.format( "javac %s.java -cp %s/%s", fileName, baseDir, fileDir ).split( "\\s+" )
+                    };
+                    
+                } else {
+                    
+                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s", fileName );
+
+                    compilationCommands = new String[][]{
+                        String.format( "javac %s.java", fileName ).split( "\\s+" )
+                    };
+                
+                }
 
                 threadId = new String[]{
                     "    javac"
