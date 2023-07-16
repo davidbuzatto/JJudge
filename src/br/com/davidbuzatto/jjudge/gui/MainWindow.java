@@ -202,20 +202,31 @@ public class MainWindow extends javax.swing.JFrame {
 
                     String n1 = f1.getName();
                     String n2 = f2.getName();
-
-                    if ( ( n1.startsWith( "ex" ) || n1.startsWith( "de" ) || n1.startsWith( "pr" ) ) && 
-                         ( n2.startsWith( "ex" ) || n2.startsWith( "de" ) || n2.startsWith( "pr" ) ) && 
-                           n1.contains( "." ) && n2.contains( "." ) ) {
-
-                        String t1 = n1.substring( 0, n1.indexOf( "." ) );
-                        String t2 = n2.substring( 0, n2.indexOf( "." ) );
+                    String strCmp = ".";
+                    boolean cmp;
+                    
+                    if ( n1.contains( "$" ) || n2.contains( "$" ) ) {
+                        cmp = ( n1.startsWith( "Exercicio" ) || n1.startsWith( "Desafio" ) || n1.startsWith( "Projeto" ) ) && 
+                              ( n2.startsWith( "Exercicio" ) || n2.startsWith( "Desafio" ) || n2.startsWith( "Projeto" ) ) && 
+                                n1.contains( "$" ) && n2.contains( "$" );
+                        strCmp = "$";
+                    } else {
+                        cmp = ( n1.startsWith( "ex" ) || n1.startsWith( "de" ) || n1.startsWith( "pr" ) ) && 
+                              ( n2.startsWith( "ex" ) || n2.startsWith( "de" ) || n2.startsWith( "pr" ) ) && 
+                                n1.contains( "." ) && n2.contains( "." );
+                    }
+                    
+                    if ( cmp ) {
+                        
+                        String t1 = n1.substring( 0, n1.indexOf( strCmp ) );
+                        String t2 = n2.substring( 0, n2.indexOf( strCmp ) );
 
                         String v1;
                         String v2;
 
                         try {
-                            v1 = n1.substring( n1.indexOf( "." ) + 1, n1.lastIndexOf( "." ) );
-                            v2 = n2.substring( n2.indexOf( "." ) + 1, n2.lastIndexOf( "." ) );
+                            v1 = n1.substring( n1.indexOf( strCmp ) + 1, n1.lastIndexOf( "." ) );
+                            v2 = n2.substring( n2.indexOf( strCmp ) + 1, n2.lastIndexOf( "." ) );
                         } catch ( StringIndexOutOfBoundsException exc ) {
                             return n1.compareTo( n2 );
                         }
@@ -236,7 +247,7 @@ public class MainWindow extends javax.swing.JFrame {
                         } catch ( NumberFormatException exc ) {
                             return n1.compareTo( n2 );
                         }
-
+                        
                     } else {
                         return n1.compareTo( n2 );
                     }
