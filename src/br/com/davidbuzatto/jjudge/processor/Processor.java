@@ -104,11 +104,11 @@ public class Processor {
                     System.out.println( fileDir );
                     System.out.println( fileName );*/
 
-                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp %s/%s %s", baseDir, fileDir, justName );
+                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp \"%s/%s\" %s", baseDir, fileDir, justName );
                     //System.out.println( cmdExec );
 
                     compilationCommands = new String[][]{
-                        String.format( "javac %s.java -cp %s/%s", fileName, baseDir, fileDir ).split( "\\s+" )
+                        String.format( "javac %s.java -cp \"%s/%s\"", fileName, baseDir, fileDir ).split( "\\s+" )
                     };
                     
                 } else {
