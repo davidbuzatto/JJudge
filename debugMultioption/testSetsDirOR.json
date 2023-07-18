@@ -5,6 +5,7 @@
     "tests": [
       {
         "name": "Driver",
+        "presentationName": "Driver",
         "testCases": [
           {
             "input": "",
@@ -14,6 +15,7 @@
       },
       {
         "name": "ex1$1/Driver2$OR$Driver2",
+        "presentationName": "Driver2",
         "testCases": [
           {
             "input": "",

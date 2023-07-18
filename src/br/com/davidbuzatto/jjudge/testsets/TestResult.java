@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 public class TestResult {
     
     private String name;
+    private String presentationName;
     private List<TestCaseResult> testCasesResult;
     private ExecutionState executionState;
     private String errorMessage;
@@ -24,6 +25,14 @@ public class TestResult {
 
     public void setName( String name ) {
         this.name = name;
+    }
+
+    public String getPresentationName() {
+        return presentationName;
+    }
+
+    public void setPresentationName( String presentationName ) {
+        this.presentationName = presentationName;
     }
 
     public List<TestCaseResult> getTestCasesResult() {
@@ -57,7 +66,7 @@ public class TestResult {
     @Override
     public String toString() {
         return String.format( bundle.getString( "TestResult.toString.format" ), 
-                name, testCasesResult.size(), executionState );
+                presentationName, testCasesResult.size(), executionState );
     }
     
 }

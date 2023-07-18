@@ -412,6 +412,7 @@ public class Utils {
                 String fileName = lookupTestName( t, baseDir, testSet );
                 
                 TestResult testResult = Processor.compileAndRun( 
+                        t.getPresentationName(),
                         fileName, 
                         baseDir, 
                         secondsToTimeout, 
@@ -438,6 +439,7 @@ public class Utils {
                 if ( filenameWithoutExt.equals( fileName ) ) {
                     
                     testResult = Processor.compileAndRun( 
+                            t.getPresentationName(),
                             fileName, 
                             baseDir, 
                             secondsToTimeout, 
@@ -450,6 +452,7 @@ public class Utils {
                     
                     testResult = new TestResult();
                     testResult.setName( t.getName() );
+                    testResult.setPresentationName( t.getPresentationName() );
                     testResult.setTestCasesResult( new ArrayList<>() );
                     testResult.setExecutionState( ExecutionState.DONT_CHECK );
                     
@@ -648,7 +651,7 @@ public class Utils {
             int cr = 1;   // current row
             
             for ( TestResult tr : tSetResList.get( 0 ).getTestResults() ) {
-                r.getCell( cc++ ).setCellValue( tr.getName() );
+                r.getCell( cc++ ).setCellValue( tr.getPresentationName() );
             }
             r.getCell( cc ).setCellValue( bundle.getString( "Utils.processResultsToExcel.gradeSheet.grade" ) );
             

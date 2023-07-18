@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 public class Test implements Cloneable {
     
     private String name;
+    private String presentationName;
     private List<TestCase> testCases;
     
     private transient ResourceBundle bundle = Utils.bundle;
@@ -24,6 +25,14 @@ public class Test implements Cloneable {
         this.name = name;
     }
 
+    public String getPresentationName() {
+        return presentationName;
+    }
+
+    public void setPresentationName( String presentationName ) {
+        this.presentationName = presentationName;
+    }
+
     public List<TestCase> getTestCases() {
         return testCases;
     }
@@ -34,8 +43,8 @@ public class Test implements Cloneable {
 
     @Override
     public String toString() {
-        return String.format(  bundle.getString( "Test.toString.format" ), 
-                name, testCases.size() );
+        return String.format( bundle.getString( "Test.toString.format" ), 
+                presentationName, testCases.size() );
     }
     
     @Override
@@ -44,6 +53,7 @@ public class Test implements Cloneable {
         Test clone = (Test) super.clone();
         
         clone.name = this.name;
+        clone.presentationName = this.presentationName;
         clone.testCases = new ArrayList<>();
         
         for ( TestCase tc : testCases ) {

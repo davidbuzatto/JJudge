@@ -73,40 +73,15 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
                     Color.BLACK, false );
             Utils.addFormattedText( 
                     textPaneDetails, 
-                    t.getName(),
+                    t.getPresentationName(),
                     Color.BLUE, false );
             Utils.addFormattedText( 
                     textPaneDetails, 
-                    bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.fileName" ),
+                    bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.filename" ),
                     Color.BLACK, false );
             Utils.addFormattedText( 
                     textPaneDetails, 
-                    t.getName(),
-                    Color.BLUE, false );
-            
-            String ext = "";
-            
-            switch ( testSet.getProgrammingLanguage() ) {
-                case C:
-                    ext = ".c";
-                    break;
-                case CPP:
-                    ext = ".cpp";
-                    break;
-                case JAVA:
-                    ext = ".java";
-                    break;
-                case PYTHON:
-                    ext = ".py";
-                    break;
-                default:
-                    ext = bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.undefined" );
-                    break;
-            }
-            
-            Utils.addFormattedText( 
-                    textPaneDetails, 
-                    ext,
+                    processFilename( t, testSet ),
                     Color.BLUE, false );
             
             Utils.addFormattedText( 
@@ -180,6 +155,32 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
                         "|\n",
                         Color.BLACK, false );
             
+        }
+        
+    }
+    
+    private String processFilename( Test test, TestSet testSet ) {
+        
+        String filename = test.getName();
+        String ext = testSet.getProgrammingLanguage().extension;
+        
+        if ( filename.contains( "$OR$" ) ) {
+            
+            String f = "";
+            boolean first = true;
+            
+            for ( String s : filename.split( "[$]OR[$]" ) ) {
+                if ( !first ) {
+                    f += " ou ";
+                }
+                f += s + "." + ext;
+                first = false;
+            }
+            
+            return f;
+            
+        } else {
+            return filename + "." + ext;
         }
         
     }

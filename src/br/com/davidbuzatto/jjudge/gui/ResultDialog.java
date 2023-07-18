@@ -43,7 +43,7 @@ public class ResultDialog extends javax.swing.JDialog {
         
         Utils.addFormattedText( 
                     textPaneResult, 
-                    String.format( bundle.getString( "ResultDialog.processResults.test" ), testResult.getName() ), 
+                    String.format( bundle.getString( "ResultDialog.processResults.test" ), testResult.getPresentationName() ), 
                     Color.BLUE, false );
         
         int testCase = 1;

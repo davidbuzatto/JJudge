@@ -136,7 +136,7 @@ public class ResultPanel extends JPanel {
                     maxStudentWidth = sw;
                 }
                 for ( TestResult tr : tsr.getTestResults() ) {
-                    int tw = fm.stringWidth( tr.getName() );
+                    int tw = fm.stringWidth( tr.getPresentationName() );
                     if ( tw > maxTestNameWidth ) {
                         maxTestNameWidth = tw;
                     }
@@ -163,7 +163,7 @@ public class ResultPanel extends JPanel {
                         
                         g2dt.translate( x, y );
                         g2dt.rotate( Math.toRadians( -90 ) );
-                        g2dt.drawString( tr.getName(), 10, (int) ( RES_WIDTH / 1.5 ) + RES_WIDTH * currLabel );
+                        g2dt.drawString( tr.getPresentationName(), 10, (int) ( RES_WIDTH / 1.5 ) + RES_WIDTH * currLabel );
                         
                         currLabel++;
                         g2dt.dispose();
@@ -251,7 +251,7 @@ public class ResultPanel extends JPanel {
                     maxStudentWidth = sw;
                 }
                 for ( TestResult tr : tsr.getTestResults() ) {
-                    int tw = fm.stringWidth( tr.getName() );
+                    int tw = fm.stringWidth( tr.getPresentationName() );
                     if ( tw > maxTestNameWidth ) {
                         maxTestNameWidth = tw;
                     }

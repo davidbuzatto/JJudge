@@ -162,7 +162,9 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         btnSaveTest = new javax.swing.JButton();
         btnDeleteTest = new javax.swing.JButton();
         panelTestData = new javax.swing.JPanel();
+        lblTestPresName = new javax.swing.JLabel();
         lblTestName = new javax.swing.JLabel();
+        fieldTestPresName = new javax.swing.JTextField();
         fieldTestName = new javax.swing.JTextField();
         panelTestCases = new javax.swing.JPanel();
         scrollTestCases = new javax.swing.JScrollPane();
@@ -356,6 +358,8 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             }
         });
 
+        lblTestPresName.setText(bundle.getString("EditTestSetsDialog.lblTestPresName.text")); // NOI18N
+
         lblTestName.setText(bundle.getString("EditTestSetsDialog.lblTestName.text")); // NOI18N
 
         javax.swing.GroupLayout panelTestDataLayout = new javax.swing.GroupLayout(panelTestData);
@@ -364,15 +368,25 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             panelTestDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTestDataLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTestName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fieldTestName)
+                .addGroup(panelTestDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelTestDataLayout.createSequentialGroup()
+                        .addComponent(lblTestName)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldTestName, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE))
+                    .addGroup(panelTestDataLayout.createSequentialGroup()
+                        .addComponent(lblTestPresName)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldTestPresName, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelTestDataLayout.setVerticalGroup(
             panelTestDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTestDataLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panelTestDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(fieldTestPresName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTestPresName))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelTestDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTestName)
                     .addComponent(fieldTestName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -388,7 +402,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                 .addGroup(panelTestsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scrollTests, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTestsLayout.createSequentialGroup()
-                        .addGap(0, 21, Short.MAX_VALUE)
+                        .addGap(0, 49, Short.MAX_VALUE)
                         .addComponent(btnNewTest)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSaveTest)
@@ -505,22 +519,22 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                         .addComponent(btnSaveTestCase)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnDeleteTestCase))
-                    .addComponent(scrollTestCases, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE))
+                    .addComponent(scrollTestCases, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelTestCasesLayout.setVerticalGroup(
             panelTestCasesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTestCasesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollTestCases, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollTestCases, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelTestCaseData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelTestCasesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnDeleteTestCase)
-                    .addComponent(btnSaveTestCase)
-                    .addComponent(btnNewTestCase))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(panelTestCasesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnNewTestCase, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnSaveTestCase, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnDeleteTestCase, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
         );
 
         btnOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
@@ -592,9 +606,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelTests, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelTestSets, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(panelTestCases, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(panelTestCases, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBottomButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -626,6 +638,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         
         selectedTest = null;
         listModelTests.clear();
+        fieldTestPresName.setText( "" );
         fieldTestName.setText( "" );
         
         selectedTestCase = null;
@@ -654,6 +667,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                 comboTestSetProgLanguage.setSelectedItem( 0 );
                 
                 selectedTest = null;
+                fieldTestPresName.setText( "" );
                 fieldTestName.setText( "" );
                 listModelTests.clear();
 
@@ -678,6 +692,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                 selectedTestSet.getTests().add( selectedTest );
             }
 
+            selectedTest.setPresentationName( fieldTestPresName.getText() );
             selectedTest.setName( fieldTestName.getText() );
 
             listModelTests.clear();
@@ -686,6 +701,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             }
 
             selectedTest = null;
+            fieldTestPresName.setText( "" );
             fieldTestName.setText( "" );
 
             selectedTestCase = null;
@@ -722,6 +738,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
                 selectedTestSet.getTests().remove( index );
                 
                 selectedTest = null;
+                fieldTestPresName.setText( "" );
                 fieldTestName.setText( "" );
 
                 selectedTestCase = null;
@@ -870,6 +887,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
             listModelTests.addElement( t );
         }
         
+        fieldTestPresName.setText( "" );
         fieldTestName.setText( "" );
         
         listModelTestCases.clear();
@@ -891,6 +909,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         selectedTest = listTests.getSelectedValue();
         selectedTestCase = null;
         
+        fieldTestPresName.setText( selectedTest.getPresentationName() );
         fieldTestName.setText( selectedTest.getName() );
         
         listModelTestCases.clear();
@@ -933,6 +952,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         
         selectedTest = null;
         listModelTests.clear();
+        fieldTestPresName.setText( "" );
         fieldTestName.setText( "" );
         
         selectedTestCase = null;
@@ -947,6 +967,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
         if ( selectedTestSet != null ) {
             
             selectedTest = null;
+            fieldTestPresName.setText( "" );
             fieldTestName.setText( "" );
 
             listModelTests.clear();
@@ -1122,10 +1143,12 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnSaveTestSet;
     private javax.swing.JComboBox<String> comboTestSetProgLanguage;
     private javax.swing.JTextField fieldTestName;
+    private javax.swing.JTextField fieldTestPresName;
     private javax.swing.JTextField fieldTestSetDescription;
     private javax.swing.JLabel lblTestCaseInput;
     private javax.swing.JLabel lblTestCaseOutput;
     private javax.swing.JLabel lblTestName;
+    private javax.swing.JLabel lblTestPresName;
     private javax.swing.JLabel lblTestSetDescription;
     private javax.swing.JLabel lblTestSetProgLanguage;
     private javax.swing.JList<TestCase> listTestCases;

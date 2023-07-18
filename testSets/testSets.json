@@ -5,6 +5,7 @@
     "tests": [
       {
         "name": "debugApproveSum",
+        "presentationName": "debugApproveSum",
         "testCases": [
           {
             "input": "1\n2",
@@ -17,7 +18,8 @@
         ]
       },
       {
-        "name": "debugApproveBhaskara",
+        "name": "debugApproveEq2G",
+        "presentationName": "debugApproveEq2G",
         "testCases": [
           {
             "input": "1\n5\n4",
@@ -39,6 +41,7 @@
       },
       {
         "name": "debugApproveComplexOutput",
+        "presentationName": "debugApproveComplexOutput",
         "testCases": [
           {
             "input": "",
@@ -48,6 +51,7 @@
       },
       {
         "name": "debugReproveSum",
+        "presentationName": "debugReproveSum",
         "testCases": [
           {
             "input": "1\n2",
@@ -61,6 +65,7 @@
       },
       {
         "name": "debugReproveComplexOutput",
+        "presentationName": "debugReproveComplexOutput",
         "testCases": [
           {
             "input": "",
@@ -70,6 +75,7 @@
       },
       {
         "name": "debugReproveWithRuntimeError",
+        "presentationName": "debugReproveWithRuntimeError",
         "testCases": [
           {
             "input": "10\n5",
@@ -83,6 +89,7 @@
       },
       {
         "name": "debugCompilationError",
+        "presentationName": "debugCompilationError",
         "testCases": [
           {
             "input": "",
@@ -92,6 +99,7 @@
       },
       {
         "name": "debugInfiniteRecursion",
+        "presentationName": "debugInfiniteRecursion",
         "testCases": [
           {
             "input": "",
@@ -101,6 +109,7 @@
       },
       {
         "name": "debugInfiniteLoop",
+        "presentationName": "debugInfiniteLoop",
         "testCases": [
           {
             "input": "",
@@ -110,6 +119,7 @@
       },
       {
         "name": "debugFileNotFoundError",
+        "presentationName": "debugFileNotFoundError",
         "testCases": []
       }
     ]
@@ -120,6 +130,7 @@
     "tests": [
       {
         "name": "debugApproveSum",
+        "presentationName": "debugApproveSum",
         "testCases": [
           {
             "input": "1\n2",
@@ -132,7 +143,8 @@
         ]
       },
       {
-        "name": "debugApproveBhaskara",
+        "name": "debugApproveEq2G",
+        "presentationName": "debugApproveEq2G",
         "testCases": [
           {
             "input": "1\n5\n4",
@@ -154,6 +166,7 @@
       },
       {
         "name": "debugApproveComplexOutput",
+        "presentationName": "debugApproveComplexOutput",
         "testCases": [
           {
             "input": "",
@@ -163,6 +176,7 @@
       },
       {
         "name": "debugReproveSum",
+        "presentationName": "debugReproveSum",
         "testCases": [
           {
             "input": "1\n2",
@@ -176,6 +190,7 @@
       },
       {
         "name": "debugReproveComplexOutput",
+        "presentationName": "debugReproveComplexOutput",
         "testCases": [
           {
             "input": "",
@@ -185,6 +200,7 @@
       },
       {
         "name": "debugReproveWithRuntimeError",
+        "presentationName": "debugReproveWithRuntimeError",
         "testCases": [
           {
             "input": "10\n5",
@@ -198,6 +214,7 @@
       },
       {
         "name": "debugCompilationError",
+        "presentationName": "debugCompilationError",
         "testCases": [
           {
             "input": "",
@@ -207,6 +224,7 @@
       },
       {
         "name": "debugInfiniteRecursion",
+        "presentationName": "debugInfiniteRecursion",
         "testCases": [
           {
             "input": "",
@@ -216,6 +234,7 @@
       },
       {
         "name": "debugInfiniteLoop",
+        "presentationName": "debugInfiniteLoop",
         "testCases": [
           {
             "input": "",
@@ -225,6 +244,7 @@
       },
       {
         "name": "debugFileNotFoundError",
+        "presentationName": "debugFileNotFoundError",
         "testCases": []
       }
     ]
@@ -235,6 +255,7 @@
     "tests": [
       {
         "name": "debugApproveSum",
+        "presentationName": "debugApproveSum",
         "testCases": [
           {
             "input": "1\n2",
@@ -247,7 +268,8 @@
         ]
       },
       {
-        "name": "debugApproveBhaskara",
+        "name": "debugApproveEq2G",
+        "presentationName": "debugApproveEq2G",
         "testCases": [
           {
             "input": "1\n5\n4",
@@ -269,6 +291,7 @@
       },
       {
         "name": "debugApproveComplexOutput",
+        "presentationName": "debugApproveComplexOutput",
         "testCases": [
           {
             "input": "",
@@ -278,6 +301,7 @@
       },
       {
         "name": "debugReproveSum",
+        "presentationName": "debugReproveSum",
         "testCases": [
           {
             "input": "1\n2",
@@ -291,6 +315,7 @@
       },
       {
         "name": "debugReproveComplexOutput",
+        "presentationName": "debugReproveComplexOutput",
         "testCases": [
           {
             "input": "",
@@ -300,6 +325,7 @@
       },
       {
         "name": "debugReproveWithRuntimeError",
+        "presentationName": "debugReproveWithRuntimeError",
         "testCases": [
           {
             "input": "10\n5",
@@ -313,6 +339,7 @@
       },
       {
         "name": "debugCompilationError",
+        "presentationName": "debugCompilationError",
         "testCases": [
           {
             "input": "",
@@ -322,6 +349,7 @@
       },
       {
         "name": "debugInfiniteRecursion",
+        "presentationName": "debugInfiniteRecursion",
         "testCases": [
           {
             "input": "",
@@ -331,6 +359,7 @@
       },
       {
         "name": "debugInfiniteLoop",
+        "presentationName": "debugInfiniteLoop",
         "testCases": [
           {
             "input": "",
@@ -340,6 +369,7 @@
       },
       {
         "name": "debugFileNotFoundError",
+        "presentationName": "debugFileNotFoundError",
         "testCases": []
       }
     ]
@@ -350,6 +380,7 @@
     "tests": [
       {
         "name": "debugApproveSum",
+        "presentationName": "debugApproveSum",
         "testCases": [
           {
             "input": "1\n2",
@@ -362,7 +393,8 @@
         ]
       },
       {
-        "name": "debugApproveBhaskara",
+        "name": "debugApproveEq2G",
+        "presentationName": "debugApproveEq2G",
         "testCases": [
           {
             "input": "1\n5\n4",
@@ -384,6 +416,7 @@
       },
       {
         "name": "debugApproveComplexOutput",
+        "presentationName": "debugApproveComplexOutput",
         "testCases": [
           {
             "input": "",
@@ -393,6 +426,7 @@
       },
       {
         "name": "debugReproveSum",
+        "presentationName": "debugReproveSum",
         "testCases": [
           {
             "input": "1\n2",
@@ -406,6 +440,7 @@
       },
       {
         "name": "debugReproveComplexOutput",
+        "presentationName": "debugReproveComplexOutput",
         "testCases": [
           {
             "input": "",
@@ -415,6 +450,7 @@
       },
       {
         "name": "debugReproveWithRuntimeError",
+        "presentationName": "debugReproveWithRuntimeError",
         "testCases": [
           {
             "input": "10\n5",
@@ -428,6 +464,7 @@
       },
       {
         "name": "debugInfiniteRecursion",
+        "presentationName": "debugInfiniteRecursion",
         "testCases": [
           {
             "input": "",
@@ -437,6 +474,7 @@
       },
       {
         "name": "debugInfiniteLoop",
+        "presentationName": "debugInfiniteLoop",
         "testCases": [
           {
             "input": "",
@@ -446,6 +484,7 @@
       },
       {
         "name": "debugFileNotFoundError",
+        "presentationName": "debugFileNotFoundError",
         "testCases": []
       }
     ]

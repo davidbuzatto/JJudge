@@ -26,6 +26,7 @@ import javax.swing.JTextPane;
 public class Processor {
     
     public static TestResult compileAndRun( 
+            String presentationName,
             String fileName, 
             String baseDir, 
             int secondsToTimeout, 
@@ -37,6 +38,7 @@ public class Processor {
         ResourceBundle bundle = Utils.bundle;
         
         TestResult testResult = new TestResult();
+        testResult.setPresentationName( presentationName );
         testResult.setName( fileName );
         testResult.setTestCasesResult( new ArrayList<>() );
             
@@ -48,7 +50,7 @@ public class Processor {
         String sourceExt = pLang.name().toLowerCase();
         sourceExt = sourceExt.equals( "python" ) ? "py" : sourceExt;
         
-        String cmdExec = "";
+        String[] cmdExec = new String[0];
         String[] filesToRemoveByExtension = { "o", "exe", "class", "out" };
         String[][] compilationCommands = {};
         String[] threadId = {};
@@ -58,7 +60,9 @@ public class Processor {
             
             case C:
                 
-                cmdExec = String.format( "%s/%s.exe", baseDir, fileName );
+                cmdExec = new String[]{
+                    String.format( "%s/%s.exe", baseDir, fileName )
+                };
 
                 compilationCommands = new String[][]{
                     String.format( "gcc -Werror -Wfatal-errors -c %s.c -o %s.o", fileName, fileName ).split( "\\s+" ),
@@ -76,7 +80,9 @@ public class Processor {
                 
             case CPP:
                 
-                cmdExec = String.format( "%s/%s.exe", baseDir, fileName );
+                cmdExec = new String[]{
+                    String.format( "%s/%s.exe", baseDir, fileName )
+                };
 
                 compilationCommands = new String[][]{
                     String.format( "g++ -Werror -Wfatal-errors -c %s.cpp -o %s.o", fileName, fileName ).split( "\\s+" ),
@@ -100,12 +106,7 @@ public class Processor {
                     String fileDir = fileName.substring( 0, ind );
                     String justName = fileName.substring( ind + 1 );
 
-                    /*System.out.println( baseDir );
-                    System.out.println( fileDir );
-                    System.out.println( fileName );*/
-
-                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp \"%s/%s\" %s", baseDir, fileDir, justName );
-                    //System.out.println( cmdExec );
+                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp \"%s/%s\" %s", baseDir, fileDir, justName ).split( "\\s+" );
 
                     compilationCommands = new String[][]{
                         String.format( "javac %s.java -cp \"%s/%s\"", fileName, baseDir, fileDir ).split( "\\s+" )
@@ -113,7 +114,7 @@ public class Processor {
                     
                 } else {
                     
-                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s", fileName );
+                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s", fileName ).split( "\\s+" );
 
                     compilationCommands = new String[][]{
                         String.format( "javac %s.java", fileName ).split( "\\s+" )
@@ -131,7 +132,7 @@ public class Processor {
                 
             case PYTHON:
                 
-                cmdExec = String.format( "python %s.py", fileName );
+                cmdExec = String.format( "python %s.py", fileName ).split( "\\s+" );
                 break;
             
         }
