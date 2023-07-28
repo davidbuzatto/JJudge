@@ -169,10 +169,34 @@
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="sepMenuEdit01">
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuItemDependencies">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="F4"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/cog.png"/>
+                </Property>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemDependencies.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemDependencies.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemDependenciesActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="sepMenuEdit02">
+            </MenuItem>
             <Menu class="javax.swing.JMenu" name="menuItemTheme">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/br/com/davidbuzatto/jjudge/gui/icons/palette.png"/>
+                </Property>
+                <Property name="mnemonic" type="int" editor="org.netbeans.modules.i18n.form.FormI18nMnemonicEditor">
+                  <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemTheme.m" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="br/com/davidbuzatto/jjudge/gui/Bundle.properties" key="MainWindow.menuItemTheme.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>

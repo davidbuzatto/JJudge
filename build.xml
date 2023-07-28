@@ -78,7 +78,7 @@
         <property name="caminho" value="${dist.dir}/../${artefato}"/>
         
         <!-- cópia do arquivo em lotes para criação do carregador -->
-        <copy file="runbat/RunBuilder.bat" todir="${dist.dir}"/>
+        <!--copy file="runbat/RunBuilder.bat" todir="${dist.dir}"/-->
         
         <!-- remoção do readme -->
         <delete file="${dist.dir}/README.TXT"/>

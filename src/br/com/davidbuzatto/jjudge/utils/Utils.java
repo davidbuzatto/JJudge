@@ -75,6 +75,8 @@ public class Utils {
     public static final String PREF_LOAD_TEST_SETS_PATH = "PREF_LOAD_TEST_SETS_PATH";
     public static final String PREF_SAVE_TEST_SETS_PATH = "PREF_SAVE_TEST_SETS_PATH";
     public static final String PREF_BUILD_TEST_PACKAGE_PATH = "PREF_BUILD_TEST_PACKAGE_PATH";
+    public static final String PREF_TEST_DEPENDENCIES_PATH = "PREF_TEST_DEPENDENCIES_PATH";
+    public static final String PREF_JAVA_CLASSPATH_DEPENDENCIES_PATHS = "PREF_JAVA_CLASSPATH_DEPENDENCIES_PATHS";
     public static final String PREF_CURRENT_THEME = "PREF_CURRENT_THEME";
         
     public static final ResourceBundle bundle = ResourceBundle.getBundle( "br/com/davidbuzatto/jjudge/gui/Bundle" );
@@ -826,6 +828,8 @@ public class Utils {
             PREFS.remove( PREF_LOAD_TEST_SETS_PATH );
             PREFS.remove( PREF_SAVE_TEST_SETS_PATH );
             PREFS.remove( PREF_BUILD_TEST_PACKAGE_PATH );
+            PREFS.remove( PREF_TEST_DEPENDENCIES_PATH );
+            PREFS.remove( PREF_JAVA_CLASSPATH_DEPENDENCIES_PATHS );
             PREFS.remove( PREF_CURRENT_THEME );
         }
         
@@ -834,6 +838,8 @@ public class Utils {
         PREFS.put( PREF_LOAD_TEST_SETS_PATH, PREFS.get( PREF_LOAD_TEST_SETS_PATH, new File( "" ).getAbsolutePath() ) );
         PREFS.put( PREF_SAVE_TEST_SETS_PATH, PREFS.get( PREF_SAVE_TEST_SETS_PATH, new File( "" ).getAbsolutePath() ) );
         PREFS.put( PREF_BUILD_TEST_PACKAGE_PATH, PREFS.get( PREF_BUILD_TEST_PACKAGE_PATH, new File( "" ).getAbsolutePath() ) );
+        PREFS.put( PREF_TEST_DEPENDENCIES_PATH, PREFS.get( PREF_TEST_DEPENDENCIES_PATH, new File( "" ).getAbsolutePath() ) );
+        PREFS.put( PREF_JAVA_CLASSPATH_DEPENDENCIES_PATHS, PREFS.get( PREF_JAVA_CLASSPATH_DEPENDENCIES_PATHS, "" ) );
         PREFS.put( PREF_CURRENT_THEME, PREFS.get( PREF_CURRENT_THEME, "light" ) );
         
     }
@@ -987,16 +993,15 @@ public class Utils {
     
     public static String buildDependenciesPath( List<File> files ) {
         
-        String separator = System.getProperty( "os.name" ).toLowerCase().contains( "windows" ) ? ";" : ";";
         String path = ".";
         
         for ( File f : files ) {
             try {
                 if ( f.exists() ) {
                     if ( f.isFile() ) {
-                        path += separator + f.getCanonicalPath();
+                        path += File.pathSeparator + f.getCanonicalPath();
                     } else if ( f.isDirectory() ) {
-                        path += separator + f.getCanonicalPath() + File.separator + "*";
+                        path += File.pathSeparator + f.getCanonicalPath() + File.separator + "*";
                     }
                 }
             } catch ( IOException exc ) {
@@ -1005,6 +1010,44 @@ public class Utils {
         }
         
         return path;
+        
+    }
+    
+    public static List<File> processStoredFilesPath( String paths ) {
+        
+        List<File> files = new ArrayList<>();
+        
+        for ( String path : paths.split( "<SEP>" ) ) {
+            File f = new File( path );
+            if ( f.exists() ) {
+                files.add( f );
+            }
+        }
+        
+        return files;
+        
+    }
+    
+    public static String generateFilePathsToStore( List<File> files ) {
+        
+        String paths = "";
+        boolean first = true;
+        
+        for ( File f : files ) {
+            if ( !first ) {
+                paths += "<SEP>";
+            }
+            if ( f.exists() ) {
+                try { 
+                    paths += f.getCanonicalPath();
+                    first = false;
+                } catch ( IOException exc ) {
+                    Utils.showException( exc );
+                }
+            }
+        }
+        
+        return paths;
         
     }
 

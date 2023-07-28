@@ -62,7 +62,7 @@ public class Processor {
             case C:
                 
                 cmdExec = new String[]{
-                    String.format( "%s/%s.exe", baseDir, fileName )
+                    String.format( "%s%s%s.exe", baseDir, File.separator, fileName )
                 };
 
                 compilationCommands = new String[][]{
@@ -82,7 +82,7 @@ public class Processor {
             case CPP:
                 
                 cmdExec = new String[]{
-                    String.format( "%s/%s.exe", baseDir, fileName )
+                    String.format( "%s%s%s.exe", baseDir, File.separator, fileName )
                 };
 
                 compilationCommands = new String[][]{
@@ -109,17 +109,40 @@ public class Processor {
                     classpathFilesWithCP = String.format( "-cp \"%s\"", classpathFiles );
                 }
                 
+                /*System.out.println( classpathFiles );
+                System.out.println( classpathFilesWithCP );*/
+                
                 if ( fileName.contains( "/" ) ) {
                         
                     int ind = fileName.lastIndexOf( '/' );
                     String fileDir = fileName.substring( 0, ind );
                     String justName = fileName.substring( ind + 1 );
 
-                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp \"%s/%s%s\" %s", baseDir, fileDir, classpathFiles, justName ).split( "\\s+" );
+                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp \"%s%s%s%s%s\" %s", 
+                            baseDir, 
+                            File.separator,
+                            fileDir, 
+                            File.pathSeparator, 
+                            classpathFiles, 
+                            justName ).split( "\\s+" );
 
                     compilationCommands = new String[][]{
-                        String.format( "javac -Xlint:unchecked %s.java -cp \"%s/%s%s\"", fileName, baseDir, classpathFiles, fileDir ).split( "\\s+" )
+                        String.format( "javac -Xlint:unchecked %s.java -cp \"%s%s%s%s%s\"", 
+                                fileName, 
+                                baseDir, 
+                                File.separator,
+                                fileDir, 
+                                File.pathSeparator, 
+                                classpathFiles ).split( "\\s+" )
                     };
+                    
+                    /*System.out.println( String.format( "javac -Xlint:unchecked %s.java -cp \"%s%s%s%s%s\"", 
+                            fileName, 
+                            baseDir, 
+                            File.separator,
+                            fileDir, 
+                            File.pathSeparator, 
+                            classpathFiles ) );*/
                     
                 } else {
                     
