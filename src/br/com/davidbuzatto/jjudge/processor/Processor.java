@@ -33,7 +33,8 @@ public class Processor {
             boolean outputStreams,
             List<TestCase> testCases,
             TestProgrammingLanguage pLang,
-            JTextPane textPane ) throws IOException, InterruptedException {
+            JTextPane textPane,
+            List<File> javaClasspathFiles ) throws IOException, InterruptedException {
         
         ResourceBundle bundle = Utils.bundle;
         
@@ -100,24 +101,32 @@ public class Processor {
                 
             case JAVA:
                 
+                String classpathFiles = "";
+                String classpathFilesWithCP = "";
+                
+                if ( javaClasspathFiles != null ) {
+                    classpathFiles = Utils.buildDependenciesPath( javaClasspathFiles );
+                    classpathFilesWithCP = String.format( "-cp \"%s\"", classpathFiles );
+                }
+                
                 if ( fileName.contains( "/" ) ) {
                         
                     int ind = fileName.lastIndexOf( '/' );
                     String fileDir = fileName.substring( 0, ind );
                     String justName = fileName.substring( ind + 1 );
 
-                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp \"%s/%s\" %s", baseDir, fileDir, justName ).split( "\\s+" );
+                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp \"%s/%s%s\" %s", baseDir, fileDir, classpathFiles, justName ).split( "\\s+" );
 
                     compilationCommands = new String[][]{
-                        String.format( "javac %s.java -cp \"%s/%s\"", fileName, baseDir, fileDir ).split( "\\s+" )
+                        String.format( "javac -Xlint:unchecked %s.java -cp \"%s/%s%s\"", fileName, baseDir, classpathFiles, fileDir ).split( "\\s+" )
                     };
                     
                 } else {
                     
-                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s", fileName ).split( "\\s+" );
+                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s%s", classpathFilesWithCP + " ", fileName ).split( "\\s+" );
 
                     compilationCommands = new String[][]{
-                        String.format( "javac %s.java", fileName ).split( "\\s+" )
+                        String.format( "javac -Xlint:unchecked %s.java%s", fileName, " " + classpathFilesWithCP ).split( "\\s+" )
                     };
                 
                 }

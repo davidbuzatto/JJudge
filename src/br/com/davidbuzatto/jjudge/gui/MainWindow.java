@@ -9,6 +9,7 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.EventQueue;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -43,20 +45,25 @@ public class MainWindow extends javax.swing.JFrame {
     private Color resultPanelBackgroundColor;
     private Color testSetDetailsDialogBackgroundColor;
     
-    /**
-     * Creates new form JJudge
-     */
+    private boolean running;
+    private final Icon RUN_ICON;
+    private final Icon STOP_ICON;
+    
     public MainWindow() {
-        this ( 5 );
+        this( 5 );
     }
     
-    /**
-     * Creates new form JJudge
-     */
     public MainWindow( int secondsToTimeout ) {
+        
         this.secondsToTimeout = secondsToTimeout;
+        RUN_ICON = new ImageIcon( getClass().getResource(
+                "/br/com/davidbuzatto/jjudge/gui/icons/accept.png" ) );
+        STOP_ICON = new ImageIcon( getClass().getResource(
+                "/br/com/davidbuzatto/jjudge/gui/icons/stop.png" ) );
+        
         initComponents();
         customInit();
+        
     }
 
     private void customInit() {
@@ -80,13 +87,7 @@ public class MainWindow extends javax.swing.JFrame {
         setExtendedState( JFrame.MAXIMIZED_BOTH );
         resultPanel.setMouseOverAllowed( true );
         
-        //testSets = Utils.loadTestSets();
-        //buildTestSetsModel();
-        
-        //listPackagesModel.addElement( new File( "debugPackageC.zip" ) );
-        //listPackagesModel.addElement( new File( "debugPackageCPP.zip" ) );
-        //listPackagesModel.addElement( new File( "debugPackageJAVA.zip" ) );
-        //listPackagesModel.addElement( new File( "debugPackagePYTHON.zip" ) );
+        prepareForDebug();
         
     }
     
@@ -264,6 +265,27 @@ public class MainWindow extends javax.swing.JFrame {
         
     }
     
+    private void removePackage() {
+        
+        if ( listPackages.getSelectedValue() != null ) {
+            
+            if ( JOptionPane.showConfirmDialog( 
+                    this, bundle.getString( "MainWindow.btnRemovePackageActionPerformed.confirmMessage" ),
+                    bundle.getString( "MainWindow.btnRemovePackageActionPerformed.confirmTitle" ),
+                    JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION ) {
+                
+                int[] indices = listPackages.getSelectedIndices();
+                
+                for ( int i = indices.length-1; i >= 0; i-- ) {
+                    listPackagesModel.remove( indices[i] );
+                }
+                
+            }
+            
+        }
+        
+    }
+    
     private void loadTestSet() {
         
         JFileChooser jfc = new JFileChooser( new File( Utils.getPref( Utils.PREF_LOAD_TEST_SETS_PATH ) ) );
@@ -318,14 +340,17 @@ public class MainWindow extends javax.swing.JFrame {
                 @Override
                 public void run() {
                     
+                    running = true;
+                    
+                    btnRunTest.setText( bundle.getString( "MainWindow.btnRunTestStop.text" ) );
+                    btnRunTest.setIcon( STOP_ICON );
+                    
                     listPackages.setEnabled( false );
                     listTestSets.setEnabled( false );
                     btnBuildTestPackage.setEnabled( false );
                     btnAddPackage.setEnabled( false );
                     btnRemovePackage.setEnabled( false );
-                    //checkGenerateResultsSpreadsheet.setEnabled( false );
                     btnLoadTestSet.setEnabled( false );
-                    btnRunTest.setEnabled( false );
                     menuItemBuildTestPackage.setEnabled( false );
                     menuItemAddPackage.setEnabled( false );
                     menuItemLoadTestSets.setEnabled( false );
@@ -337,11 +362,10 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
                     textPaneProcessOutput.setText( "" );
-                    //resultPanel.setMouseOverAllowed( false );
                     
                     try {
                         
-                        for ( int i = 0; i < listPackagesModel.size(); i++ ) {
+                        for ( int i = 0; i < listPackagesModel.size() && running; i++ ) {
                             
                             File file = listPackagesModel.get( i );
                             File destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
@@ -350,13 +374,14 @@ public class MainWindow extends javax.swing.JFrame {
                                     textPaneProcessOutput, 
                                     String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
                                     Color.BLUE, false );
-
+                            
                             tSetResList.add( Utils.runTest( 
                                     file, 
                                     tSet, 
                                     outputStreams, 
                                     secondsToTimeout, 
-                                    textPaneProcessOutput ) );
+                                    textPaneProcessOutput,
+                                    getJavaClasspathFiles() ) );
 
                             resultPanel.generateRects();
                             resultPanel.updateSize();
@@ -412,9 +437,7 @@ public class MainWindow extends javax.swing.JFrame {
                     btnBuildTestPackage.setEnabled( true );
                     btnAddPackage.setEnabled( true );
                     btnRemovePackage.setEnabled( true );
-                    //checkGenerateResultsSpreadsheet.setEnabled( true );
                     btnLoadTestSet.setEnabled( true );
-                    btnRunTest.setEnabled( true );
                     menuItemBuildTestPackage.setEnabled( true );
                     menuItemAddPackage.setEnabled( true );
                     menuItemLoadTestSets.setEnabled( true);
@@ -425,7 +448,12 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
-                    //resultPanel.setMouseOverAllowed( true );
+                    
+                    btnRunTest.setText( bundle.getString( "MainWindow.btnRunTest.text" ) );
+                    btnRunTest.setIcon( RUN_ICON );
+                    btnRunTest.setEnabled( true );
+                    
+                    running = false;
                     
                 }
                 
@@ -482,6 +510,45 @@ public class MainWindow extends javax.swing.JFrame {
         SwingUtilities.updateComponentTreeUI( popupMenu );
         
         resultPanel.repaint();
+        
+    }
+    
+    private List<File> getJavaClasspathFiles() {
+        
+        List<File> javaClasspathFiles = new ArrayList<>();
+        javaClasspathFiles.add( new File( "D:\\Google Drive\\Projetos e Códigos\\Corretor de Exercícios\\JJudge\\testSets\\dependencies\\AlgoritmosEstruturasDeDados.jar" ) );
+        javaClasspathFiles.add( new File( "D:\\Google Drive\\Projetos e Códigos\\Corretor de Exercícios\\JJudge\\testSets\\dependencies" ) );
+        
+        return javaClasspathFiles;
+        
+    }
+    
+    private void prepareForDebug() {
+        
+        testSets = Utils.loadTestSets( new File( "testSets/javaTestSets.json" ) );
+        buildTestSetsModel();
+        listPackagesModel.addElement( new File( "testSets/javaTest.zip" ) );
+        listPackagesModel.addElement( new File( "testSets/javaTestFiles/Exercicio1$1.java" ) );
+        listPackagesModel.addElement( new File( "testSets/javaTestFiles/Exercicio1$2.java" ) );
+        listPackagesModel.addElement( new File( "testSets/javaTestFiles/Exercicio1$3.java" ) );
+        listPackagesModel.addElement( new File( "testSets/javaTestFiles/Exercicio1$4.java" ) );
+        listPackagesModel.addElement( new File( "testSets/javaTestFiles/Exercicio1$5.java" ) );
+        
+        /*testSets = Utils.loadTestSets( new File( "testSets/cTestSets.json" ) );
+        buildTestSetsModel();
+        listPackagesModel.addElement( new File( "testSets/cTest.zip" ) );
+        listPackagesModel.addElement( new File( "testSets/cTestFiles/ex1.1.c" ) );
+        listPackagesModel.addElement( new File( "testSets/cTestFiles/ex1.2.c" ) );
+        listPackagesModel.addElement( new File( "testSets/cTestFiles/ex1.3.c" ) );
+        listPackagesModel.addElement( new File( "testSets/cTestFiles/ex1.4.c" ) );
+        listPackagesModel.addElement( new File( "testSets/cTestFiles/ex1.5.c" ) );*/
+        
+        /*testSets = Utils.loadTestSets( new File( "testSets/testSets.json" ) );
+        buildTestSetsModel();
+        listPackagesModel.addElement( new File( "testSets/debugPackageC.zip" ) );
+        listPackagesModel.addElement( new File( "testSets/debugPackageCPP.zip" ) );
+        listPackagesModel.addElement( new File( "testSets/debugPackageJAVA.zip" ) );
+        listPackagesModel.addElement( new File( "testSets/debugPackagePYTHON.zip" ) );*/
         
     }
     
@@ -551,6 +618,11 @@ public class MainWindow extends javax.swing.JFrame {
 
         panelPackages.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("MainWindow.panelPackages.border.title"))); // NOI18N
 
+        listPackages.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                listPackagesKeyReleased(evt);
+            }
+        });
         scrollPackages.setViewportView(listPackages);
 
         btnBuildTestPackage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/package.png"))); // NOI18N
@@ -875,7 +947,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(panelPackages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(panelTestSets, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(panelProcessOutput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -888,9 +960,9 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(panelPackages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(panelTestSets, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(panelTestSets, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(panelPackages, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panelProcessOutput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -905,28 +977,17 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddPackageActionPerformed
 
     private void btnRemovePackageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemovePackageActionPerformed
-        
-        if ( listPackages.getSelectedValue() != null ) {
-            
-            if ( JOptionPane.showConfirmDialog( 
-                    this, bundle.getString( "MainWindow.btnRemovePackageActionPerformed.confirmMessage" ),
-                    bundle.getString( "MainWindow.btnRemovePackageActionPerformed.confirmTitle" ),
-                    JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION ) {
-                
-                int[] indices = listPackages.getSelectedIndices();
-                
-                for ( int i = indices.length-1; i >= 0; i-- ) {
-                    listPackagesModel.remove( indices[i] );
-                }
-                
-            }
-            
-        }
-        
+        removePackage();
     }//GEN-LAST:event_btnRemovePackageActionPerformed
 
     private void btnRunTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRunTestActionPerformed
-        runTest();
+        if ( !running ) {
+            runTest();
+        } else {
+            running = false;
+            btnRunTest.setText( bundle.getString( "MainWindow.btnRunTestStopping.text" ) );
+            btnRunTest.setEnabled( false );
+        }
     }//GEN-LAST:event_btnRunTestActionPerformed
 
     private void listTestSetsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listTestSetsMousePressed
@@ -1020,10 +1081,17 @@ public class MainWindow extends javax.swing.JFrame {
     private void menuItemRadioDarkThemeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRadioDarkThemeActionPerformed
         configureDarkTheme();
     }//GEN-LAST:event_menuItemRadioDarkThemeActionPerformed
+
+    private void listPackagesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_listPackagesKeyReleased
+        if ( evt.getKeyCode() == KeyEvent.VK_DELETE ) {
+            removePackage();
+        }
+    }//GEN-LAST:event_listPackagesKeyReleased
     
     public static void main( String[] args ) {
         
         EventQueue.invokeLater( new Runnable() {
+            
             public void run() {
                 
                 int secondsToTimeout = 5;

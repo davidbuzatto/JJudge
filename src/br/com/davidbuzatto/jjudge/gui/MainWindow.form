@@ -294,7 +294,7 @@
                   <Group type="102" attributes="0">
                       <Component id="panelPackages" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="panelTestSets" min="-2" max="-2" attributes="0"/>
+                      <Component id="panelTestSets" max="32767" attributes="0"/>
                   </Group>
                   <Component id="panelProcessOutput" max="32767" attributes="0"/>
               </Group>
@@ -311,9 +311,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="panelResults" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="panelPackages" min="-2" max="-2" attributes="0"/>
-                          <Component id="panelTestSets" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="panelTestSets" max="32767" attributes="0"/>
+                          <Component id="panelPackages" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="panelProcessOutput" max="32767" attributes="0"/>
@@ -385,6 +385,9 @@
                   <StringArray count="0"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="listPackagesKeyReleased"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;File&gt;"/>
               </AuxValues>

@@ -1,0 +1,58 @@
+[
+  {
+    "description": "capitulo01EntradaSaidaPadraoFormatados",
+    "programmingLanguage": "JAVA",
+    "tests": [
+      {
+        "name": "Exercicio1$1",
+        "presentationName": "Exercício 1.1",
+        "testCases": [
+          {
+            "input": "",
+            "output": "Ola Mundo!"
+          }
+        ]
+      },
+      {
+        "name": "Exercicio1$2",
+        "presentationName": "Exercício 1.2",
+        "testCases": [
+          {
+            "input": "",
+            "output": "   *\n  ***\n *****\n*******"
+          }
+        ]
+      },
+      {
+        "name": "Exercicio1$3",
+        "presentationName": "Exercício 1.3",
+        "testCases": [
+          {
+            "input": "",
+            "output": "########\n#      #\n#      #\n#      #\n#      #\n########"
+          }
+        ]
+      },
+      {
+        "name": "Exercicio1$4",
+        "presentationName": "Exercício 1.4",
+        "testCases": [
+          {
+            "input": "",
+            "output": "       *\n      *\n     *\n*   *\n * *\n  *"
+          }
+        ]
+      },
+      {
+        "name": "Exercicio1$5",
+        "presentationName": "Exercício 1.5",
+        "testCases": [
+          {
+            "input": "",
+            "output": "*********         ***           *            *\n*       *       *     *        ***          * *\n*       *      *       *      *****        *   *\n*       *      *       *        *         *     *\n*       *      *       *        *        *       *\n*       *      *       *        *         *     *\n*       *      *       *        *          *   *\n*       *       *     *         *           * *\n*********         ***           *            *"
+          }
+        ]
+      }
+    ]
+  }
+]

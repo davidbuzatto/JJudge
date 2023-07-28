@@ -5,6 +5,7 @@ import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import br.com.davidbuzatto.jjudge.utils.Utils;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public class TestsPythonLanguage {
         int secondsToTimeout = 10;
         
         Student student = Utils.loadStudent( baseDir );
-        List<TestSet> testSets = Utils.loadTestSets();
+        List<TestSet> testSets = Utils.loadTestSets( new File( "testSets/testSets.json" ) );
         
         TestSet testSet = null;
         for ( TestSet t : testSets ) {
@@ -42,7 +43,8 @@ public class TestsPythonLanguage {
                     secondsToTimeout, 
                     outputStreams,
                     null,
-                    null  );
+                    null,
+                    null );
 
             System.out.println( testSet.getDescription() );
             System.out.println( tResSet.getStudent() );

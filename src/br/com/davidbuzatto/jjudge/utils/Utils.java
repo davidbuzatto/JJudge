@@ -398,7 +398,8 @@ public class Utils {
             int secondsToTimeout, 
             boolean outputStreams,
             JTextPane textPane,
-            File file ) throws IOException, InterruptedException {
+            File file,
+            List<File> javaClasspathFiles ) throws IOException, InterruptedException {
         
         TestSetResult testSetResult = new TestSetResult();
         testSetResult.setStudent( student );
@@ -419,10 +420,11 @@ public class Utils {
                         outputStreams,
                         t.getTestCases(),
                         testSet.getProgrammingLanguage(),
-                        textPane );
-
+                        textPane,
+                        javaClasspathFiles );
+                
                 testSetResult.getTestResults().add( testResult );
-
+                
             }
             
         } else {
@@ -446,7 +448,8 @@ public class Utils {
                             outputStreams,
                             t.getTestCases(),
                             testSet.getProgrammingLanguage(),
-                            textPane );
+                            textPane,
+                            javaClasspathFiles );
                 
                 } else {
                     
@@ -483,7 +486,8 @@ public class Utils {
             TestSet testSet, 
             boolean outputStreams, 
             int secondsToTimeout,
-            JTextPane textPane ) throws IOException, InterruptedException {
+            JTextPane textPane,
+            List<File> javaClasspathFiles ) throws IOException, InterruptedException {
         
         File destDir;
         Student student = new Student();
@@ -542,7 +546,8 @@ public class Utils {
                         secondsToTimeout, 
                         outputStreams,
                         textPane,
-                        null );
+                        null,
+                        javaClasspathFiles );
             } else {
                 return verify( 
                         testSet, 
@@ -551,7 +556,8 @@ public class Utils {
                         secondsToTimeout, 
                         outputStreams,
                         textPane,
-                        file );
+                        file,
+                        javaClasspathFiles );
             }
             
         }
@@ -977,6 +983,29 @@ public class Utils {
         
         return testName;
                 
+    }
+    
+    public static String buildDependenciesPath( List<File> files ) {
+        
+        String separator = System.getProperty( "os.name" ).toLowerCase().contains( "windows" ) ? ";" : ";";
+        String path = ".";
+        
+        for ( File f : files ) {
+            try {
+                if ( f.exists() ) {
+                    if ( f.isFile() ) {
+                        path += separator + f.getCanonicalPath();
+                    } else if ( f.isDirectory() ) {
+                        path += separator + f.getCanonicalPath() + File.separator + "*";
+                    }
+                }
+            } catch ( IOException exc ) {
+                Utils.showException( exc );
+            }
+        }
+        
+        return path;
+        
     }
 
 }
