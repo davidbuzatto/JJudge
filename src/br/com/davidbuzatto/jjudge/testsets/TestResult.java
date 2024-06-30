@@ -32,7 +32,11 @@ public class TestResult {
     }
 
     public void setPresentationName( String presentationName ) {
-        this.presentationName = presentationName;
+        if ( presentationName == null ) {
+            this.presentationName = bundle.getString( "TestResult.noPresentationName" );
+        } else {
+            this.presentationName = presentationName;
+        }
     }
 
     public List<TestCaseResult> getTestCasesResult() {
