@@ -329,7 +329,8 @@ public class Utils {
                                 "/testSets.json"  ) ) );
 
         Type listType = new TypeToken<ArrayList<TestSet>>(){}.getType();
-        testSets = new Gson().fromJson( reader, listType );
+        Gson gson = new GsonBuilder().registerTypeAdapterFactory( new PostProcessingEnabler() ).create();
+        testSets = gson.fromJson( reader, listType );
         
         return testSets;
         
@@ -345,7 +346,8 @@ public class Utils {
                     new FileReader( file, StandardCharsets.UTF_8 ) );
 
             Type listType = new TypeToken<ArrayList<TestSet>>(){}.getType();
-            testSets = new Gson().fromJson( reader, listType );
+            Gson gson = new GsonBuilder().registerTypeAdapterFactory( new PostProcessingEnabler() ).create();
+            testSets = gson.fromJson( reader, listType );
             
         } catch ( FileNotFoundException exc ) {
             Utils.showException( exc );

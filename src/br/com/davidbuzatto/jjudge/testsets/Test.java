@@ -1,5 +1,6 @@
 package br.com.davidbuzatto.jjudge.testsets;
 
+import br.com.davidbuzatto.jjudge.utils.PostProcessable;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.ResourceBundle;
  *
  * @author Prof. Dr. David Buzatto
  */
-public class Test implements Cloneable {
+public class Test implements Cloneable, PostProcessable {
     
     private String name;
     private String presentationName;
@@ -62,6 +63,13 @@ public class Test implements Cloneable {
         
         return clone;
         
+    }
+
+    @Override
+    public void gsonPostProcess() {
+        if ( presentationName == null ) {
+            this.presentationName = bundle.getString( "TestResult.noPresentationName" );
+        }
     }
     
 }
