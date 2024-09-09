@@ -1052,5 +1052,9 @@ public class Utils {
         return paths;
         
     }
-
+    
+    public static boolean runningOnWindows() {
+        return System.getProperty( "os.name" ).toLowerCase().contains( "windows" );
+    }
+    
 }

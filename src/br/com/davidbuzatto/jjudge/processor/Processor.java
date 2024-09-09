@@ -103,22 +103,39 @@ public class Processor {
                 
                 String classpathFiles = "";
                 String classpathFilesWithCP = "";
+                boolean runningOnWindows = Utils.runningOnWindows();
                 
                 if ( javaClasspathFiles != null ) {
                     classpathFiles = Utils.buildDependenciesPath( javaClasspathFiles );
-                    classpathFilesWithCP = String.format( "-cp \"%s\"", classpathFiles );
+                    if ( runningOnWindows ) {
+                        classpathFilesWithCP = String.format( "-cp \"%s\"", classpathFiles );
+                    } else {
+                        classpathFilesWithCP = String.format( "-cp %s", classpathFiles );
+                    }
                 }
                 
                 /*System.out.println( classpathFiles );
                 System.out.println( classpathFilesWithCP );*/
                 
+                // multiple file compilation and execution
                 if ( fileName.contains( "/" ) ) {
                         
                     int ind = fileName.lastIndexOf( '/' );
                     String fileDir = fileName.substring( 0, ind );
                     String justName = fileName.substring( ind + 1 );
-
-                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US -cp \"%s%s%s%s%s\" %s", 
+                    
+                    String cmdExecString;
+                    String compilationCommandsString;
+                    
+                    if ( runningOnWindows ) {
+                        cmdExecString = "java -Duser.language=en -Duser.country=US -cp \"%s%s%s%s%s\" %s";
+                        compilationCommandsString = "javac -Xlint:unchecked %s.java -cp \"%s%s%s%s%s\"";
+                    } else {
+                        cmdExecString = "java -Duser.language=en -Duser.country=US -cp %s%s%s%s%s %s";
+                        compilationCommandsString = "javac -Xlint:unchecked %s.java -cp %s%s%s%s%s";
+                    }
+                    
+                    cmdExec = String.format( cmdExecString, 
                             baseDir, 
                             File.separator,
                             fileDir, 
@@ -127,7 +144,7 @@ public class Processor {
                             justName ).split( "\\s+" );
 
                     compilationCommands = new String[][]{
-                        String.format( "javac -Xlint:unchecked %s.java -cp \"%s%s%s%s%s\"", 
+                        String.format( compilationCommandsString, 
                                 fileName, 
                                 baseDir, 
                                 File.separator,
@@ -135,14 +152,6 @@ public class Processor {
                                 File.pathSeparator, 
                                 classpathFiles ).split( "\\s+" )
                     };
-                    
-                    /*System.out.println( String.format( "javac -Xlint:unchecked %s.java -cp \"%s%s%s%s%s\"", 
-                            fileName, 
-                            baseDir, 
-                            File.separator,
-                            fileDir, 
-                            File.pathSeparator, 
-                            classpathFiles ) );*/
                     
                 } else {
                     
