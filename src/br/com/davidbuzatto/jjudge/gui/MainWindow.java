@@ -3,6 +3,7 @@ package br.com.davidbuzatto.jjudge.gui;
 import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
+import br.com.davidbuzatto.jjudge.utils.NoGuiModeWrapper;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
@@ -1131,44 +1132,65 @@ public class MainWindow extends javax.swing.JFrame {
     
     public static void main( String[] args ) {
         
-        EventQueue.invokeLater( new Runnable() {
+        if ( args.length == 4 && args[0].equals( "-nogui" ) ) {
             
-            public void run() {
-                
-                System.setOut( new PrintStream( new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8 ) );
-                System.setErr( new PrintStream( new FileOutputStream(FileDescriptor.err), true, StandardCharsets.UTF_8 ) );
-        
-                int secondsToTimeout = 5;
-                
-                if ( args.length == 2 ) {
-                    if ( args[0].equals( "-stt" ) ) {
-                        try {
-                            secondsToTimeout = Integer.parseInt( args[1] );
-                        } catch ( NumberFormatException exc ) {
-                        }
-                    }
-                }
-                
-                Utils.preparePreferences( false );
-                MainWindow mainWindow = new MainWindow( secondsToTimeout );
-
-                switch ( Utils.getPref( Utils.PREF_CURRENT_THEME ) ) {
-                    case "light":
-                        mainWindow.configureLightTheme();
-                        mainWindow.menuItemRadioLightTheme.setSelected( true );
-                        break;
-                    case "dark":
-                        mainWindow.configureDarkTheme();
-                        mainWindow.menuItemRadioDarkTheme.setSelected( true );
-                        break;
-                }
-                
-                Utils.updateSplashScreen( 6000 );
-                mainWindow.setVisible( true );
-
+            String fileToTestPath = args[1];
+            String testSetsFilePath = args[2];
+            int testSetToExecute = Integer.parseInt( args[3] );
+            
+            File fileToTest = new File( new File( fileToTestPath ).getAbsolutePath() );
+            File testSetsFile = new File( testSetsFilePath );
+            List<TestSet> testSets = Utils.loadTestSets( testSetsFile );
+            
+            if( testSetToExecute < testSets.size() ) {
+                TestSet testSet = testSets.get( testSetToExecute );
+                NoGuiModeWrapper.runTest( fileToTest, testSet );
+            } else {
+                System.out.println( "Invalid test set to execute!" );
             }
             
-        } );
+        } else {
+            
+            EventQueue.invokeLater( new Runnable() {
+
+                public void run() {
+
+                    System.setOut( new PrintStream( new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8 ) );
+                    System.setErr( new PrintStream( new FileOutputStream(FileDescriptor.err), true, StandardCharsets.UTF_8 ) );
+
+                    int secondsToTimeout = 5;
+
+                    if ( args.length == 2 ) {
+                        if ( args[0].equals( "-stt" ) ) {
+                            try {
+                                secondsToTimeout = Integer.parseInt( args[1] );
+                            } catch ( NumberFormatException exc ) {
+                            }
+                        }
+                    }
+
+                    Utils.preparePreferences( false );
+                    MainWindow mainWindow = new MainWindow( secondsToTimeout );
+
+                    switch ( Utils.getPref( Utils.PREF_CURRENT_THEME ) ) {
+                        case "light":
+                            mainWindow.configureLightTheme();
+                            mainWindow.menuItemRadioLightTheme.setSelected( true );
+                            break;
+                        case "dark":
+                            mainWindow.configureDarkTheme();
+                            mainWindow.menuItemRadioDarkTheme.setSelected( true );
+                            break;
+                    }
+
+                    Utils.updateSplashScreen( 6000 );
+                    mainWindow.setVisible( true );
+
+                }
+
+            });
+            
+        }
         
     }
     
