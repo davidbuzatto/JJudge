@@ -26,7 +26,7 @@ public class NoGuiModeWrapper {
 
                 try {
 
-                    File destDir = new File( fileToTest.getAbsolutePath().replace( ".zip", "" ).trim() );
+                    File destDir = new File( fileToTest.getAbsolutePath().replace( ".jjd", "" ).trim() );
 
                     System.out.println( String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), fileToTest ) );
 
@@ -38,7 +38,7 @@ public class NoGuiModeWrapper {
                             null,
                             javaClasspathFiles );
 
-                    if ( fileToTest.getName().endsWith( ".zip" ) ) {
+                    if ( fileToTest.getName().endsWith( ".jjd" ) ) {
                         System.out.println( String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), fileToTest ) );
                         FileUtils.deleteDirectory( destDir );
                     }

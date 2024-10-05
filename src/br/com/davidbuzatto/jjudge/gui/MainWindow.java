@@ -169,7 +169,7 @@ public class MainWindow extends javax.swing.JFrame {
                             filesList.add( studentFile );
                             files = filesList.toArray( files );
                             
-                            Utils.newZipFiles( files, new File( absolutePath + "/" + packageName + ".zip" )  );
+                            Utils.newZipFiles( files, new File( absolutePath + "/" + packageName + ".jjd" )  );
                             
                             studentFile.delete();
                             
@@ -198,7 +198,7 @@ public class MainWindow extends javax.swing.JFrame {
         jfc.removeChoosableFileFilter( jfc.getFileFilter() );
         jfc.setFileFilter( new FileNameExtensionFilter( 
                 bundle.getString( "MainWindow.btnAddPackageActionPerformed.fileTypes" ), 
-                "zip", "c", "cpp", "java", "py" ) );
+                "jjd", "c", "cpp", "java", "py" ) );
         
         
         if ( jfc.showOpenDialog( this ) == JFileChooser.APPROVE_OPTION ) {
@@ -381,7 +381,7 @@ public class MainWindow extends javax.swing.JFrame {
                         for ( int i = 0; i < listPackagesModel.size() && running; i++ ) {
                             
                             File file = listPackagesModel.get( i );
-                            File destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
+                            File destDir = new File( file.getAbsolutePath().replace( ".jjd", "" ).trim() );
                             
                             Utils.addFormattedText( 
                                     textPaneProcessOutput, 
@@ -401,7 +401,7 @@ public class MainWindow extends javax.swing.JFrame {
                             resultPanel.repaint();
                             scrollResults.updateUI();
                             
-                            if ( file.getName().endsWith( ".zip" ) ) {
+                            if ( file.getName().endsWith( ".jjd" ) ) {
 
                                 Utils.addFormattedText( 
                                         textPaneProcessOutput, 
@@ -541,7 +541,7 @@ public class MainWindow extends javax.swing.JFrame {
         
         testSets = Utils.loadTestSets( new File( "testSets/javaTestSets.json" ) );
         buildTestSetsModel();
-        listPackagesModel.addElement( new File( "testSets/javaTest.zip" ) );
+        listPackagesModel.addElement( new File( "testSets/javaTest.jjd" ) );
         listPackagesModel.addElement( new File( "testSets/javaTestFiles/Exercicio1$1.java" ) );
         listPackagesModel.addElement( new File( "testSets/javaTestFiles/Exercicio1$2.java" ) );
         listPackagesModel.addElement( new File( "testSets/javaTestFiles/Exercicio1$3.java" ) );
@@ -554,7 +554,7 @@ public class MainWindow extends javax.swing.JFrame {
         
         testSets = Utils.loadTestSets( new File( "testSets/cTestSets.json" ) );
         buildTestSetsModel();
-        listPackagesModel.addElement( new File( "testSets/cTest.zip" ) );
+        listPackagesModel.addElement( new File( "testSets/cTest.jjd" ) );
         listPackagesModel.addElement( new File( "testSets/cTestFiles/ex1.1.c" ) );
         listPackagesModel.addElement( new File( "testSets/cTestFiles/ex1.2.c" ) );
         listPackagesModel.addElement( new File( "testSets/cTestFiles/ex1.3.c" ) );
@@ -567,10 +567,10 @@ public class MainWindow extends javax.swing.JFrame {
         
         testSets = Utils.loadTestSets( new File( "testSets/testSets.json" ) );
         buildTestSetsModel();
-        listPackagesModel.addElement( new File( "testSets/debugPackageC.zip" ) );
-        listPackagesModel.addElement( new File( "testSets/debugPackageCPP.zip" ) );
-        listPackagesModel.addElement( new File( "testSets/debugPackageJAVA.zip" ) );
-        listPackagesModel.addElement( new File( "testSets/debugPackagePYTHON.zip" ) );
+        listPackagesModel.addElement( new File( "testSets/debugPackageC.jjd" ) );
+        listPackagesModel.addElement( new File( "testSets/debugPackageCPP.jjd" ) );
+        listPackagesModel.addElement( new File( "testSets/debugPackageJAVA.jjd" ) );
+        listPackagesModel.addElement( new File( "testSets/debugPackagePYTHON.jjd" ) );
         
     }
     

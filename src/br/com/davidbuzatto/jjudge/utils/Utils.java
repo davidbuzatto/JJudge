@@ -501,9 +501,9 @@ public class Utils {
         boolean loadStudent = false;
         boolean errorUnzipping = false;
         
-        if ( file.getName().endsWith( ".zip" ) ) {
+        if ( file.getName().endsWith( ".jjd" ) ) {
             
-            destDir = new File( file.getAbsolutePath().replace( ".zip", "" ).trim() );
+            destDir = new File( file.getAbsolutePath().replace( ".jjd", "" ).trim() );
             
             try {
                 if ( destDir.exists() ) {
@@ -542,7 +542,7 @@ public class Utils {
             
         } else { 
             
-            if ( file.getName().endsWith( ".zip" ) ) {
+            if ( file.getName().endsWith( ".jjd" ) ) {
                 return verify( 
                         testSet, 
                         student, 
