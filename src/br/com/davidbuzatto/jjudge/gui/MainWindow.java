@@ -151,7 +151,7 @@ public class MainWindow extends javax.swing.JFrame {
                     File[] files = jfc.getSelectedFiles();
 
                     if ( files != null && files.length > 0 ) {
-
+                        
                         String absolutePath = files[0].getParentFile().getAbsolutePath();
                         Utils.setPref( Utils.PREF_BUILD_TEST_PACKAGE_PATH, absolutePath );
                         
@@ -173,7 +173,26 @@ public class MainWindow extends javax.swing.JFrame {
                             
                             studentFile.delete();
                             
-                            JOptionPane.showMessageDialog( this, bundle.getString( "MainWindow.buildTestPackage.success" ) );
+                            boolean hasDir = false;
+                            for ( File f : filesList ) {
+                                if ( f.isDirectory() ) {
+                                    hasDir = true;
+                                }
+                            }
+                            
+                            if ( hasDir ) {
+                                JOptionPane.showMessageDialog( 
+                                    this, 
+                                    bundle.getString( "MainWindow.buildTestPackage.warning" ), 
+                                    bundle.getString( "MainWindow.buildTestPackage.warningTitle" ), 
+                                    JOptionPane.WARNING_MESSAGE );
+                            }
+                            
+                            JOptionPane.showMessageDialog( 
+                                this,
+                                bundle.getString( "MainWindow.buildTestPackage.success" ),
+                                bundle.getString( "MainWindow.buildTestPackage.successTitle" ),
+                                JOptionPane.INFORMATION_MESSAGE );
                             
                         } catch ( IOException exc )  {
                             Utils.showException( exc );
@@ -1181,6 +1200,17 @@ public class MainWindow extends javax.swing.JFrame {
                             mainWindow.configureDarkTheme();
                             mainWindow.menuItemRadioDarkTheme.setSelected( true );
                             break;
+                    }
+                    
+                    if ( args.length == 1 ) {
+                        
+                        File fileToOpen = new File( args[0] );
+                        
+                        if ( fileToOpen.exists() && fileToOpen.getName().endsWith( "jjd" ) ) {
+                            fileToOpen = Utils.renameFileToValidName( fileToOpen.getAbsoluteFile() );
+                            mainWindow.listPackagesModel.addElement( fileToOpen );
+                        }
+                        
                     }
 
                     Utils.updateSplashScreen( 6000 );

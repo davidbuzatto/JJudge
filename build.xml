@@ -98,7 +98,7 @@
         <!-- move para pasta dist (pode ser apagada no clean, não deixando rastro) -->
         <move file="${artefato}.zip" todir="${dist.dir}"/>
         
-        <!-- apaga o diretório usado temporáriamente -->
+        <!-- apaga o diretório usado temporariamente -->
         <delete includeEmptyDirs="true">
            <fileset dir="${caminho}"/>
         </delete>

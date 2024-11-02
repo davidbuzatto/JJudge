@@ -1,11 +1,12 @@
 --input ../dist/
 --name JJudge
 --main-jar JJudge.jar
---app-version 1.32.0
+--app-version 1.33.0
 --vendor 'Prof. Dr. David Buzatto'
 --description 'JJudge is a Java desktop application that aims to automate the checking of programs by compiling and executing them by providing inputs and testing for expected outputs.'
 --icon juiz.ico
 --license-file ../LICENSE.MD
+--file-associations jjd.properties
 --win-dir-chooser
 --win-menu-group 'JJudge'
 --win-per-user-install
