@@ -65,14 +65,22 @@ public class Processor {
                     String.format( "%s%s%s.exe", baseDir, File.separator, fileName )
                 };
 
-                compilationCommands = new String[][]{
+                /*compilationCommands = new String[][]{
                     String.format( "gcc -Werror -Wfatal-errors -c %s.c -o %s.o", fileName, fileName ).split( "\\s+" ),
                     String.format( "g++ -o %s.exe %s.o", fileName, fileName ).split( "\\s+" )
                 };
-
+                
                 threadId = new String[]{
                     "    gcc (comp)",
                     "    g++ (link)"
+                };*/
+                
+                compilationCommands = new String[][]{
+                    String.format( "gcc %s.c -o %s.exe -Werror -Wfatal-errors -std=c99 -lm", fileName, fileName ).split( "\\s+" )
+                };
+
+                threadId = new String[]{
+                    "    gcc"
                 };
                 
                 break;
@@ -85,7 +93,7 @@ public class Processor {
                     String.format( "%s%s%s.exe", baseDir, File.separator, fileName )
                 };
 
-                compilationCommands = new String[][]{
+                /*compilationCommands = new String[][]{
                     String.format( "g++ -Werror -Wfatal-errors -c %s.cpp -o %s.o", fileName, fileName ).split( "\\s+" ),
                     String.format( "g++ -o %s.exe %s.o", fileName, fileName ).split( "\\s+" )
                 };
@@ -93,6 +101,14 @@ public class Processor {
                 threadId = new String[]{
                     "    g++ (comp)",
                     "    g++ (link)"
+                };*/
+                
+                compilationCommands = new String[][]{
+                    String.format( "g++ %s.cpp -o %s.exe -Werror -Wfatal-errors -std=c++20 -lm", fileName, fileName ).split( "\\s+" )
+                };
+
+                threadId = new String[]{
+                    "    g++"
                 };
                 
                 break;
