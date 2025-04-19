@@ -400,7 +400,7 @@ public class MainWindow extends javax.swing.JFrame {
                         for ( int i = 0; i < listPackagesModel.size() && running; i++ ) {
                             
                             File file = listPackagesModel.get( i );
-                            File destDir = new File( file.getAbsolutePath().replace( ".jjd", "" ).trim() );
+                            File destDir = new File( file.getAbsolutePath().replace( ".jjd", "-jjd-temp" ).trim() );
                             
                             Utils.addFormattedText( 
                                     textPaneProcessOutput, 

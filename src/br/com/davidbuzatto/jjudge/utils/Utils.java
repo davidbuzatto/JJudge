@@ -503,7 +503,7 @@ public class Utils {
         
         if ( file.getName().endsWith( ".jjd" ) ) {
             
-            destDir = new File( file.getAbsolutePath().replace( ".jjd", "" ).trim() );
+            destDir = new File( file.getAbsolutePath().replace( ".jjd", "-jjd-temp" ).trim() );
             
             try {
                 if ( destDir.exists() ) {
