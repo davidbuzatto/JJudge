@@ -1057,4 +1057,22 @@ public class Utils {
         return System.getProperty( "os.name" ).toLowerCase().contains( "windows" );
     }
     
+    public static Color lerp( Color start, Color end, double amount ) {
+        int r = (int) clamp( lerp( start.getRed(), end.getRed(), amount ), 0, 255 );
+        int g = (int) clamp( lerp( start.getGreen(), end.getGreen(), amount ), 0, 255 );
+        int b = (int) clamp( lerp( start.getBlue(), end.getBlue(), amount ), 0, 255 );
+        int a = (int) clamp( lerp( start.getAlpha(), end.getAlpha(), amount ), 0, 255 );
+        return new Color( r, g, b, a );
+    }
+    
+    public static double clamp( double value, double min, double max ) {
+        double result = value < min ? min : value;
+        if ( result > max ) result = max;
+        return result;
+    }
+    
+    public static double lerp( double start, double end, double amount ) {
+        return start + amount * ( end - start );
+    }
+    
 }
