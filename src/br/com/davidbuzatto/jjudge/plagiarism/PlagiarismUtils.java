@@ -22,13 +22,13 @@ import org.apache.commons.io.FileUtils;
  */
 public class PlagiarismUtils {
     
-    public static List<PlagiarismTestResult> plagiarismTest( List<File> jjds ) throws IOException {
-        
-        DiffRowGenerator generator = DiffRowGenerator
+    private static final DiffRowGenerator GENERATOR = DiffRowGenerator
             .create()
             .ignoreWhiteSpaces( true )
             .reportLinesUnchanged( false )
             .build();
+    
+    public static List<PlagiarismTestResult> runPlagiarismDetector( List<File> jjds ) throws IOException {    
         
         List<File> destDirs = new ArrayList<>();
         List<Student> students = new ArrayList<>();
@@ -39,7 +39,7 @@ public class PlagiarismUtils {
             dirName = dirName.substring( 0, dirName.lastIndexOf( ".jjd" ) );
             File destDir = new File( f.getParentFile().getAbsolutePath() + "/" + dirName );
             destDirs.add( destDir );
-            Utils.unzip( f, destDir );
+            Utils.completeUnzip( f, destDir );
         }
         
         Map<String, List<File>> studentsFileMap = new LinkedHashMap<>();
@@ -68,7 +68,7 @@ public class PlagiarismUtils {
                         if ( f1.getName().equals( f2.getName() ) ) {
                             List<String> f1Lines = Files.readAllLines( f1.toPath() );
                             List<String> f2Lines = Files.readAllLines( f2.toPath() );
-                            double similarity = similarityCalc( generator, f1Lines, f2Lines, false );
+                            double similarity = similarityCalc( GENERATOR, f1Lines, f2Lines, false );
                             //System.out.printf( "    %s x %s: %.2f%% (similarity)\n", f1.getName(), f2.getName(), similarityCalc( generator, f1Lines, f2Lines, false ) );
                             result.addSimilarityResult( f1, f2, similarity );
                         }

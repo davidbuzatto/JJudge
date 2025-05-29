@@ -1,5 +1,7 @@
 package br.com.davidbuzatto.jjudge.gui;
 
+import br.com.davidbuzatto.jjudge.plagiarism.PlagiarismTestResult;
+import br.com.davidbuzatto.jjudge.plagiarism.PlagiarismUtils;
 import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
@@ -48,6 +50,7 @@ public class MainWindow extends javax.swing.JFrame {
     
     private Color textPaneProcessOutputBackgroundColor;
     private Color resultPanelBackgroundColor;
+    private Color plagiarismPanelBackgroundColor;
     private Color testSetDetailsDialogBackgroundColor;
     
     private boolean running;
@@ -100,6 +103,7 @@ public class MainWindow extends javax.swing.JFrame {
         //prepareForJavaDebug();
         //prepareForCDebug();
         //prepareForGeneralDebug();
+        prepareForPlagiarismDetectorDebug();
         
     }
     
@@ -390,6 +394,249 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemTestSets.setEnabled( false );
                     menuItemDependencies.setEnabled( false );
                     menuItemTheme.setEnabled( false );
+                    menuItemPlagiarismDetector.setEnabled( false );
+                    menuItemStyleChecker.setEnabled( false );
+                    menuItemHowTo.setEnabled( false );
+                    menuItemAbout.setEnabled( false );
+                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
+                    textPaneProcessOutput.setText( "" );
+                    
+                    try {
+                        
+                        for ( int i = 0; i < listPackagesModel.size() && running; i++ ) {
+                            
+                            File file = listPackagesModel.get( i );
+                            File destDir = new File( file.getAbsolutePath().replace( ".jjd", "-jjd-temp" ).trim() );
+                            
+                            Utils.addFormattedText( 
+                                    textPaneProcessOutput, 
+                                    String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
+                                    Color.BLUE, false );
+                            
+                            tSetResList.add( Utils.runTest( 
+                                    file, 
+                                    tSet, 
+                                    outputStreams, 
+                                    secondsToTimeout, 
+                                    textPaneProcessOutput,
+                                    javaClasspathFiles ) );
+
+                            resultPanel.generateRects();
+                            resultPanel.updateSize();
+                            resultPanel.repaint();
+                            scrollResults.updateUI();
+                            
+                            if ( file.getName().endsWith( ".jjd" ) ) {
+
+                                Utils.addFormattedText( 
+                                        textPaneProcessOutput, 
+                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
+                                        Color.BLACK, false );
+
+                                FileUtils.deleteDirectory( destDir );
+                                
+                            }
+                            
+                        }
+                        
+                        if ( checkGenerateResultsSpreadsheet.isSelected() ) {
+                            
+                            File f = Utils.processResultsToExcel( tSetResList, tSet );
+                            
+                            if ( f != null && 
+                                 JOptionPane.showConfirmDialog( null, 
+                                     bundle.getString( "MainWindow.confirmOpenExcelFile" ), 
+                                     bundle.getString( "MainWindow.confirm" ), 
+                                     JOptionPane.YES_NO_OPTION ) == JOptionPane.OK_OPTION ) {
+                                
+                                Desktop.getDesktop().open( f );
+                                
+                            }
+                            
+                        }
+                        
+                    } catch ( IOException exc ) {
+                        Utils.addFormattedText( 
+                                textPaneProcessOutput, 
+                                bundle.getString( "MainWindow.btnRunTestActionPerformed.errorCompileAndRun" ),
+                                Color.RED, false );
+                        Utils.showException( exc );
+                    } catch ( InterruptedException exc ) {
+                        Utils.showException( exc );
+                    }
+                    
+                    Utils.addFormattedText( 
+                            textPaneProcessOutput, 
+                            bundle.getString( "MainWindow.btnRunTestActionPerformed.finished" ),
+                            Color.BLACK, false );
+                    
+                    listPackages.setEnabled( true );
+                    listTestSets.setEnabled( true );
+                    btnBuildTestPackage.setEnabled( true );
+                    btnAddPackage.setEnabled( true );
+                    btnRemovePackage.setEnabled( true );
+                    btnLoadTestSet.setEnabled( true );
+                    menuItemBuildTestPackage.setEnabled( true );
+                    menuItemAddPackage.setEnabled( true );
+                    menuItemLoadTestSets.setEnabled( true);
+                    menuItemRunTest.setEnabled( true );
+                    menuItemExit.setEnabled( true );
+                    menuItemTestSets.setEnabled( true );
+                    menuItemDependencies.setEnabled( true );
+                    menuItemTheme.setEnabled( true );
+                    menuItemPlagiarismDetector.setEnabled( true );
+                    menuItemStyleChecker.setEnabled( true );
+                    menuItemHowTo.setEnabled( true );
+                    menuItemAbout.setEnabled( true );
+                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
+                    
+                    btnRunTest.setText( bundle.getString( "MainWindow.btnRunTest.text" ) );
+                    btnRunTest.setIcon( RUN_ICON );
+                    btnRunTest.setEnabled( true );
+                    
+                    running = false;
+                    
+                }
+                
+            }).start();
+            
+        } else if ( tSet == null ) {
+            JOptionPane.showMessageDialog( 
+                    this, 
+                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorSelectTestSet" ), 
+                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
+        } else {
+            JOptionPane.showMessageDialog( 
+                    this, 
+                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorTest" ), 
+                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
+        }
+        
+    }
+    
+    private void runPlagiarismDetector() {
+        
+        final List<File> packagesToTest = new ArrayList<>();
+        final JFrame thisFrame = this;
+        
+        if ( !listPackagesModel.isEmpty() ) {
+            for ( int i = 0; i < listPackagesModel.getSize(); i++ ) {
+                File f = listPackagesModel.get( i );
+                if ( f.exists() ) {
+                    packagesToTest.add( listPackagesModel.get( i ) );
+                }
+            }
+        }
+        
+        if ( packagesToTest.size() > 1 ) {
+            
+            new Thread( new Runnable() {
+                
+                @Override
+                public void run() {
+                    
+                    listPackages.setEnabled( false );
+                    listTestSets.setEnabled( false );
+                    btnBuildTestPackage.setEnabled( false );
+                    btnAddPackage.setEnabled( false );
+                    btnRemovePackage.setEnabled( false );
+                    btnLoadTestSet.setEnabled( false );
+                    btnRunTest.setEnabled( false );
+                    menuItemBuildTestPackage.setEnabled( false );
+                    menuItemAddPackage.setEnabled( false );
+                    menuItemLoadTestSets.setEnabled( false );
+                    menuItemRunTest.setEnabled( false );
+                    menuItemExit.setEnabled( false );
+                    menuItemTestSets.setEnabled( false );
+                    menuItemDependencies.setEnabled( false );
+                    menuItemTheme.setEnabled( false );
+                    menuItemPlagiarismDetector.setEnabled( false );
+                    menuItemStyleChecker.setEnabled( false );
+                    menuItemHowTo.setEnabled( false );
+                    menuItemAbout.setEnabled( false );
+                    lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.pleaseWait" ) );
+                    
+                    try {
+                        List<PlagiarismTestResult> results = PlagiarismUtils.runPlagiarismDetector( packagesToTest );
+                        PlagiarismDetectorResultFrame frame = new PlagiarismDetectorResultFrame( results, plagiarismPanelBackgroundColor );
+                        frame.setVisible( true );
+                    } catch ( IOException exc ) {
+                        Utils.showException( exc );
+                    }
+                    
+                    listPackages.setEnabled( true );
+                    listTestSets.setEnabled( true );
+                    btnBuildTestPackage.setEnabled( true );
+                    btnAddPackage.setEnabled( true );
+                    btnRemovePackage.setEnabled( true );
+                    btnLoadTestSet.setEnabled( true );
+                    btnRunTest.setEnabled( true );
+                    menuItemBuildTestPackage.setEnabled( true );
+                    menuItemAddPackage.setEnabled( true );
+                    menuItemLoadTestSets.setEnabled( true);
+                    menuItemRunTest.setEnabled( true );
+                    menuItemExit.setEnabled( true );
+                    menuItemTestSets.setEnabled( true );
+                    menuItemDependencies.setEnabled( true );
+                    menuItemTheme.setEnabled( true );
+                    menuItemPlagiarismDetector.setEnabled( true );
+                    menuItemStyleChecker.setEnabled( true );
+                    menuItemHowTo.setEnabled( true );
+                    menuItemAbout.setEnabled( true );
+                    lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.done" ) );
+                    
+                }
+                
+            }).start();
+            
+        } else {
+            JOptionPane.showMessageDialog( 
+                    this, 
+                    bundle.getString( "MainWindow.menuItemPlagiarismDetector.errorTest" ), 
+                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
+        }
+        
+        /*final TestSet tSet;
+        
+        if ( listTestSetsModel.getSize() == 1 ) {
+            tSet = listTestSetsModel.get( 0 );
+        } else {
+            tSet = listTestSets.getSelectedValue();
+        }
+        List<TestSetResult> tSetResList = new ArrayList<>();
+        
+        resultPanel.setTestSetResultList( tSetResList );
+        resultPanel.generateRects();
+        resultPanel.repaint();
+        resultPanel.updateSize();
+        scrollResults.updateUI();
+        
+        if ( tSet != null && !listPackagesModel.isEmpty() ) {
+            
+            new Thread( new Runnable() {
+                
+                @Override
+                public void run() {
+                    
+                    running = true;
+                    
+                    btnRunTest.setText( bundle.getString( "MainWindow.btnRunTestStop.text" ) );
+                    btnRunTest.setIcon( STOP_ICON );
+                    
+                    listPackages.setEnabled( false );
+                    listTestSets.setEnabled( false );
+                    btnBuildTestPackage.setEnabled( false );
+                    btnAddPackage.setEnabled( false );
+                    btnRemovePackage.setEnabled( false );
+                    btnLoadTestSet.setEnabled( false );
+                    menuItemBuildTestPackage.setEnabled( false );
+                    menuItemAddPackage.setEnabled( false );
+                    menuItemLoadTestSets.setEnabled( false );
+                    menuItemRunTest.setEnabled( false );
+                    menuItemExit.setEnabled( false );
+                    menuItemTestSets.setEnabled( false );
+                    menuItemDependencies.setEnabled( false );
+                    menuItemTheme.setEnabled( false );
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
@@ -502,8 +749,12 @@ public class MainWindow extends javax.swing.JFrame {
                     this, 
                     bundle.getString( "MainWindow.btnRunTestActionPerformed.errorTest" ), 
                     bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
-        }
+        }*/
         
+    }
+    
+    private void runStyleChecker() {
+        JOptionPane.showMessageDialog( this, "Not implemented yet!!!" );
     }
     
     private void configureLightTheme() {
@@ -515,6 +766,7 @@ public class MainWindow extends javax.swing.JFrame {
         textPaneProcessOutputBackgroundColor = background;
         resultPanelBackgroundColor = background;
         testSetDetailsDialogBackgroundColor = background;
+        plagiarismPanelBackgroundColor = background;
     
         textPaneProcessOutput.setBackground( textPaneProcessOutputBackgroundColor );
         resultPanel.setBackgroundColor( resultPanelBackgroundColor );
@@ -535,6 +787,7 @@ public class MainWindow extends javax.swing.JFrame {
         textPaneProcessOutputBackgroundColor = background;
         resultPanelBackgroundColor = background;
         testSetDetailsDialogBackgroundColor = background;
+        plagiarismPanelBackgroundColor = background;
         
         textPaneProcessOutput.setBackground( textPaneProcessOutputBackgroundColor );
         resultPanel.setBackgroundColor( resultPanelBackgroundColor );
@@ -593,6 +846,15 @@ public class MainWindow extends javax.swing.JFrame {
         
     }
     
+    private void prepareForPlagiarismDetectorDebug() {
+        
+        listPackagesModel.addElement( new File( "testPlagiarism/student1.jjd" ) );
+        listPackagesModel.addElement( new File( "testPlagiarism/student2.jjd" ) );
+        listPackagesModel.addElement( new File( "testPlagiarism/student3.jjd" ) );
+        listPackagesModel.addElement( new File( "testPlagiarism/student4.jjd" ) );
+        
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -641,6 +903,9 @@ public class MainWindow extends javax.swing.JFrame {
         menuItemTheme = new javax.swing.JMenu();
         menuItemRadioLightTheme = new javax.swing.JRadioButtonMenuItem();
         menuItemRadioDarkTheme = new javax.swing.JRadioButtonMenuItem();
+        menuTools = new javax.swing.JMenu();
+        menuItemPlagiarismDetector = new javax.swing.JMenuItem();
+        menuItemStyleChecker = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemHowTo = new javax.swing.JMenuItem();
         sepMenuHelp01 = new javax.swing.JPopupMenu.Separator();
@@ -964,6 +1229,28 @@ public class MainWindow extends javax.swing.JFrame {
 
         menuBar.add(menuEdit);
 
+        menuTools.setText(bundle.getString("MainWindow.menuTools.text")); // NOI18N
+
+        menuItemPlagiarismDetector.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/report.png"))); // NOI18N
+        menuItemPlagiarismDetector.setText(bundle.getString("MainWindow.menuItemPlagiarismDetector.text")); // NOI18N
+        menuItemPlagiarismDetector.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemPlagiarismDetectorActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemPlagiarismDetector);
+
+        menuItemStyleChecker.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
+        menuItemStyleChecker.setText(bundle.getString("MainWindow.menuItemStyleChecker.text")); // NOI18N
+        menuItemStyleChecker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemStyleCheckerActionPerformed(evt);
+            }
+        });
+        menuTools.add(menuItemStyleChecker);
+
+        menuBar.add(menuTools);
+
         menuHelp.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuHelp.m").charAt(0));
         menuHelp.setText(bundle.getString("MainWindow.menuHelp.text")); // NOI18N
 
@@ -1148,6 +1435,14 @@ public class MainWindow extends javax.swing.JFrame {
         ConfigureTestDependenciesDialog ctdd = new ConfigureTestDependenciesDialog( this, true, javaClasspathFiles );
         ctdd.setVisible( true );
     }//GEN-LAST:event_menuItemDependenciesActionPerformed
+
+    private void menuItemPlagiarismDetectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemPlagiarismDetectorActionPerformed
+        runPlagiarismDetector();
+    }//GEN-LAST:event_menuItemPlagiarismDetectorActionPerformed
+
+    private void menuItemStyleCheckerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemStyleCheckerActionPerformed
+        runStyleChecker();
+    }//GEN-LAST:event_menuItemStyleCheckerActionPerformed
     
     public static void main( String[] args ) {
         
@@ -1246,12 +1541,15 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemExit;
     private javax.swing.JMenuItem menuItemHowTo;
     private javax.swing.JMenuItem menuItemLoadTestSets;
+    private javax.swing.JMenuItem menuItemPlagiarismDetector;
     private javax.swing.JRadioButtonMenuItem menuItemRadioDarkTheme;
     private javax.swing.JRadioButtonMenuItem menuItemRadioLightTheme;
     private javax.swing.JMenuItem menuItemRunTest;
     private javax.swing.JMenuItem menuItemShowDetails;
+    private javax.swing.JMenuItem menuItemStyleChecker;
     private javax.swing.JMenuItem menuItemTestSets;
     private javax.swing.JMenu menuItemTheme;
+    private javax.swing.JMenu menuTools;
     private javax.swing.JPanel panelPackages;
     private javax.swing.JPanel panelProcessOutput;
     private javax.swing.JPanel panelResults;

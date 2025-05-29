@@ -45,7 +45,7 @@ public class PlagiarismTest {
                 jjds.add( f );
             }
         }
-        List<PlagiarismTestResult> results = PlagiarismUtils.plagiarismTest( jjds );
+        List<PlagiarismTestResult> results = PlagiarismUtils.runPlagiarismDetector( jjds );
         
         /*for ( PlagiarismTestResult r : results ) {
             System.out.println( r );

@@ -1,2 +1,2 @@
-Análise de arquivos usando diff;
-Utilização de pasta temporária no sistema subjacente para execução de testes;
+Implementação de verificação de estilo para linguagem C.
+Utilização de pasta temporária no sistema subjacente para execução de testes?
