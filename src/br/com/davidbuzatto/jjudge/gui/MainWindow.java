@@ -2,6 +2,7 @@ package br.com.davidbuzatto.jjudge.gui;
 
 import br.com.davidbuzatto.jjudge.plagiarism.PlagiarismTestResult;
 import br.com.davidbuzatto.jjudge.plagiarism.PlagiarismUtils;
+import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerUtils;
 import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
@@ -103,7 +104,8 @@ public class MainWindow extends javax.swing.JFrame {
         //prepareForJavaDebug();
         //prepareForCDebug();
         //prepareForGeneralDebug();
-        prepareForPlagiarismDetectorDebug();
+        //prepareForPlagiarismDetectorDebug();
+        prepareForStyleCheckerDebug();
         
     }
     
@@ -173,7 +175,7 @@ public class MainWindow extends javax.swing.JFrame {
                             filesList.add( studentFile );
                             files = filesList.toArray( files );
                             
-                            Utils.newZipFiles( files, new File( absolutePath + "/" + packageName + ".jjd" )  );
+                            Utils.newZipFiles( files, new File( absolutePath + File.separator + packageName + ".jjd" )  );
                             
                             studentFile.delete();
                             
@@ -522,7 +524,7 @@ public class MainWindow extends javax.swing.JFrame {
         if ( !listPackagesModel.isEmpty() ) {
             for ( int i = 0; i < listPackagesModel.getSize(); i++ ) {
                 File f = listPackagesModel.get( i );
-                if ( f.exists() ) {
+                if ( f.exists() && f.getName().endsWith( ".jjd" ) ) {
                     packagesToTest.add( listPackagesModel.get( i ) );
                 }
             }
@@ -540,6 +542,7 @@ public class MainWindow extends javax.swing.JFrame {
                     btnBuildTestPackage.setEnabled( false );
                     btnAddPackage.setEnabled( false );
                     btnRemovePackage.setEnabled( false );
+                    checkGenerateResultsSpreadsheet.setEnabled( false );
                     btnLoadTestSet.setEnabled( false );
                     btnRunTest.setEnabled( false );
                     menuItemBuildTestPackage.setEnabled( false );
@@ -569,6 +572,7 @@ public class MainWindow extends javax.swing.JFrame {
                     btnBuildTestPackage.setEnabled( true );
                     btnAddPackage.setEnabled( true );
                     btnRemovePackage.setEnabled( true );
+                    checkGenerateResultsSpreadsheet.setEnabled( true );
                     btnLoadTestSet.setEnabled( true );
                     btnRunTest.setEnabled( true );
                     menuItemBuildTestPackage.setEnabled( true );
@@ -596,39 +600,37 @@ public class MainWindow extends javax.swing.JFrame {
                     bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
         }
         
-        /*final TestSet tSet;
+    }
+    
+    private void runStyleChecker() {
         
-        if ( listTestSetsModel.getSize() == 1 ) {
-            tSet = listTestSetsModel.get( 0 );
-        } else {
-            tSet = listTestSets.getSelectedValue();
+        final List<File> filesToTest = new ArrayList<>();
+        final JFrame thisFrame = this;
+        
+        if ( !listPackagesModel.isEmpty() ) {
+            for ( int i = 0; i < listPackagesModel.getSize(); i++ ) {
+                File f = listPackagesModel.get( i );
+                if ( f.exists() ) {
+                    filesToTest.add( listPackagesModel.get( i ) );
+                }
+            }
         }
-        List<TestSetResult> tSetResList = new ArrayList<>();
         
-        resultPanel.setTestSetResultList( tSetResList );
-        resultPanel.generateRects();
-        resultPanel.repaint();
-        resultPanel.updateSize();
-        scrollResults.updateUI();
-        
-        if ( tSet != null && !listPackagesModel.isEmpty() ) {
+        if ( filesToTest.size() > 1 ) {
             
             new Thread( new Runnable() {
                 
                 @Override
                 public void run() {
                     
-                    running = true;
-                    
-                    btnRunTest.setText( bundle.getString( "MainWindow.btnRunTestStop.text" ) );
-                    btnRunTest.setIcon( STOP_ICON );
-                    
                     listPackages.setEnabled( false );
                     listTestSets.setEnabled( false );
                     btnBuildTestPackage.setEnabled( false );
                     btnAddPackage.setEnabled( false );
                     btnRemovePackage.setEnabled( false );
+                    checkGenerateResultsSpreadsheet.setEnabled( false );
                     btnLoadTestSet.setEnabled( false );
+                    btnRunTest.setEnabled( false );
                     menuItemBuildTestPackage.setEnabled( false );
                     menuItemAddPackage.setEnabled( false );
                     menuItemLoadTestSets.setEnabled( false );
@@ -637,86 +639,26 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemTestSets.setEnabled( false );
                     menuItemDependencies.setEnabled( false );
                     menuItemTheme.setEnabled( false );
+                    menuItemPlagiarismDetector.setEnabled( false );
+                    menuItemStyleChecker.setEnabled( false );
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
-                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
-                    textPaneProcessOutput.setText( "" );
+                    lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.pleaseWait" ) );
                     
                     try {
-                        
-                        for ( int i = 0; i < listPackagesModel.size() && running; i++ ) {
-                            
-                            File file = listPackagesModel.get( i );
-                            File destDir = new File( file.getAbsolutePath().replace( ".jjd", "-jjd-temp" ).trim() );
-                            
-                            Utils.addFormattedText( 
-                                    textPaneProcessOutput, 
-                                    String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
-                                    Color.BLUE, false );
-                            
-                            tSetResList.add( Utils.runTest( 
-                                    file, 
-                                    tSet, 
-                                    outputStreams, 
-                                    secondsToTimeout, 
-                                    textPaneProcessOutput,
-                                    javaClasspathFiles ) );
-
-                            resultPanel.generateRects();
-                            resultPanel.updateSize();
-                            resultPanel.repaint();
-                            scrollResults.updateUI();
-                            
-                            if ( file.getName().endsWith( ".jjd" ) ) {
-
-                                Utils.addFormattedText( 
-                                        textPaneProcessOutput, 
-                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
-                                        Color.BLACK, false );
-
-                                FileUtils.deleteDirectory( destDir );
-                                
-                            }
-                            
-                        }
-                        
-                        if ( checkGenerateResultsSpreadsheet.isSelected() ) {
-                            
-                            File f = Utils.processResultsToExcel( tSetResList, tSet );
-                            
-                            if ( f != null && 
-                                 JOptionPane.showConfirmDialog( null, 
-                                     bundle.getString( "MainWindow.confirmOpenExcelFile" ), 
-                                     bundle.getString( "MainWindow.confirm" ), 
-                                     JOptionPane.YES_NO_OPTION ) == JOptionPane.OK_OPTION ) {
-                                
-                                Desktop.getDesktop().open( f );
-                                
-                            }
-                            
-                        }
-                        
+                        StyleCheckerUtils.runStyleChecker( filesToTest );
                     } catch ( IOException exc ) {
-                        Utils.addFormattedText( 
-                                textPaneProcessOutput, 
-                                bundle.getString( "MainWindow.btnRunTestActionPerformed.errorCompileAndRun" ),
-                                Color.RED, false );
-                        Utils.showException( exc );
-                    } catch ( InterruptedException exc ) {
                         Utils.showException( exc );
                     }
-                    
-                    Utils.addFormattedText( 
-                            textPaneProcessOutput, 
-                            bundle.getString( "MainWindow.btnRunTestActionPerformed.finished" ),
-                            Color.BLACK, false );
                     
                     listPackages.setEnabled( true );
                     listTestSets.setEnabled( true );
                     btnBuildTestPackage.setEnabled( true );
                     btnAddPackage.setEnabled( true );
                     btnRemovePackage.setEnabled( true );
+                    checkGenerateResultsSpreadsheet.setEnabled( true );
                     btnLoadTestSet.setEnabled( true );
+                    btnRunTest.setEnabled( true );
                     menuItemBuildTestPackage.setEnabled( true );
                     menuItemAddPackage.setEnabled( true );
                     menuItemLoadTestSets.setEnabled( true);
@@ -725,36 +667,23 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemTestSets.setEnabled( true );
                     menuItemDependencies.setEnabled( true );
                     menuItemTheme.setEnabled( true );
+                    menuItemPlagiarismDetector.setEnabled( true );
+                    menuItemStyleChecker.setEnabled( true );
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
-                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
-                    
-                    btnRunTest.setText( bundle.getString( "MainWindow.btnRunTest.text" ) );
-                    btnRunTest.setIcon( RUN_ICON );
-                    btnRunTest.setEnabled( true );
-                    
-                    running = false;
+                    lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.done" ) );
                     
                 }
                 
             }).start();
             
-        } else if ( tSet == null ) {
-            JOptionPane.showMessageDialog( 
-                    this, 
-                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorSelectTestSet" ), 
-                    bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
         } else {
             JOptionPane.showMessageDialog( 
                     this, 
-                    bundle.getString( "MainWindow.btnRunTestActionPerformed.errorTest" ), 
+                    bundle.getString( "MainWindow.menuItemPlagiarismDetector.errorTest" ), 
                     bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
-        }*/
+        }
         
-    }
-    
-    private void runStyleChecker() {
-        JOptionPane.showMessageDialog( this, "Not implemented yet!!!" );
     }
     
     private void configureLightTheme() {
@@ -852,6 +781,14 @@ public class MainWindow extends javax.swing.JFrame {
         listPackagesModel.addElement( new File( "testPlagiarism/student2.jjd" ) );
         listPackagesModel.addElement( new File( "testPlagiarism/student3.jjd" ) );
         listPackagesModel.addElement( new File( "testPlagiarism/student4.jjd" ) );
+        
+    }
+    
+    private void prepareForStyleCheckerDebug() {
+        
+        listPackagesModel.addElement( new File( "testStyle/ok.c" ) );
+        listPackagesModel.addElement( new File( "testStyle/nok.c" ) );
+        listPackagesModel.addElement( new File( "testStyle/c.jjd" ) );
         
     }
     

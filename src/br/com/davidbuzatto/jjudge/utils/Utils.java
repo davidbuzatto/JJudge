@@ -158,7 +158,7 @@ public class Utils {
             }
             
             for ( File childFile : fileToZip.listFiles() ) {
-                newZipFilesHelper( childFile, fileName + "/" + childFile.getName(), zipOut );
+                newZipFilesHelper( childFile, fileName + File.separator + childFile.getName(), zipOut );
             }
             
             return;
@@ -200,7 +200,7 @@ public class Utils {
         
         if ( fileToZip.isDirectory() ) {
             
-            if ( fileName.endsWith("/") ) {
+            if ( fileName.endsWith( "/" ) ) {
                 zipOut.putNextEntry( new ZipEntry( fileName ) );
                 zipOut.closeEntry();
             } else {
@@ -211,7 +211,7 @@ public class Utils {
             File[] children = fileToZip.listFiles();
             
             for ( File childFile : children ) {
-                recursiveZipFile( childFile, fileName + "/" + childFile.getName(), zipOut );
+                recursiveZipFile( childFile, fileName + File.separator + childFile.getName(), zipOut );
             }
             
             return;
@@ -297,12 +297,12 @@ public class Utils {
                 ZipEntry entry = entries.nextElement();
                 
                 if ( entry.isDirectory() ) {
-                    Files.createDirectories( fileSystem.getPath( uncompressedDirectory + "/" + entry.getName() ) );
+                    Files.createDirectories( fileSystem.getPath( uncompressedDirectory + File.separator + entry.getName() ) );
                 } else {
                     try ( InputStream is = zipFile.getInputStream( entry );
                           BufferedInputStream bis = new BufferedInputStream( is ) ) {
                         
-                        String uncompressedFileName = uncompressedDirectory + "/" + entry.getName();
+                        String uncompressedFileName = uncompressedDirectory + File.separator + entry.getName();
                         Path uncompressedFilePath = fileSystem.getPath( uncompressedFileName );
                         Files.createFile( uncompressedFilePath );
                         

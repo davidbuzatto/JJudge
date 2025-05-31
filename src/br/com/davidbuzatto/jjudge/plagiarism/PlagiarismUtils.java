@@ -37,8 +37,11 @@ public class PlagiarismUtils {
         for ( File f : jjds ) {
             String dirName = f.getName();
             dirName = dirName.substring( 0, dirName.lastIndexOf( ".jjd" ) );
-            File destDir = new File( f.getParentFile().getAbsolutePath() + "/" + dirName );
+            File destDir = new File( f.getParentFile().getAbsolutePath() + File.separator + dirName + "-jjd-temp" );
             destDirs.add( destDir );
+            if ( destDir.exists() ) {
+                FileUtils.deleteDirectory( destDir );
+            }
             Utils.completeUnzip( f, destDir );
         }
         
@@ -46,12 +49,12 @@ public class PlagiarismUtils {
         
         for ( File destDir : destDirs ) {
             Student s = Utils.loadStudent( destDir.getAbsolutePath() );
-            List<File> files = new ArrayList<>();
-            studentsFileMap.put( s.getName(), files );
+            List<File> pkgFiles = new ArrayList<>();
+            studentsFileMap.put( s.getName(), pkgFiles );
             students.add( s );
             for ( File f : destDir.listFiles() ) {
                 if ( f.isFile() && !f.getName().equals( "student.json" ) ) {
-                    files.add( f );
+                    pkgFiles.add( f );
                 }
             }
         }
