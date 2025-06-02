@@ -28,6 +28,13 @@ public class StyleCheckerResultItem {
         return error;
     }
 
+    public String toStringNoLine() {
+        if ( error != null ) {
+            return String.format( "%s    // %s", line, error );
+        }
+        return line;
+    }
+    
     @Override
     public String toString() {
         if ( error != null ) {

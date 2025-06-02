@@ -14,19 +14,27 @@ public class StyleCheckerResult {
     private File file;
     private Student student;
     private List<StyleCheckerResultItem> items;
+    private boolean containsError;
 
     public StyleCheckerResult( File file, Student student ) {
         this.file = file;
         this.student = student;
-        items = new ArrayList<>();
+        this.items = new ArrayList<>();
+        this.containsError = false;
     }
 
     public void addItem( StyleCheckerResultItem result  ) {
         items.add( result );
+        if ( result.getError() != null ) {
+            containsError = true;
+        }
     }
     
     public void addItem( int lineNumber, String line, String error ) {
         items.add( new StyleCheckerResultItem( lineNumber, line, error ) );
+        if ( error != null ) {
+            containsError = true;
+        }
     }
 
     public List<StyleCheckerResultItem> getItems() {
@@ -39,6 +47,10 @@ public class StyleCheckerResult {
 
     public Student getStudent() {
         return student;
+    }
+
+    public boolean containsError() {
+        return containsError;
     }
 
     @Override

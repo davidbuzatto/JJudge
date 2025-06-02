@@ -23,17 +23,12 @@ import org.apache.commons.io.FileUtils;
 public class StyleCheckerUtils {
     
     private static ResourceBundle bundle = Utils.bundle;
-    private static final String[] C_CPP_TYPE_PREFIXES = { "int", "float", "char", "bool" };
-    private static final String[] C_CPP_STATEMENT_PREFIXES = { "if", "else", "switch", "for", "while", "do" };
-    private static final String[] JAVA_TYPE_PREFIXES = { "int", "double", "char", "boolean" };
-    private static final String[] JAVA_STATEMENT_PREFIXES = { "if", "else", "switch", "for", "while", "do" };
     
     public static void main( String[] args ) throws IOException {
         List<File> files = new ArrayList<>();
         files.add( new File( "testStyle/c.jjd" ) );
         files.add( new File( "testStyle/c.c" ) );
         StyleCheckerTestResult r = runStyleChecker( files, StyleCheckerLanguage.C );
-        //new TestFrame( r );
         JFrame f = new StyleCheckerResultFrame( r, Color.WHITE );
         f.setVisible( true );
     }
@@ -143,26 +138,22 @@ public class StyleCheckerUtils {
         String result = "";
         line = line.trim();
         
-        for ( String prefix : C_CPP_TYPE_PREFIXES ) {
-            if ( line.startsWith( prefix ) ) {
-                String[] tokens = line.split( "\\s+" );
-                int commaCounter = 0;
-                int parenthesisCounter = 0;
-                if ( tokens[tokens.length-1].contains( ";" ) ) {
-                    for ( int i = 1; i < tokens.length; i++ ) {
-                        String token = tokens[i];
-                        if ( token.contains( "," ) ) {
-                            commaCounter++;
-                        }
-                        if ( token.contains( "(" ) || token.contains( ")" ) ) {
-                            parenthesisCounter++;
-                        }
-                    }
-                }
-                if ( commaCounter > 0 && parenthesisCounter == 0 ) {
-                    return bundle.getString( "StyleCheckerResultFrame.sourceCodeError.multipleVar" );
-                }
+        List<StyleCheckerToken> tokens = getTokens( new StyleCheckerTokenizer( line ) );
+        
+        int commaCounter = 0;
+        int parenthesisCounter = 0;
+        
+        for ( StyleCheckerToken t : tokens ) {
+            if ( t.type() == StyleCheckerTokenType.COMMA ) {
+                commaCounter++;
             }
+            if ( t.type() == StyleCheckerTokenType.LEFT_PAREN || t.type() == StyleCheckerTokenType.RIGHT_PAREN ) {
+                parenthesisCounter++;
+            }
+        }
+        
+        if ( commaCounter > 0 && parenthesisCounter == 0 ) {
+            return bundle.getString( "StyleCheckerResultFrame.sourceCodeError.multipleVar" );
         }
         
         return result;
@@ -174,17 +165,17 @@ public class StyleCheckerUtils {
         String result = "";
         line = line.trim();
         
-        for ( String prefix : C_CPP_STATEMENT_PREFIXES ) {
-            if ( line.startsWith( prefix ) || line.startsWith( "}" ) ) {
-                String[] tokens = line.split( "\\s+" );
-                if ( tokens.length > 1 && !tokens[tokens.length-1].endsWith( "{" ) ) {
-                    return bundle.getString( "StyleCheckerResultFrame.sourceCodeError.blockStart" );
-                } else if ( tokens.length == 1 ) {
-                    if ( !tokens[0].endsWith( "{" ) && tokens.length > 1 ) {
-                        return bundle.getString( "StyleCheckerResultFrame.sourceCodeError.blockStart" );
-                    }
-                }
+        List<StyleCheckerToken> tokens = getTokens( new StyleCheckerTokenizer( line ) );
+        
+        // start -> something -> EOF (minimum)
+        if ( tokens.size() > 2 ) {
+            
+            int leftCurlyExpectedPos = tokens.size() - 2;
+            
+            if ( StyleCheckerTokenizer.isStatemenentReservedWord( tokens.get( 0 ) ) && tokens.get( leftCurlyExpectedPos ).type() != StyleCheckerTokenType.LEFT_CURLY ) {
+                return bundle.getString( "StyleCheckerResultFrame.sourceCodeError.blockStart" );
             }
+            
         }
         
         return result;
@@ -192,81 +183,26 @@ public class StyleCheckerUtils {
     }
 
     private static StyleCheckerResult checkStyleJava( File f, Student s ) throws IOException {
-        
-        StyleCheckerResult result = new StyleCheckerResult( f, s );
-        try ( Scanner scan = new Scanner( f, StandardCharsets.UTF_8 ) ) {
-            
-            int lineNumber = 1;
-            
-            while ( scan.hasNextLine() ) {
-                String line = scan.nextLine();
-                String checkVariableResult = checkVariableJava( line );
-                String checkStatementResult = checkStatementJava( line );
-                if ( checkVariableResult.isEmpty() && checkStatementResult.isEmpty() ) {
-                    result.addItem( lineNumber, line, null );
-                } else {
-                    String checkResult = checkVariableResult.isEmpty() ? checkStatementResult : checkVariableResult;
-                    result.addItem( lineNumber, line, checkResult );
-                }
-                lineNumber++;
-            }
-            
-        }
-        
-        return result;
-        
+        return checkStyleCCPP( f, s );
     }
     
-    private static String checkVariableJava( String line ) {
+    private static List<StyleCheckerToken> getTokens( StyleCheckerTokenizer st ) {
         
-        String result = "";
-        line = line.trim();
+        List<StyleCheckerToken> tokens = new ArrayList<>();
         
-        for ( String prefix : JAVA_TYPE_PREFIXES ) {
-            if ( line.startsWith( prefix ) ) {
-                String[] tokens = line.split( "\\s+" );
-                int commaCounter = 0;
-                int parenthesisCounter = 0;
-                if ( tokens[tokens.length-1].contains( ";" ) ) {
-                    for ( int i = 1; i < tokens.length; i++ ) {
-                        String token = tokens[i];
-                        if ( token.contains( "," ) ) {
-                            commaCounter++;
-                        }
-                        if ( token.contains( "(" ) || token.contains( ")" ) ) {
-                            parenthesisCounter++;
-                        }
-                    }
-                }
-                if ( commaCounter > 0 && parenthesisCounter == 0 ) {
-                    return bundle.getString( "StyleCheckerResultFrame.sourceCodeError.multipleVar" );
-                }
+        while ( true ) {
+            
+            st.nextToken();
+            StyleCheckerToken token = st.getToken();
+            tokens.add( token );
+            
+            if ( token.type() == StyleCheckerTokenType.EOF ) {
+                break;
             }
+            
         }
         
-        return result;
-        
-    }
-    
-    private static String checkStatementJava( String line ) {
-        
-        String result = "";
-        line = line.trim();
-        
-        for ( String prefix : JAVA_STATEMENT_PREFIXES ) {
-            if ( line.startsWith( prefix ) || line.startsWith( "}" ) ) {
-                String[] tokens = line.split( "\\s+" );
-                if ( tokens.length > 1 && !tokens[tokens.length-1].endsWith( "{" ) ) {
-                    return bundle.getString( "StyleCheckerResultFrame.sourceCodeError.blockStart" );
-                } else if ( tokens.length == 1 ) {
-                    if ( !tokens[0].endsWith( "{" ) ) {
-                        return bundle.getString( "StyleCheckerResultFrame.sourceCodeError.blockStart" );
-                    }
-                }
-            }
-        }
-        
-        return result;
+        return tokens;
         
     }
     

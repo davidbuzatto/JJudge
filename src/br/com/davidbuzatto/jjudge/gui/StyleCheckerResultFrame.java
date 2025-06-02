@@ -43,12 +43,16 @@ public class StyleCheckerResultFrame extends javax.swing.JFrame {
         comboModel = (DefaultComboBoxModel<ResultComboItem>) comboResults.getModel();
         
         for ( StyleCheckerResult r : result.getStandaloneResults() ) {
-            comboModel.addElement( new ResultComboItem( r ) );
+            if ( r.containsError() ) {
+                comboModel.addElement( new ResultComboItem( r ) );
+            }
         }
         
         for ( Map.Entry<Student, List<StyleCheckerResult>> e : result.getStudentResults().entrySet() ) {
             for ( StyleCheckerResult r : e.getValue() ) {
-                comboModel.addElement( new ResultComboItem( r ) );
+                if ( r.containsError() ) {
+                    comboModel.addElement( new ResultComboItem( r ) );
+                }
             }
         }
         
@@ -57,13 +61,20 @@ public class StyleCheckerResultFrame extends javax.swing.JFrame {
     private void loadStyleCheckerResult( StyleCheckerResult result ) {
 
         textPaneSourceCode.setText( "" );
+        int linePadding = String.valueOf( result.getItems().size() ).length();
+        String lineFormat = "%" + linePadding + "d   ";
         
         for ( StyleCheckerResultItem r : result.getItems() ) {
+            
             Color c = Colors.PASSED;
+            
             if ( r.getError() != null ) {
                 c = Colors.REPROVED;
             }
-            Utils.addFormattedText( textPaneSourceCode, r.toString() + "\n", c, false );
+            
+            Utils.addFormattedText( textPaneSourceCode, String.format( lineFormat, r.getLineNumber() ), Color.BLACK, false );
+            Utils.addFormattedText( textPaneSourceCode, r.toStringNoLine() + "\n", c, false );
+            
         }
         
         textPaneSourceCode.setCaretPosition( 0 );
