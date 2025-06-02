@@ -1,5 +1,7 @@
 package br.com.davidbuzatto.jjudge.testsets;
 
+import java.util.Objects;
+
 /**
  *
  * @author Prof. Dr. David Buzatto
@@ -28,6 +30,32 @@ public class Student {
     @Override
     public String toString() {
         return name + " " + code;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode( this.code );
+        hash = 53 * hash + Objects.hashCode( this.name );
+        return hash;
+    }
+
+    @Override
+    public boolean equals( Object obj ) {
+        if ( this == obj ) {
+            return true;
+        }
+        if ( obj == null ) {
+            return false;
+        }
+        if ( getClass() != obj.getClass() ) {
+            return false;
+        }
+        final Student other = (Student) obj;
+        if ( !Objects.equals( this.code, other.code ) ) {
+            return false;
+        }
+        return Objects.equals( this.name, other.name );
     }
     
 }

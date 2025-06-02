@@ -2,6 +2,8 @@ package br.com.davidbuzatto.jjudge.gui;
 
 import br.com.davidbuzatto.jjudge.plagiarism.PlagiarismTestResult;
 import br.com.davidbuzatto.jjudge.plagiarism.PlagiarismUtils;
+import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerTestResult;
+import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerLanguage;
 import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerUtils;
 import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
@@ -52,6 +54,7 @@ public class MainWindow extends javax.swing.JFrame {
     private Color textPaneProcessOutputBackgroundColor;
     private Color resultPanelBackgroundColor;
     private Color plagiarismPanelBackgroundColor;
+    private Color styleCheckerBackgroundColor;
     private Color testSetDetailsDialogBackgroundColor;
     
     private boolean running;
@@ -397,7 +400,9 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemDependencies.setEnabled( false );
                     menuItemTheme.setEnabled( false );
                     menuItemPlagiarismDetector.setEnabled( false );
-                    menuItemStyleChecker.setEnabled( false );
+                    menuStyleChecker.setEnabled( false );
+                    menuItemStyleCheckerC.setEnabled( false );
+                    menuItemStyleCheckerJava.setEnabled( false );
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
@@ -487,7 +492,9 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemDependencies.setEnabled( true );
                     menuItemTheme.setEnabled( true );
                     menuItemPlagiarismDetector.setEnabled( true );
-                    menuItemStyleChecker.setEnabled( true );
+                    menuStyleChecker.setEnabled( true );
+                    menuItemStyleCheckerC.setEnabled( true );
+                    menuItemStyleCheckerJava.setEnabled( true );
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
@@ -554,7 +561,9 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemDependencies.setEnabled( false );
                     menuItemTheme.setEnabled( false );
                     menuItemPlagiarismDetector.setEnabled( false );
-                    menuItemStyleChecker.setEnabled( false );
+                    menuStyleChecker.setEnabled( false );
+                    menuItemStyleCheckerC.setEnabled( false );
+                    menuItemStyleCheckerJava.setEnabled( false );
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.pleaseWait" ) );
@@ -584,7 +593,9 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemDependencies.setEnabled( true );
                     menuItemTheme.setEnabled( true );
                     menuItemPlagiarismDetector.setEnabled( true );
-                    menuItemStyleChecker.setEnabled( true );
+                    menuStyleChecker.setEnabled( true );
+                    menuItemStyleCheckerC.setEnabled( true );
+                    menuItemStyleCheckerJava.setEnabled( true );
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
                     lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.done" ) );
@@ -602,7 +613,7 @@ public class MainWindow extends javax.swing.JFrame {
         
     }
     
-    private void runStyleChecker() {
+    private void runStyleChecker( StyleCheckerLanguage language ) {
         
         final List<File> filesToTest = new ArrayList<>();
         final JFrame thisFrame = this;
@@ -616,7 +627,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         }
         
-        if ( filesToTest.size() > 1 ) {
+        if ( !filesToTest.isEmpty() ) {
             
             new Thread( new Runnable() {
                 
@@ -640,13 +651,17 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemDependencies.setEnabled( false );
                     menuItemTheme.setEnabled( false );
                     menuItemPlagiarismDetector.setEnabled( false );
-                    menuItemStyleChecker.setEnabled( false );
+                    menuStyleChecker.setEnabled( false );
+                    menuItemStyleCheckerC.setEnabled( false );
+                    menuItemStyleCheckerJava.setEnabled( false );
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
-                    lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.pleaseWait" ) );
+                    lblStatus.setText( bundle.getString( "MainWindow.menuItemCheckStyle.pleaseWait" ) );
                     
                     try {
-                        StyleCheckerUtils.runStyleChecker( filesToTest );
+                        StyleCheckerTestResult result = StyleCheckerUtils.runStyleChecker( filesToTest, language );
+                        StyleCheckerResultFrame frame = new StyleCheckerResultFrame( result, styleCheckerBackgroundColor );
+                        frame.setVisible( true );
                     } catch ( IOException exc ) {
                         Utils.showException( exc );
                     }
@@ -668,10 +683,12 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemDependencies.setEnabled( true );
                     menuItemTheme.setEnabled( true );
                     menuItemPlagiarismDetector.setEnabled( true );
-                    menuItemStyleChecker.setEnabled( true );
+                    menuStyleChecker.setEnabled( true );
+                    menuItemStyleCheckerC.setEnabled( true );
+                    menuItemStyleCheckerJava.setEnabled( true );
                     menuItemHowTo.setEnabled( true );
                     menuItemAbout.setEnabled( true );
-                    lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.done" ) );
+                    lblStatus.setText( bundle.getString( "MainWindow.menuItemCheckStyle.done" ) );
                     
                 }
                 
@@ -680,7 +697,7 @@ public class MainWindow extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog( 
                     this, 
-                    bundle.getString( "MainWindow.menuItemPlagiarismDetector.errorTest" ), 
+                    bundle.getString( "MainWindow.menuItemCheckStyle.errorTest" ), 
                     bundle.getString( "MainWindow.errorTitle" ), JOptionPane.ERROR_MESSAGE );
         }
         
@@ -696,6 +713,7 @@ public class MainWindow extends javax.swing.JFrame {
         resultPanelBackgroundColor = background;
         testSetDetailsDialogBackgroundColor = background;
         plagiarismPanelBackgroundColor = background;
+        styleCheckerBackgroundColor = background;
     
         textPaneProcessOutput.setBackground( textPaneProcessOutputBackgroundColor );
         resultPanel.setBackgroundColor( resultPanelBackgroundColor );
@@ -717,6 +735,7 @@ public class MainWindow extends javax.swing.JFrame {
         resultPanelBackgroundColor = background;
         testSetDetailsDialogBackgroundColor = background;
         plagiarismPanelBackgroundColor = background;
+        styleCheckerBackgroundColor = background;
         
         textPaneProcessOutput.setBackground( textPaneProcessOutputBackgroundColor );
         resultPanel.setBackgroundColor( resultPanelBackgroundColor );
@@ -786,9 +805,12 @@ public class MainWindow extends javax.swing.JFrame {
     
     private void prepareForStyleCheckerDebug() {
         
-        listPackagesModel.addElement( new File( "testStyle/ok.c" ) );
-        listPackagesModel.addElement( new File( "testStyle/nok.c" ) );
+        listPackagesModel.addElement( new File( "testStyle/c.c" ) );
         listPackagesModel.addElement( new File( "testStyle/c.jjd" ) );
+        listPackagesModel.addElement( new File( "testStyle/student1.jjd" ) );
+        listPackagesModel.addElement( new File( "testStyle/student2.jjd" ) );
+        listPackagesModel.addElement( new File( "testStyle/student3.jjd" ) );
+        listPackagesModel.addElement( new File( "testStyle/student4.jjd" ) );
         
     }
     
@@ -842,7 +864,9 @@ public class MainWindow extends javax.swing.JFrame {
         menuItemRadioDarkTheme = new javax.swing.JRadioButtonMenuItem();
         menuTools = new javax.swing.JMenu();
         menuItemPlagiarismDetector = new javax.swing.JMenuItem();
-        menuItemStyleChecker = new javax.swing.JMenuItem();
+        menuStyleChecker = new javax.swing.JMenu();
+        menuItemStyleCheckerC = new javax.swing.JMenuItem();
+        menuItemStyleCheckerJava = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemHowTo = new javax.swing.JMenuItem();
         sepMenuHelp01 = new javax.swing.JPopupMenu.Separator();
@@ -1177,14 +1201,28 @@ public class MainWindow extends javax.swing.JFrame {
         });
         menuTools.add(menuItemPlagiarismDetector);
 
-        menuItemStyleChecker.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
-        menuItemStyleChecker.setText(bundle.getString("MainWindow.menuItemStyleChecker.text")); // NOI18N
-        menuItemStyleChecker.addActionListener(new java.awt.event.ActionListener() {
+        menuStyleChecker.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
+        menuStyleChecker.setText(bundle.getString("MainWindow.menuStyleChecker.text")); // NOI18N
+
+        menuItemStyleCheckerC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
+        menuItemStyleCheckerC.setText(bundle.getString("MainWindow.menuItemStyleCheckerC.text")); // NOI18N
+        menuItemStyleCheckerC.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemStyleCheckerActionPerformed(evt);
+                menuItemStyleCheckerCActionPerformed(evt);
             }
         });
-        menuTools.add(menuItemStyleChecker);
+        menuStyleChecker.add(menuItemStyleCheckerC);
+
+        menuItemStyleCheckerJava.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/accept.png"))); // NOI18N
+        menuItemStyleCheckerJava.setText(bundle.getString("MainWindow.menuItemStyleCheckerJava.text")); // NOI18N
+        menuItemStyleCheckerJava.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemStyleCheckerJavaActionPerformed(evt);
+            }
+        });
+        menuStyleChecker.add(menuItemStyleCheckerJava);
+
+        menuTools.add(menuStyleChecker);
 
         menuBar.add(menuTools);
 
@@ -1377,9 +1415,13 @@ public class MainWindow extends javax.swing.JFrame {
         runPlagiarismDetector();
     }//GEN-LAST:event_menuItemPlagiarismDetectorActionPerformed
 
-    private void menuItemStyleCheckerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemStyleCheckerActionPerformed
-        runStyleChecker();
-    }//GEN-LAST:event_menuItemStyleCheckerActionPerformed
+    private void menuItemStyleCheckerCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemStyleCheckerCActionPerformed
+        runStyleChecker( StyleCheckerLanguage.C );
+    }//GEN-LAST:event_menuItemStyleCheckerCActionPerformed
+
+    private void menuItemStyleCheckerJavaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemStyleCheckerJavaActionPerformed
+        runStyleChecker( StyleCheckerLanguage.JAVA );
+    }//GEN-LAST:event_menuItemStyleCheckerJavaActionPerformed
     
     public static void main( String[] args ) {
         
@@ -1483,9 +1525,11 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem menuItemRadioLightTheme;
     private javax.swing.JMenuItem menuItemRunTest;
     private javax.swing.JMenuItem menuItemShowDetails;
-    private javax.swing.JMenuItem menuItemStyleChecker;
+    private javax.swing.JMenuItem menuItemStyleCheckerC;
+    private javax.swing.JMenuItem menuItemStyleCheckerJava;
     private javax.swing.JMenuItem menuItemTestSets;
     private javax.swing.JMenu menuItemTheme;
+    private javax.swing.JMenu menuStyleChecker;
     private javax.swing.JMenu menuTools;
     private javax.swing.JPanel panelPackages;
     private javax.swing.JPanel panelProcessOutput;
