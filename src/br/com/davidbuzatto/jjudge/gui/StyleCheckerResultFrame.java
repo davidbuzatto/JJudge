@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 
@@ -19,6 +20,7 @@ import javax.swing.ImageIcon;
  */
 public class StyleCheckerResultFrame extends javax.swing.JFrame {
 
+    private ResourceBundle bundle = Utils.bundle;
     private StyleCheckerTestResult result;
     private DefaultComboBoxModel<ResultComboItem> comboModel;
     
@@ -58,6 +60,15 @@ public class StyleCheckerResultFrame extends javax.swing.JFrame {
                     comboModel.addElement( new ResultComboItem( r ) );
                 }
             }
+        }
+        
+        if ( comboModel.getSize() == 0 ) {
+            Utils.addFormattedText( 
+                textPaneSourceCode, 
+                bundle.getString( "StyleCheckerResultFrame.noProblemsFound" ), 
+                Colors.PASSED, 
+                false
+            );
         }
         
     }

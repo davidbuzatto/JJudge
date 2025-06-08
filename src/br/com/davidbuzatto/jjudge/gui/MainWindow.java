@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -111,7 +112,7 @@ public class MainWindow extends javax.swing.JFrame {
         //prepareForCDebug();
         //prepareForGeneralDebug();
         //prepareForPlagiarismDetectorDebug();
-        prepareForStyleCheckerDebug();
+        //prepareForStyleCheckerDebug();
         
     }
     
@@ -368,7 +369,7 @@ public class MainWindow extends javax.swing.JFrame {
         } else {
             tSet = listTestSets.getSelectedValue();
         }
-        List<TestSetResult> tSetResList = new ArrayList<>();
+        List<TestSetResult> tSetResList = new CopyOnWriteArrayList<>();
         
         resultPanel.setTestSetResultList( tSetResList );
         resultPanel.generateRects();
