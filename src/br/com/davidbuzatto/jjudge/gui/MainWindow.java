@@ -875,6 +875,8 @@ public class MainWindow extends javax.swing.JFrame {
         menuStyleChecker = new javax.swing.JMenu();
         menuItemStyleCheckerC = new javax.swing.JMenuItem();
         menuItemStyleCheckerJava = new javax.swing.JMenuItem();
+        sepMenuStyleChecker01 = new javax.swing.JPopupMenu.Separator();
+        menuItemStyleCheckerJavaAbout = new javax.swing.JMenuItem();
         menuHelp = new javax.swing.JMenu();
         menuItemHowTo = new javax.swing.JMenuItem();
         sepMenuHelp01 = new javax.swing.JPopupMenu.Separator();
@@ -1229,6 +1231,16 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         menuStyleChecker.add(menuItemStyleCheckerJava);
+        menuStyleChecker.add(sepMenuStyleChecker01);
+
+        menuItemStyleCheckerJavaAbout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/information.png"))); // NOI18N
+        menuItemStyleCheckerJavaAbout.setText(bundle.getString("MainWindow.menuItemStyleCheckerAbout.text")); // NOI18N
+        menuItemStyleCheckerJavaAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemStyleCheckerJavaAboutActionPerformed(evt);
+            }
+        });
+        menuStyleChecker.add(menuItemStyleCheckerJavaAbout);
 
         menuTools.add(menuStyleChecker);
 
@@ -1432,6 +1444,16 @@ public class MainWindow extends javax.swing.JFrame {
     private void menuItemStyleCheckerJavaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemStyleCheckerJavaActionPerformed
         runStyleChecker( StyleCheckerLanguage.JAVA );
     }//GEN-LAST:event_menuItemStyleCheckerJavaActionPerformed
+
+    private void menuItemStyleCheckerJavaAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemStyleCheckerJavaAboutActionPerformed
+        
+        JOptionPane.showMessageDialog( 
+                this, 
+                bundle.getString( "MainWindow.menuItemStyleCheckerAboutActionPerformed.message" ), 
+                bundle.getString( "MainWindow.menuItemStyleCheckerAboutActionPerformed.title" ), 
+                JOptionPane.INFORMATION_MESSAGE );
+        
+    }//GEN-LAST:event_menuItemStyleCheckerJavaAboutActionPerformed
     
     public static void main( String[] args ) {
         
@@ -1537,6 +1559,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemShowDetails;
     private javax.swing.JMenuItem menuItemStyleCheckerC;
     private javax.swing.JMenuItem menuItemStyleCheckerJava;
+    private javax.swing.JMenuItem menuItemStyleCheckerJavaAbout;
     private javax.swing.JMenuItem menuItemTestSets;
     private javax.swing.JMenu menuItemTheme;
     private javax.swing.JMenu menuStyleChecker;
@@ -1556,6 +1579,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator sepMenuFile01;
     private javax.swing.JPopupMenu.Separator sepMenuFile02;
     private javax.swing.JPopupMenu.Separator sepMenuHelp01;
+    private javax.swing.JPopupMenu.Separator sepMenuStyleChecker01;
     private javax.swing.JTextPane textPaneProcessOutput;
     // End of variables declaration//GEN-END:variables
 }
