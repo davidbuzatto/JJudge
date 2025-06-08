@@ -153,7 +153,7 @@
       <SubComponents>
         <Container class="javax.swing.JPanel" name="plagiarismPanel">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new PlagiarismDetectorResultPanel( results, scrollPaneResults );"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new PlagiarismDetectorResultPanel( results, scrollPaneResults, useLightTheme );"/>
           </AuxValues>
 
           <Layout>

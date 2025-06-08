@@ -44,7 +44,8 @@ public class TestsJavaLanguage {
                     outputStreams,
                     null,
                     null,
-                    null );
+                    null,
+                    true );
 
             System.out.println( testSet.getDescription() );
             System.out.println( tResSet.getStudent() );

@@ -3,6 +3,7 @@ package br.com.davidbuzatto.jjudge.gui;
 import br.com.davidbuzatto.jjudge.testsets.Test;
 import br.com.davidbuzatto.jjudge.testsets.TestCase;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
+import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
 import java.util.ResourceBundle;
@@ -18,13 +19,16 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
     private ResourceBundle bundle = Utils.bundle;
     private Color backgroundColor = Color.WHITE;
     
+    private boolean useLightTheme;
+    
     /**
      * Creates new form ResultDialog
      */
-    public TestSetDetailsDialog( JFrame parent, boolean modal, TestSet testSet, Color backgroundColor ) {
+    public TestSetDetailsDialog( JFrame parent, boolean modal, TestSet testSet, Color backgroundColor, boolean useLightTheme ) {
         super( parent, modal );
         initComponents();
         this.backgroundColor = backgroundColor;
+        this.useLightTheme = useLightTheme;
         textPaneDetails.setBackground( backgroundColor );
         customInit( testSet );
     }
@@ -45,49 +49,49 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
         Utils.addFormattedText( 
                 textPaneDetails, 
                 bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.description" ),
-                Color.BLACK, false );
+                getResultTextColor(), false );
         Utils.addFormattedText( 
                 textPaneDetails, 
                 testSet.getDescription(),
-                Color.BLUE, false );
+                getProcessingMessageColor(), false );
         
         Utils.addFormattedText( 
                 textPaneDetails, 
                 bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.programmingLanguage" ),
-                Color.BLACK, false );
+                getResultTextColor(), false );
         Utils.addFormattedText( 
                 textPaneDetails, 
                 testSet.getProgrammingLanguage().toString(),
-                Color.BLUE, false );
+                getProcessingMessageColor(), false );
         
         Utils.addFormattedText( 
                 textPaneDetails, 
                 bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.tests" ),
-                Color.BLACK, false );
+                getResultTextColor(), false );
         
         for ( Test t : testSet.getTests() ) {    
             
             Utils.addFormattedText( 
                     textPaneDetails, 
                     bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.name" ),
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             Utils.addFormattedText( 
                     textPaneDetails, 
                     t.getPresentationName(),
-                    Color.BLUE, false );
+                    getProcessingMessageColor(), false );
             Utils.addFormattedText( 
                     textPaneDetails, 
                     bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.filename" ),
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             Utils.addFormattedText( 
                     textPaneDetails, 
                     processFilename( t, testSet ),
-                    Color.BLUE, false );
+                    getProcessingMessageColor(), false );
             
             Utils.addFormattedText( 
                     textPaneDetails, 
                     bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.testCases" ),
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
             int i = 1;
             for ( TestCase tc : t.getTestCases() ) {
@@ -95,65 +99,65 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
                 Utils.addFormattedText( 
                         textPaneDetails, 
                         String.format( bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.testCase" ), i++ ),
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
                         bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.input" ),
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
                         Utils.identText( tc.getInput().isEmpty() ? bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.empty" ) : tc.getInput(), 5 ),
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
                         "\n|   |   |   |\n",
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
                         bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.output" ),
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
                 
                 if ( tc.getOutput().isEmpty() ) {
                     Utils.addFormattedText( 
                             textPaneDetails, 
                             Utils.identText( bundle.getString( "TestSetDetailsDialog.processDetailsTestSet.empty" ), 5 ),
-                            Color.BLACK, false );
+                            getResultTextColor(), false );
                     Utils.addFormattedText( 
                             textPaneDetails, 
                             "\n",
-                            Color.BLACK, false );
+                            getResultTextColor(), false );
                 } else {
                     Utils.addFormattedText( 
                             textPaneDetails, 
                             Utils.identText( tc.getOutput(), 5 ),
-                            Color.BLACK, true );
+                            getResultTextColor(), true );
                 }                
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
                         "|   |   |   |\n",
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
                 
                 Utils.addFormattedText( 
                         textPaneDetails, 
                         "|   |   |\n",
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
                 
             }
             
             Utils.addFormattedText( 
                         textPaneDetails, 
                         "|   |\n",
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
             
             Utils.addFormattedText( 
                         textPaneDetails, 
                         "|\n",
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
             
         }
         
@@ -183,6 +187,20 @@ public class TestSetDetailsDialog extends javax.swing.JDialog {
             return filename + "." + ext;
         }
         
+    }
+    
+    private Color getResultTextColor() {
+        if ( useLightTheme ) {
+            return Colors.RESULT_TEXT_LIGHT;
+        }
+        return Colors.RESULT_TEXT_DARK;
+    }
+    
+    private Color getProcessingMessageColor() {
+        if ( useLightTheme ) {
+            return Colors.PROCESSING_MESSAGE_LIGHT;
+        }
+        return Colors.PROCESSING_MESSAGE_DARK;
     }
     
     /**

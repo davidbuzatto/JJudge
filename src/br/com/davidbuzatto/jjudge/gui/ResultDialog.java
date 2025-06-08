@@ -18,14 +18,16 @@ public class ResultDialog extends javax.swing.JDialog {
     
     private ResourceBundle bundle = Utils.bundle;
     private Color backgroundColor = Color.WHITE;
+    private boolean useLightTheme;
     
     /**
      * Creates new form ResultDialog
      */
-    public ResultDialog( JFrame parent, boolean modal, TestResult testResult, Color backgroundColor ) {
+    public ResultDialog( JFrame parent, boolean modal, TestResult testResult, Color backgroundColor, boolean useLightTheme ) {
         super( parent, modal );
         initComponents();
         this.backgroundColor = backgroundColor;
+        this.useLightTheme = useLightTheme;
         textPaneResult.setBackground( backgroundColor );
         customInit( testResult );
     }
@@ -44,7 +46,7 @@ public class ResultDialog extends javax.swing.JDialog {
         Utils.addFormattedText( 
                     textPaneResult, 
                     String.format( bundle.getString( "ResultDialog.processResults.test" ), testResult.getPresentationName() ), 
-                    Color.BLUE, false );
+                    useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
         
         int testCase = 1;
         
@@ -53,79 +55,79 @@ public class ResultDialog extends javax.swing.JDialog {
             Utils.addFormattedText( 
                     textPaneResult, 
                     String.format( bundle.getString( "ResultDialog.processResults.testCase" ), testCase++ ), 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     bundle.getString( "ResultDialog.processResults.processTestInput" ), 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     Utils.identText( tcr.getInput().isEmpty() ? bundle.getString( "ResultDialog.processResults.empty" ) : tcr.getInput(), 3 ) + "\n", 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
                     
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |\n", 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     bundle.getString( "ResultDialog.processResults.processTestOutput" ), 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
             if ( tcr.getOutput().isEmpty() ) {
                 Utils.addFormattedText( 
                         textPaneResult, 
                         Utils.identText( bundle.getString( "ResultDialog.processResults.empty" ), 3 ) + "\n",
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
             } else {
                 Utils.addFormattedText( 
                         textPaneResult, 
                         Utils.identText( tcr.getOutput(), 3 ),
-                        Color.BLACK, true );
+                        getResultTextColor(), true );
             }
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |\n", 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     bundle.getString( "ResultDialog.processResults.processOutput" ), 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
             if ( tcr.getTestOutput().isEmpty() ) {
                 Utils.addFormattedText( 
                         textPaneResult, 
                         Utils.identText( bundle.getString( "ResultDialog.processResults.empty" ), 3 ) + "\n",
-                        Color.BLACK, false );
+                        getResultTextColor(), false );
             } else {
                 if ( tcr.getExecutionState() == ExecutionState.RUNTIME_ERROR || 
                         tcr.getExecutionState() == ExecutionState.TIMEOUT_ERROR ) {
                     Utils.addFormattedText( 
                             textPaneResult, 
                             Utils.identText( tcr.getTestOutput(), 3 ) + "\n",
-                            Color.BLACK, false );
+                            getResultTextColor(), false );
                 } else {
                     Utils.addFormattedText( 
                             textPaneResult, 
                             Utils.identText( tcr.getTestOutput(), 3 ),
-                            Color.BLACK, true );
+                            getResultTextColor(), true );
                 }
             }
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|   |\n", 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
             Utils.addFormattedText( 
                     textPaneResult, 
                     bundle.getString( "ResultDialog.processResults.testCaseState" ), 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
             Color color = Utils.retrieveStateColor( tcr.getExecutionState() );
             
@@ -137,7 +139,7 @@ public class ResultDialog extends javax.swing.JDialog {
             Utils.addFormattedText( 
                     textPaneResult, 
                     "\n|\n", 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
             
         }
         
@@ -146,7 +148,7 @@ public class ResultDialog extends javax.swing.JDialog {
             Utils.addFormattedText( 
                     textPaneResult, 
                     "|-- ", 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
 
             Utils.addFormattedText( 
                     textPaneResult, 
@@ -156,14 +158,14 @@ public class ResultDialog extends javax.swing.JDialog {
             Utils.addFormattedText( 
                     textPaneResult, 
                     Utils.identText( testResult.getErrorMessage(), 2 ) + "\n", 
-                    Color.BLACK, false );
+                    getResultTextColor(), false );
 
         }
         
         Utils.addFormattedText( 
                 textPaneResult, 
                 bundle.getString( "ResultDialog.processResults.testState" ), 
-                Color.BLACK, false );
+                getResultTextColor(), false );
         
         Color color = Utils.retrieveStateColor( testResult.getExecutionState() );
             
@@ -174,6 +176,13 @@ public class ResultDialog extends javax.swing.JDialog {
         
     }
 
+    private Color getResultTextColor() {
+        if ( useLightTheme ) {
+            return Colors.RESULT_TEXT_LIGHT;
+        }
+        return Colors.RESULT_TEXT_DARK;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

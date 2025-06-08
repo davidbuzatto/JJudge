@@ -2,6 +2,7 @@ package br.com.davidbuzatto.jjudge.gui;
 
 import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
+import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.Cursors;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
@@ -34,6 +35,8 @@ public class ResultPanel extends JPanel {
     private boolean mouseOverAllowed;
     private Color backgroundColor = Color.WHITE;
     
+    private boolean useLightTheme;
+    
     public ResultPanel() {
         
         resRects = new ArrayList<>();
@@ -57,7 +60,7 @@ public class ResultPanel extends JPanel {
                     }
                     
                     if ( selectedResRect != null ) {
-                        ResultDialog rd = new ResultDialog( null, true, selectedResRect.testResult, backgroundColor );
+                        ResultDialog rd = new ResultDialog( null, true, selectedResRect.testResult, backgroundColor, useLightTheme );
                         rd.setVisible( true );
                     }
                     
@@ -151,7 +154,12 @@ public class ResultPanel extends JPanel {
                 int y = currTestSetResult * RES_HEIGHT + maxTestNameWidth;
                 int studentWidth = fm.stringWidth( tsr.getStudent().toString() );
                 
-                g2d.setColor( Color.BLACK );
+                if ( useLightTheme ) {
+                    g2d.setColor(Colors.RESULT_TEXT_LIGHT );
+                } else {
+                    g2d.setColor(Colors.RESULT_TEXT_DARK );
+                }
+                
                 if ( firstTestSetResult ) {
                     
                     int currLabel = 0;
@@ -337,6 +345,10 @@ public class ResultPanel extends JPanel {
 
     public void setBackgroundColor( Color backgroundColor ) {
         this.backgroundColor = backgroundColor;
+    }
+
+    public void setUseLightTheme( boolean useLightTheme ) {
+        this.useLightTheme = useLightTheme;
     }
     
 }

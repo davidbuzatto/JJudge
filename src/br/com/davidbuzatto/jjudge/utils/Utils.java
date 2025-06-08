@@ -403,7 +403,8 @@ public class Utils {
             boolean outputStreams,
             JTextPane textPane,
             File file,
-            List<File> javaClasspathFiles ) throws IOException, InterruptedException {
+            List<File> javaClasspathFiles,
+            boolean useLightTheme ) throws IOException, InterruptedException {
         
         TestSetResult testSetResult = new TestSetResult();
         testSetResult.setStudent( student );
@@ -425,7 +426,8 @@ public class Utils {
                         t.getTestCases(),
                         testSet.getProgrammingLanguage(),
                         textPane,
-                        javaClasspathFiles );
+                        javaClasspathFiles,
+                        useLightTheme );
                 
                 testSetResult.getTestResults().add( testResult );
                 
@@ -453,7 +455,8 @@ public class Utils {
                             t.getTestCases(),
                             testSet.getProgrammingLanguage(),
                             textPane,
-                            javaClasspathFiles );
+                            javaClasspathFiles,
+                            useLightTheme );
                 
                 } else {
                     
@@ -491,7 +494,8 @@ public class Utils {
             boolean outputStreams, 
             int secondsToTimeout,
             JTextPane textPane,
-            List<File> javaClasspathFiles ) throws IOException, InterruptedException {
+            List<File> javaClasspathFiles,
+            boolean useLightTheme ) throws IOException, InterruptedException {
         
         File destDir;
         Student student = new Student();
@@ -551,7 +555,8 @@ public class Utils {
                         outputStreams,
                         textPane,
                         null,
-                        javaClasspathFiles );
+                        javaClasspathFiles,
+                        useLightTheme );
             } else {
                 return verify( 
                         testSet, 
@@ -561,7 +566,8 @@ public class Utils {
                         outputStreams,
                         textPane,
                         file,
-                        javaClasspathFiles );
+                        javaClasspathFiles,
+                        useLightTheme );
             }
             
         }

@@ -22,15 +22,19 @@ public class StyleCheckerResultFrame extends javax.swing.JFrame {
     private StyleCheckerTestResult result;
     private DefaultComboBoxModel<ResultComboItem> comboModel;
     
+    private boolean useLightTheme;
+    
     /**
      * Creates new form StyleCheckerResultFrame
      */
-    public StyleCheckerResultFrame( StyleCheckerTestResult result, Color styleCheckerBackgroundColor ) {
+    public StyleCheckerResultFrame( StyleCheckerTestResult result, Color styleCheckerBackgroundColor, boolean useLightTheme ) {
         
         this.result = result;
         initComponents();
         
         textPaneSourceCode.setBackground( styleCheckerBackgroundColor );
+        this.useLightTheme = useLightTheme;
+        
         setIconImage( new ImageIcon( getClass().getResource(
                 "/br/com/davidbuzatto/jjudge/gui/icons/accept.png" ) ).getImage() );
         
@@ -72,7 +76,12 @@ public class StyleCheckerResultFrame extends javax.swing.JFrame {
                 c = Colors.REPROVED;
             }
             
-            Utils.addFormattedText( textPaneSourceCode, String.format( lineFormat, r.getLineNumber() ), Color.BLACK, false );
+            Utils.addFormattedText( 
+                textPaneSourceCode, 
+                String.format( lineFormat, r.getLineNumber() ), 
+                useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, 
+                false
+            );
             Utils.addFormattedText( textPaneSourceCode, r.toStringNoLine() + "\n", c, false );
             
         }

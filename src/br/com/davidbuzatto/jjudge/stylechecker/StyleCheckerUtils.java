@@ -29,7 +29,7 @@ public class StyleCheckerUtils {
         files.add( new File( "testStyle/c.jjd" ) );
         files.add( new File( "testStyle/c.c" ) );
         StyleCheckerTestResult r = runStyleChecker( files, StyleCheckerLanguage.C );
-        JFrame f = new StyleCheckerResultFrame( r, Color.WHITE );
+        JFrame f = new StyleCheckerResultFrame( r, Color.WHITE, false );
         f.setVisible( true );
     }
     

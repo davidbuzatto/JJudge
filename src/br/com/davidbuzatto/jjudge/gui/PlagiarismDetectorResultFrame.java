@@ -14,10 +14,14 @@ public class PlagiarismDetectorResultFrame extends javax.swing.JFrame {
     private List<PlagiarismTestResult> results;
     private PlagiarismDetectorResultPanel pPanel;
 
+    private boolean useLightTheme;
+    
     /**
      * Creates new form PlagiarismDetectorResultFrame
      */
-    public PlagiarismDetectorResultFrame( List<PlagiarismTestResult> results, Color plagiarismPanelBackgroundColor ) {
+    public PlagiarismDetectorResultFrame( List<PlagiarismTestResult> results, Color plagiarismPanelBackgroundColor, boolean useLightTheme ) {
+        
+        this.useLightTheme = useLightTheme;
         
         this.results = results;
         initComponents();
@@ -47,7 +51,7 @@ public class PlagiarismDetectorResultFrame extends javax.swing.JFrame {
         radioStudentName = new javax.swing.JRadioButton();
         radioStudentCode = new javax.swing.JRadioButton();
         scrollPaneResults = new javax.swing.JScrollPane();
-        plagiarismPanel = new PlagiarismDetectorResultPanel( results, scrollPaneResults );
+        plagiarismPanel = new PlagiarismDetectorResultPanel( results, scrollPaneResults, useLightTheme );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle"); // NOI18N

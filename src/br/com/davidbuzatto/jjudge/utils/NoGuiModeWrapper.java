@@ -36,7 +36,8 @@ public class NoGuiModeWrapper {
                             true, 
                             5, 
                             null,
-                            javaClasspathFiles );
+                            javaClasspathFiles,
+                            true );
 
                     if ( fileToTest.getName().endsWith( ".jjd" ) ) {
                         System.out.println( String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), fileToTest ) );

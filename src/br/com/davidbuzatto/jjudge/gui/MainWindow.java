@@ -8,6 +8,7 @@ import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerUtils;
 import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
+import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.NoGuiModeWrapper;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import com.formdev.flatlaf.FlatDarculaLaf;
@@ -62,6 +63,8 @@ public class MainWindow extends javax.swing.JFrame {
     private final Icon STOP_ICON;
     
     private List<File> javaClasspathFiles;
+    
+    private boolean useLightTheme;
     
     public MainWindow() {
         this( 5 );
@@ -418,7 +421,7 @@ public class MainWindow extends javax.swing.JFrame {
                             Utils.addFormattedText( 
                                     textPaneProcessOutput, 
                                     String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
-                                    Color.BLUE, false );
+                                    useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
                             
                             tSetResList.add( Utils.runTest( 
                                     file, 
@@ -426,7 +429,8 @@ public class MainWindow extends javax.swing.JFrame {
                                     outputStreams, 
                                     secondsToTimeout, 
                                     textPaneProcessOutput,
-                                    javaClasspathFiles ) );
+                                    javaClasspathFiles,
+                                    useLightTheme ) );
 
                             resultPanel.generateRects();
                             resultPanel.updateSize();
@@ -438,7 +442,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 Utils.addFormattedText( 
                                         textPaneProcessOutput, 
                                         String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
-                                        Color.BLACK, false );
+                                        useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
 
                                 FileUtils.deleteDirectory( destDir );
                                 
@@ -475,7 +479,7 @@ public class MainWindow extends javax.swing.JFrame {
                     Utils.addFormattedText( 
                             textPaneProcessOutput, 
                             bundle.getString( "MainWindow.btnRunTestActionPerformed.finished" ),
-                            Color.BLACK, false );
+                            useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
                     
                     listPackages.setEnabled( true );
                     listTestSets.setEnabled( true );
@@ -570,7 +574,7 @@ public class MainWindow extends javax.swing.JFrame {
                     
                     try {
                         List<PlagiarismTestResult> results = PlagiarismUtils.runPlagiarismDetector( packagesToTest );
-                        PlagiarismDetectorResultFrame frame = new PlagiarismDetectorResultFrame( results, plagiarismPanelBackgroundColor );
+                        PlagiarismDetectorResultFrame frame = new PlagiarismDetectorResultFrame( results, plagiarismPanelBackgroundColor, useLightTheme );
                         frame.setVisible( true );
                     } catch ( IOException exc ) {
                         Utils.showException( exc );
@@ -660,7 +664,7 @@ public class MainWindow extends javax.swing.JFrame {
                     
                     try {
                         StyleCheckerTestResult result = StyleCheckerUtils.runStyleChecker( filesToTest, language );
-                        StyleCheckerResultFrame frame = new StyleCheckerResultFrame( result, styleCheckerBackgroundColor );
+                        StyleCheckerResultFrame frame = new StyleCheckerResultFrame( result, styleCheckerBackgroundColor, useLightTheme );
                         frame.setVisible( true );
                     } catch ( IOException exc ) {
                         Utils.showException( exc );
@@ -717,6 +721,8 @@ public class MainWindow extends javax.swing.JFrame {
     
         textPaneProcessOutput.setBackground( textPaneProcessOutputBackgroundColor );
         resultPanel.setBackgroundColor( resultPanelBackgroundColor );
+        resultPanel.setUseLightTheme( true );
+        useLightTheme = true;
         
         SwingUtilities.updateComponentTreeUI( this );
         SwingUtilities.updateComponentTreeUI( popupMenu );
@@ -730,7 +736,7 @@ public class MainWindow extends javax.swing.JFrame {
         FlatDarculaLaf.setup();
         Utils.setPref( Utils.PREF_CURRENT_THEME, "dark" );
         
-        Color background = new Color( 180, 180, 180 );
+        Color background = new Color( 43, 43, 43 );
         textPaneProcessOutputBackgroundColor = background;
         resultPanelBackgroundColor = background;
         testSetDetailsDialogBackgroundColor = background;
@@ -739,6 +745,8 @@ public class MainWindow extends javax.swing.JFrame {
         
         textPaneProcessOutput.setBackground( textPaneProcessOutputBackgroundColor );
         resultPanel.setBackgroundColor( resultPanelBackgroundColor );
+        resultPanel.setUseLightTheme( false );
+        useLightTheme = false;
         
         SwingUtilities.updateComponentTreeUI( this );
         SwingUtilities.updateComponentTreeUI( popupMenu );
@@ -1327,7 +1335,9 @@ public class MainWindow extends javax.swing.JFrame {
                 this, 
                 true, 
                 listTestSets.getSelectedValue(),
-                testSetDetailsDialogBackgroundColor );
+                testSetDetailsDialogBackgroundColor,
+                useLightTheme
+        );
         r.setVisible( true );
         
     }//GEN-LAST:event_menuItemShowDetailsActionPerformed

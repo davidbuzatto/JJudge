@@ -1,1 +1,1 @@
-Implementação de verificação de estilo para linguagem C - em progresso!
+Testar concurrent modification exception (indício que pode ser o que está gerando erros nos testes esporadicamente!!!)

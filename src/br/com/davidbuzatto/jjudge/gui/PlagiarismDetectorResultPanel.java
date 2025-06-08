@@ -2,6 +2,7 @@ package br.com.davidbuzatto.jjudge.gui;
 
 import br.com.davidbuzatto.jjudge.plagiarism.PlagiarismTestResult;
 import br.com.davidbuzatto.jjudge.plagiarism.SimilarityResult;
+import br.com.davidbuzatto.jjudge.utils.Colors;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,11 +30,14 @@ public class PlagiarismDetectorResultPanel extends JPanel {
     
     private Color backgroundColor = Color.WHITE;
     
-    public PlagiarismDetectorResultPanel( List<PlagiarismTestResult> results, JScrollPane spContainer ) {
+    private boolean useLightTheme;
+    
+    public PlagiarismDetectorResultPanel( List<PlagiarismTestResult> results, JScrollPane spContainer, boolean useLightTheme ) {
         this.results = results;
         this.threshold = 0;
         this.showStudentName = true;
         this.spContainer = spContainer;
+        this.useLightTheme = useLightTheme;
     }
 
     @Override
@@ -50,7 +54,12 @@ public class PlagiarismDetectorResultPanel extends JPanel {
         g2d.setColor( backgroundColor );
         g2d.fillRect( 0, 0, getWidth(), getHeight() );
 
-        g2d.setColor( Color.BLACK );
+        if ( useLightTheme ) {
+            g2d.setColor( Colors.RESULT_TEXT_LIGHT );
+        } else {
+            g2d.setColor( Colors.RESULT_TEXT_DARK );
+        }
+        
         g2d.setFont( DEFAULT_FONT );
 
         int xStart = 10;
@@ -89,6 +98,12 @@ public class PlagiarismDetectorResultPanel extends JPanel {
                         g2d.setColor( Color.BLACK );
                         g2d.drawRect( xStart + RES_WIDTH * k, yStart + 5, RES_WIDTH, RES_WIDTH );
 
+                        if ( useLightTheme ) {
+                            g2d.setColor( Colors.RESULT_TEXT_LIGHT );
+                        } else {
+                            g2d.setColor( Colors.RESULT_TEXT_DARK );
+                        }
+                        
                         Graphics2D g2dt = (Graphics2D) g2d.create();
                         g2dt.translate( xStart, yStart + 5 );
                         g2dt.rotate( Math.toRadians( 90 ) );
@@ -150,6 +165,10 @@ public class PlagiarismDetectorResultPanel extends JPanel {
 
     public void setBackgroundColor( Color backgroundColor ) {
         this.backgroundColor = backgroundColor;
+    }
+
+    public void setUseLightTheme( boolean useLightTheme ) {
+        this.useLightTheme = useLightTheme;
     }
     
 }

@@ -14,12 +14,18 @@ public class Colors {
     public static final Color NOT_PASSED = Color.RED.darker();
     public static final Color COMPILATION_ERROR = new Color( 255, 127, 39 );
     public static final Color RUNTIME_ERROR = new Color( 163, 73, 164 );
-    public static final Color TIMEOUT_ERROR = new Color( 91, 0, 183 );
+    public static final Color TIMEOUT_ERROR = new Color( 120, 0, 240 );
     public static final Color FILE_NOT_FOUND_ERROR = new Color( 120, 120, 120 );
     public static final Color DONT_CHECK = new Color( 0, 176, 240 );
     public static final Color ERROR = Color.ORANGE.darker();
     
     public static final Color VERIFICATION_ERROR_F = Color.RED;
     public static final Color VERIFICATION_ERROR_B = new Color( 50, 0, 0 );
+    
+    public static final Color RESULT_TEXT_LIGHT = Color.BLACK;
+    public static final Color RESULT_TEXT_DARK = new Color( 169, 183, 198 );
+    
+    public static final Color PROCESSING_MESSAGE_LIGHT = Color.BLUE;
+    public static final Color PROCESSING_MESSAGE_DARK = new Color( 63, 115, 187 );
     
 }
