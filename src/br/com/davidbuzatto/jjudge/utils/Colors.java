@@ -28,4 +28,6 @@ public class Colors {
     public static final Color PROCESSING_MESSAGE_LIGHT = Color.BLUE;
     public static final Color PROCESSING_MESSAGE_DARK = new Color( 63, 115, 187 );
     
+    public static final Color REDO_COLOR = new Color( 197, 255, 186 );
+    
 }

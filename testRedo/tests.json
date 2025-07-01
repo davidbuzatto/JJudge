@@ -1,0 +1,268 @@
+[
+  {
+    "description": "capitulo01EntradaSaidaPadraoFormatados",
+    "programmingLanguage": "C",
+    "tests": [
+      {
+        "name": "ex1.1",
+        "presentationName": "Exercício 1.1",
+        "testCases": [
+          {
+            "input": "",
+            "output": "Ola Mundo!"
+          }
+        ]
+      },
+      {
+        "name": "ex1.2",
+        "presentationName": "Exercício 1.2",
+        "testCases": [
+          {
+            "input": "",
+            "output": "   *\n  ***\n *****\n*******"
+          }
+        ]
+      },
+      {
+        "name": "ex1.3",
+        "presentationName": "Exercício 1.3",
+        "testCases": [
+          {
+            "input": "",
+            "output": "########\n#      #\n#      #\n#      #\n#      #\n########"
+          }
+        ]
+      },
+      {
+        "name": "ex1.4",
+        "presentationName": "Exercício 1.4",
+        "testCases": [
+          {
+            "input": "",
+            "output": "       *\n      *\n     *\n*   *\n * *\n  *"
+          }
+        ]
+      },
+      {
+        "name": "ex1.5",
+        "presentationName": "Exercício 1.5",
+        "testCases": [
+          {
+            "input": "",
+            "output": "*********         ***           *            *\n*       *       *     *        ***          * *\n*       *      *       *      *****        *   *\n*       *      *       *        *         *     *\n*       *      *       *        *        *       *\n*       *      *       *        *         *     *\n*       *      *       *        *          *   *\n*       *       *     *         *           * *\n*********         ***           *            *"
+          }
+        ]
+      },
+      {
+        "name": "ex1.6",
+        "presentationName": "Exercício 1.6",
+        "testCases": [
+          {
+            "input": "7\n3",
+            "output": "7 + 3 \u003d 10\n7 - 3 \u003d 4\n7 * 3 \u003d 21\n7 / 3 \u003d 2"
+          }
+        ]
+      },
+      {
+        "name": "ex1.7",
+        "presentationName": "Exercício 1.7",
+        "testCases": [
+          {
+            "input": "5",
+            "output": "Perimetro \u003d 20\nArea \u003d 25"
+          }
+        ]
+      },
+      {
+        "name": "ex1.8",
+        "presentationName": "Exercício 1.8",
+        "testCases": [
+          {
+            "input": "5\n10",
+            "output": "Perimetro \u003d 30\nArea \u003d 50"
+          }
+        ]
+      },
+      {
+        "name": "ex1.9",
+        "presentationName": "Exercício 1.9",
+        "testCases": [
+          {
+            "input": "10\n5",
+            "output": "Area \u003d 25"
+          }
+        ]
+      },
+      {
+        "name": "ex1.10",
+        "presentationName": "Exercício 1.10",
+        "testCases": [
+          {
+            "input": "10\n6\n5",
+            "output": "Area \u003d 40"
+          }
+        ]
+      },
+      {
+        "name": "ex1.11",
+        "presentationName": "Exercício 1.11",
+        "testCases": [
+          {
+            "input": "12\n6",
+            "output": "Area \u003d 36"
+          }
+        ]
+      },
+      {
+        "name": "ex1.12",
+        "presentationName": "Exercício 1.12",
+        "testCases": [
+          {
+            "input": "153.4671",
+            "output": "153.467102\n153.47\n153.467"
+          }
+        ]
+      },
+      {
+        "name": "ex1.13",
+        "presentationName": "Exercício 1.13",
+        "testCases": [
+          {
+            "input": "7.5\n3.5",
+            "output": "7.50 + 3.50 \u003d 11.00\n7.50 - 3.50 \u003d 4.00\n7.50 * 3.50 \u003d 26.25\n7.50 / 3.50 \u003d 2.14"
+          }
+        ]
+      },
+      {
+        "name": "ex1.14",
+        "presentationName": "Exercício 1.14",
+        "testCases": [
+          {
+            "input": "5.5",
+            "output": "Perimetro \u003d 22.00\nArea \u003d 30.25"
+          }
+        ]
+      },
+      {
+        "name": "ex1.15",
+        "presentationName": "Exercício 1.15",
+        "testCases": [
+          {
+            "input": "5.5\n9.5",
+            "output": "Perimetro \u003d 30.00\nArea \u003d 52.25"
+          }
+        ]
+      },
+      {
+        "name": "ex1.16",
+        "presentationName": "Exercício 1.16",
+        "testCases": [
+          {
+            "input": "10.5\n5.75",
+            "output": "Area \u003d 30.19"
+          }
+        ]
+      },
+      {
+        "name": "ex1.17",
+        "presentationName": "Exercício 1.17",
+        "testCases": [
+          {
+            "input": "10.5\n6.25\n6.75",
+            "output": "Area \u003d 56.53"
+          }
+        ]
+      },
+      {
+        "name": "ex1.18",
+        "presentationName": "Exercício 1.18",
+        "testCases": [
+          {
+            "input": "12.25\n6.6",
+            "output": "Area \u003d 40.42"
+          }
+        ]
+      },
+      {
+        "name": "ex1.19",
+        "presentationName": "Exercício 1.19",
+        "testCases": [
+          {
+            "input": "10.5",
+            "output": "Diametro \u003d 21.00\nCircunferencia \u003d 65.97\nArea \u003d 346.36"
+          }
+        ]
+      },
+      {
+        "name": "ex1.20",
+        "presentationName": "Exercício 1.20",
+        "testCases": [
+          {
+            "input": "5\n10",
+            "output": "Media aritmetica: 7"
+          }
+        ]
+      },
+      {
+        "name": "ex1.21",
+        "presentationName": "Exercício 1.21",
+        "testCases": [
+          {
+            "input": "1992",
+            "output": "Sucessor de 1992: 1993\nAntecessor de 1992: 1991"
+          }
+        ]
+      },
+      {
+        "name": "ex1.22",
+        "presentationName": "Exercício 1.22",
+        "testCases": [
+          {
+            "input": "5.79",
+            "output": "Preco de venda com 9% de desconto: 5.27"
+          }
+        ]
+      },
+      {
+        "name": "ex1.23",
+        "presentationName": "Exercício 1.23",
+        "testCases": [
+          {
+            "input": "1985\n2018",
+            "output": "Idade aproximada: 33 anos"
+          }
+        ]
+      },
+      {
+        "name": "ex1.24",
+        "presentationName": "Exercício 1.24",
+        "testCases": [
+          {
+            "input": "20.78\n40\n26.5",
+            "output": "Salario Liquido: 610.93"
+          }
+        ]
+      },
+      {
+        "name": "ex1.25",
+        "presentationName": "Exercício 1.25",
+        "testCases": [
+          {
+            "input": "125",
+            "output": "125.00 graus Fahrenheit correspondem a 51.67 graus Celsius"
+          }
+        ]
+      },
+      {
+        "name": "ex1.26",
+        "presentationName": "Exercício 1.26",
+        "testCases": [
+          {
+            "input": "36",
+            "output": "36.00 graus Celsius correspondem a 96.80 graus Fahrenheit"
+          }
+        ]
+      }
+    ]
+  }
+]

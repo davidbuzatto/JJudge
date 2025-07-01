@@ -402,11 +402,14 @@ public class Utils {
             int secondsToTimeout, 
             boolean outputStreams,
             JTextPane textPane,
+            File packageFile,
             File file,
             List<File> javaClasspathFiles,
             boolean useLightTheme ) throws IOException, InterruptedException {
         
         TestSetResult testSetResult = new TestSetResult();
+        testSetResult.setPackageFile( packageFile );
+        
         testSetResult.setStudent( student );
         testSetResult.setTestResults( new ArrayList<>() );
         
@@ -554,6 +557,7 @@ public class Utils {
                         secondsToTimeout, 
                         outputStreams,
                         textPane,
+                        file,
                         null,
                         javaClasspathFiles,
                         useLightTheme );
@@ -565,6 +569,7 @@ public class Utils {
                         secondsToTimeout, 
                         outputStreams,
                         textPane,
+                        null,
                         file,
                         javaClasspathFiles,
                         useLightTheme );

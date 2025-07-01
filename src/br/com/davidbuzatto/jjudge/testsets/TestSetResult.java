@@ -1,5 +1,6 @@
 package br.com.davidbuzatto.jjudge.testsets;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -12,6 +13,7 @@ public class TestSetResult {
     private double grade;
     private List<TestResult> testResults;
     private String error;
+    private File packageFile;
 
     public Student getStudent() {
         return student;
@@ -43,6 +45,14 @@ public class TestSetResult {
 
     public void setError( String error ) {
         this.error = error;
+    }
+
+    public File getPackageFile() {
+        return packageFile;
+    }
+
+    public void setPackageFile( File packageFile ) {
+        this.packageFile = packageFile;
     }
     
 }

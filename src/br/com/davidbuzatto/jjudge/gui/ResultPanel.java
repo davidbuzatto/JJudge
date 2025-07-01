@@ -15,8 +15,11 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 /**
@@ -25,6 +28,9 @@ import javax.swing.JPanel;
  */
 public class ResultPanel extends JPanel {
 
+    private static BufferedImage refreshIcon;
+    
+    private MainWindow mainWindow;
     private List<TestSetResult> testSetResultList;
     private List<TestResultRectangle> resRects;
     
@@ -39,7 +45,16 @@ public class ResultPanel extends JPanel {
     
     public ResultPanel() {
         
-        resRects = new ArrayList<>();
+        if ( refreshIcon == null ) {
+            try {
+                refreshIcon = ImageIO.read( getClass().getResource(
+                        "/br/com/davidbuzatto/jjudge/gui/icons/arrow_refresh.png" ) );
+            } catch ( IOException exc ) {
+                Utils.showException( exc );
+            }
+        }
+        
+        this.resRects = new ArrayList<>();
         
         addMouseListener( new MouseAdapter() {
             
@@ -60,8 +75,12 @@ public class ResultPanel extends JPanel {
                     }
                     
                     if ( selectedResRect != null ) {
-                        ResultDialog rd = new ResultDialog( null, true, selectedResRect.testResult, backgroundColor, useLightTheme );
-                        rd.setVisible( true );
+                        if ( selectedResRect.testSetResult == null ) {
+                            ResultDialog rd = new ResultDialog( null, true, selectedResRect.testResult, backgroundColor, useLightTheme );
+                            rd.setVisible( true );
+                        } else if ( !mainWindow.isRunning() ) {
+                            mainWindow.runTest( selectedResRect.testSetResult );
+                        }
                     }
                     
                 }
@@ -81,14 +100,19 @@ public class ResultPanel extends JPanel {
                     
                     int x = e.getX();
                     int y = e.getY();
+                    boolean shouldShowOver = true;
 
                     for ( TestResultRectangle r : resRects ) {
                         if ( r.intersects( x, y ) ) {
                             found = true;
+                            if ( r.testSetResult != null && mainWindow.isRunning() ) {
+                                shouldShowOver = false;
+                            }
+                            break;
                         }
                     }
                     
-                    if ( found ) {
+                    if ( found && shouldShowOver ) {
                         setCursor( Cursors.HAND_CURSOR );
                     } else {
                         setCursor( Cursors.DEFAULT_CURSOR );
@@ -155,9 +179,9 @@ public class ResultPanel extends JPanel {
                 int studentWidth = fm.stringWidth( tsr.getStudent().toString() );
                 
                 if ( useLightTheme ) {
-                    g2d.setColor(Colors.RESULT_TEXT_LIGHT );
+                    g2d.setColor( Colors.RESULT_TEXT_LIGHT );
                 } else {
-                    g2d.setColor(Colors.RESULT_TEXT_DARK );
+                    g2d.setColor( Colors.RESULT_TEXT_DARK );
                 }
                 
                 if ( firstTestSetResult ) {
@@ -272,14 +296,20 @@ public class ResultPanel extends JPanel {
                 
                 int currTestResult = 1;
                 int y = currTestSetResult * RES_HEIGHT + maxTestNameWidth;
+                int x;
                 
                 for ( TestResult tr : tsr.getTestResults() ) {
                             
-                    int x = maxStudentWidth + currTestResult * RES_WIDTH;
+                    x = maxStudentWidth + currTestResult * RES_WIDTH;
                     resRects.add( new TestResultRectangle( x, y, RES_WIDTH, RES_HEIGHT, tr ) );
                         
                     currTestResult++;
                     
+                }
+                
+                if ( tsr.getPackageFile() != null ) {
+                    x = maxStudentWidth + currTestResult * RES_WIDTH;
+                    resRects.add( new TestResultRectangle( x, y, RES_WIDTH, RES_HEIGHT, tsr ) );
                 }
                 
                 currTestSetResult++;
@@ -301,6 +331,7 @@ public class ResultPanel extends JPanel {
         int width;
         int height;
         Color color;
+        TestSetResult testSetResult;
         TestResult testResult;
         
         boolean mouseOver;
@@ -313,9 +344,21 @@ public class ResultPanel extends JPanel {
             this.testResult = testResult;
         }
         
+        TestResultRectangle( int x, int y, int width, int height, TestSetResult testSetResult ) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.testSetResult = testSetResult;
+        }
+        
         void draw( Graphics2D g2d ) {
             
-            Color drawColor = Utils.retrieveStateColor( testResult.getExecutionState() );
+            Color drawColor = Colors.REDO_COLOR;
+            
+            if ( testSetResult == null ) {
+                drawColor = Utils.retrieveStateColor( testResult.getExecutionState() );
+            }
             
             if ( mouseOver ) {
                 drawColor = drawColor.darker();
@@ -326,6 +369,15 @@ public class ResultPanel extends JPanel {
             
             g2d.setColor( Color.BLACK );
             g2d.drawRect( x, y, width, height );        
+            
+            if ( testSetResult != null ) {
+                g2d.drawImage( 
+                    refreshIcon, 
+                    x + RES_WIDTH / 2 - refreshIcon.getWidth() / 2 + 1, 
+                    y + RES_HEIGHT / 2 - refreshIcon.getHeight() / 2 + 1, 
+                    null
+                );
+            }
             
         }
         
@@ -349,6 +401,10 @@ public class ResultPanel extends JPanel {
 
     public void setUseLightTheme( boolean useLightTheme ) {
         this.useLightTheme = useLightTheme;
+    }
+
+    public void setMainWindow( MainWindow mainWindow ) {
+        this.mainWindow = mainWindow;
     }
     
 }

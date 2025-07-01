@@ -45,6 +45,7 @@ import org.apache.commons.io.FileUtils;
  */
 public class MainWindow extends javax.swing.JFrame {
     
+    private List<TestSetResult> testSetResList;
     private DefaultListModel<File> listPackagesModel;
     private DefaultListModel<TestSet> listTestSetsModel;
     private List<TestSet> testSets;
@@ -87,9 +88,12 @@ public class MainWindow extends javax.swing.JFrame {
     private void customInit() {
         
         outputStreams = false;
+        resultPanel.setMainWindow( this );
         
         setIconImage( new ImageIcon( getClass().getResource(
                 "/br/com/davidbuzatto/jjudge/gui/icons/user_gray.png" ) ).getImage() );
+        
+        testSetResList = new CopyOnWriteArrayList<>();
         
         listPackagesModel = new DefaultListModel<>();
         listTestSetsModel = new DefaultListModel<>();
@@ -113,6 +117,7 @@ public class MainWindow extends javax.swing.JFrame {
         //prepareForGeneralDebug();
         //prepareForPlagiarismDetectorDebug();
         //prepareForStyleCheckerDebug();
+        //prepareForRedoTestDebug();
         
     }
     
@@ -360,7 +365,7 @@ public class MainWindow extends javax.swing.JFrame {
         
     }
     
-    private void runTest() {
+    public void runTest( TestSetResult testSetToUpdate ) {
         
         final TestSet tSet;
         
@@ -369,13 +374,15 @@ public class MainWindow extends javax.swing.JFrame {
         } else {
             tSet = listTestSets.getSelectedValue();
         }
-        List<TestSetResult> tSetResList = new CopyOnWriteArrayList<>();
         
-        resultPanel.setTestSetResultList( tSetResList );
-        resultPanel.generateRects();
-        resultPanel.repaint();
-        resultPanel.updateSize();
-        scrollResults.updateUI();
+        if ( testSetToUpdate == null ) {
+            testSetResList.clear();
+            resultPanel.setTestSetResultList( testSetResList );
+            resultPanel.generateRects();
+            resultPanel.repaint();
+            resultPanel.updateSize();
+            scrollResults.updateUI();
+        }
         
         if ( tSet != null && !listPackagesModel.isEmpty() ) {
             
@@ -414,38 +421,92 @@ public class MainWindow extends javax.swing.JFrame {
                     
                     try {
                         
+                        boolean update = testSetToUpdate != null;
+                        boolean targetFound = false;
+                        
                         for ( int i = 0; i < listPackagesModel.size() && running; i++ ) {
                             
                             File file = listPackagesModel.get( i );
+                            
+                            if ( testSetToUpdate != null ) {
+                                if ( file.equals( testSetToUpdate.getPackageFile() ) ) {
+                                    targetFound = true;
+                                }
+                            }
+                            
                             File destDir = new File( file.getAbsolutePath().replace( ".jjd", "-jjd-temp" ).trim() );
                             
-                            Utils.addFormattedText( 
-                                    textPaneProcessOutput, 
-                                    String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
-                                    useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
+                            if ( !update ) {
                             
-                            tSetResList.add( Utils.runTest( 
-                                    file, 
-                                    tSet, 
-                                    outputStreams, 
-                                    secondsToTimeout, 
-                                    textPaneProcessOutput,
-                                    javaClasspathFiles,
-                                    useLightTheme ) );
-
-                            resultPanel.generateRects();
-                            resultPanel.updateSize();
-                            resultPanel.repaint();
-                            scrollResults.updateUI();
-                            
-                            if ( file.getName().endsWith( ".jjd" ) ) {
-
                                 Utils.addFormattedText( 
                                         textPaneProcessOutput, 
-                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
-                                        useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
+                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
+                                        useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
 
-                                FileUtils.deleteDirectory( destDir );
+                                testSetResList.add( Utils.runTest( 
+                                        file, 
+                                        tSet, 
+                                        outputStreams, 
+                                        secondsToTimeout, 
+                                        textPaneProcessOutput,
+                                        javaClasspathFiles,
+                                        useLightTheme ) );
+
+                                resultPanel.generateRects();
+                                resultPanel.updateSize();
+                                resultPanel.repaint();
+                                scrollResults.updateUI();
+
+                                if ( file.getName().endsWith( ".jjd" ) ) {
+
+                                    Utils.addFormattedText( 
+                                            textPaneProcessOutput, 
+                                            String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
+                                            useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
+
+                                    FileUtils.deleteDirectory( destDir );
+
+                                }
+                            
+                            } else if ( targetFound ) {
+                                
+                                Utils.addFormattedText( 
+                                        textPaneProcessOutput, 
+                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
+                                        useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
+
+                                TestSetResult newTestSetResult = Utils.runTest( 
+                                        file, 
+                                        tSet, 
+                                        outputStreams, 
+                                        secondsToTimeout, 
+                                        textPaneProcessOutput,
+                                        javaClasspathFiles,
+                                        useLightTheme );
+                                
+                                for ( TestSetResult tsr : testSetResList ) {
+                                    if ( tsr.getPackageFile() != null && tsr.getPackageFile().equals( newTestSetResult.getPackageFile() ) ) {
+                                        tsr.setTestResults( newTestSetResult.getTestResults() );
+                                    }
+                                }
+                                
+                                resultPanel.generateRects();
+                                resultPanel.updateSize();
+                                resultPanel.repaint();
+                                scrollResults.updateUI();
+
+                                if ( file.getName().endsWith( ".jjd" ) ) {
+
+                                    Utils.addFormattedText( 
+                                            textPaneProcessOutput, 
+                                            String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
+                                            useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
+
+                                    FileUtils.deleteDirectory( destDir );
+
+                                }
+                                
+                                break;
                                 
                             }
                             
@@ -453,13 +514,13 @@ public class MainWindow extends javax.swing.JFrame {
                         
                         if ( checkGenerateResultsSpreadsheet.isSelected() ) {
                             
-                            File f = Utils.processResultsToExcel( tSetResList, tSet );
+                            File f = Utils.processResultsToExcel( testSetResList, tSet );
                             
                             if ( f != null && 
-                                 JOptionPane.showConfirmDialog( null, 
-                                     bundle.getString( "MainWindow.confirmOpenExcelFile" ), 
-                                     bundle.getString( "MainWindow.confirm" ), 
-                                     JOptionPane.YES_NO_OPTION ) == JOptionPane.OK_OPTION ) {
+                                JOptionPane.showConfirmDialog( null, 
+                                    bundle.getString( "MainWindow.confirmOpenExcelFile" ), 
+                                    bundle.getString( "MainWindow.confirm" ), 
+                                    JOptionPane.YES_NO_OPTION ) == JOptionPane.OK_OPTION ) {
                                 
                                 Desktop.getDesktop().open( f );
                                 
@@ -765,6 +826,10 @@ public class MainWindow extends javax.swing.JFrame {
         return javaClasspathFiles;
         
     }
+
+    public boolean isRunning() {
+        return running;
+    }
     
     private void prepareForJavaDebug() {
         
@@ -820,6 +885,19 @@ public class MainWindow extends javax.swing.JFrame {
         listPackagesModel.addElement( new File( "testStyle/student2.jjd" ) );
         listPackagesModel.addElement( new File( "testStyle/student3.jjd" ) );
         listPackagesModel.addElement( new File( "testStyle/student4.jjd" ) );
+        
+    }
+    
+    private void prepareForRedoTestDebug() {
+        
+        testSets = Utils.loadTestSets( new File( "testRedo/tests.json" ) );
+        buildTestSetsModel();
+        listPackagesModel.addElement( new File( "testRedo/ex1.1.c" ) );
+        listPackagesModel.addElement( new File( "testRedo/ex1.2.c" ) );
+        listPackagesModel.addElement( new File( "testRedo/test1.jjd" ) );
+        listPackagesModel.addElement( new File( "testRedo/test2.jjd" ) );
+        listPackagesModel.addElement( new File( "testRedo/test3.jjd" ) );
+        listPackagesModel.addElement( new File( "testRedo/ex1.3.c" ) );
         
     }
     
@@ -1321,7 +1399,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void btnRunTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRunTestActionPerformed
         if ( !running ) {
-            runTest();
+            runTest( null );
         } else {
             running = false;
             btnRunTest.setText( bundle.getString( "MainWindow.btnRunTestStopping.text" ) );
@@ -1412,7 +1490,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItemAddPackageActionPerformed
 
     private void menuItemRunTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRunTestActionPerformed
-        runTest();
+        runTest( null );
     }//GEN-LAST:event_menuItemRunTestActionPerformed
 
     private void menuItemRadioLightThemeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRadioLightThemeActionPerformed
