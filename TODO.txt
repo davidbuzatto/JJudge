@@ -1,1 +1,2 @@
+Generalizar opção de compilação e execução.
 Investigar falsos positivos (provavelmente concurrent modfification exception).
