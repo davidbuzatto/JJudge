@@ -71,6 +71,69 @@
 
     -->
     
+    <property name="cGrammar" value="C"/>
+    <property name="cPackage" value="br.com.davidbuzatto.jjudge.stylechecker.parsers.c"/>
+    <property name="cOutput" value="br/com/davidbuzatto/jjudge/stylechecker/parsers/c"/>
+    
+    <property name="javaLexerGrammar" value="Java20Lexer"/>
+    <property name="javaParserGrammar" value="Java20Parser"/>
+    <property name="javaPackage" value="br.com.davidbuzatto.jjudge.stylechecker.parsers.java"/>
+    <property name="javaOutput" value="br/com/davidbuzatto/jjudge/stylechecker/parsers/java"/>
+    
+    <target name="-pre-compile">
+        
+        <property name="cFullPath" value="${src.grammars.dir}/${cGrammar}.g4"/>
+        <property name="javaLexerFullPath" value="${src.grammars.dir}/${javaLexerGrammar}.g4"/>
+        <property name="javaParserFullPath" value="${src.grammars.dir}/${javaParserGrammar}.g4"/>
+        
+        <echo level="info">********** ANTLR: Gerando analisadores... **********</echo>
+        
+        <java classpath="${libraries.dir}/ANTLR-4.13.2/antlr-4.13.2-complete.jar"
+              fork="true"
+              classname="org.antlr.v4.Tool"
+              maxmemory="500M">
+            <arg value="${cFullPath}"/>
+            <arg value="-package"/>
+            <arg value="${cPackage}"/>
+            <arg value="-o"/>
+            <arg value="${src.dir}/${cOutput}"/>
+            <arg value="-Xexact-output-dir"/>
+            <arg value="-visitor"/>
+        </java>
+        
+        <java classpath="${libraries.dir}/ANTLR-4.13.2/antlr-4.13.2-complete.jar"
+              fork="true"
+              classname="org.antlr.v4.Tool"
+              maxmemory="500M">
+            <arg value="${javaLexerFullPath}"/>
+            <arg value="-package"/>
+            <arg value="${javaPackage}"/>
+            <arg value="-o"/>
+            <arg value="${src.dir}/${javaOutput}"/>
+            <arg value="-Xexact-output-dir"/>
+        </java>
+        
+        <java classpath="${libraries.dir}/ANTLR-4.13.2/antlr-4.13.2-complete.jar"
+              fork="true"
+              classname="org.antlr.v4.Tool"
+              maxmemory="500M">
+            <arg value="${javaParserFullPath}"/>
+            <arg value="-package"/>
+            <arg value="${javaPackage}"/>
+            <arg value="-o"/>
+            <arg value="${src.dir}/${javaOutput}"/>
+            <arg value="-Xexact-output-dir"/>
+            <arg value="-visitor"/>
+        </java>
+        
+        <echo level="info">********** ANTLR: Analisadores gerados!   **********</echo>
+        
+    </target>
+    
+    <target name="-post-compile">
+        <delete file="${build.classes.dir}/${cGrammar}.g4"/>
+    </target>
+    
     <target name="-post-jar">
         
         <loadproperties srcFile="${src.dir}/br/com/davidbuzatto/jjudge/gui/Bundle.properties"/>

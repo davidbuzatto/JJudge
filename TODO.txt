@@ -1,2 +1,10 @@
-Generalizar opção de compilação e execução.
+Implementação de analisadores sintáticos para a verificação de estilos.
+
+Generalizar opção de compilação e execução?
+    Definir para cada linguagem os comandos para:
+        Compilar;
+        Executar;
+    Definir também as extensões permitidas e qual a aplicação de cada.
+    Sinceramente, não sei se vale a pena.
+
 Investigar falsos positivos (provavelmente concurrent modfification exception).

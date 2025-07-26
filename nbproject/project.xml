@@ -6,6 +6,7 @@
             <name>JJudge</name>
             <source-roots>
                 <root id="src.dir"/>
+                <root id="src.grammars.dir" name="Grammars"/>
                 <root id="src.excelTemplate.dir" name="Excel Template"/>
             </source-roots>
             <test-roots>
