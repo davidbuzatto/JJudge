@@ -67,30 +67,6 @@ int main( void ) {
         printf( "a" );
     while ( x ) ;
     
-    
-    /*if ( x )
-        printf( "a" );
-    else
-        printf( "a" );
-    
-    if ( x )
-        printf( "a" );
-    else if ( x ) {
-        printf( "a" );
-    } else {
-        printf( "a" );
-    }
-    
-    if ( x ) {
-        printf( "a" );
-    } else if ( x )
-        printf( "a" );
-    else {
-        printf( "a" );
-    }*/
-    
-    
-    
 }
 
 int x() {
@@ -114,45 +90,3 @@ int x() {
     int a = 1;
     int a, b;
 }
-
-/*if ( x )
-if ( x ) {
-if ( x ){
-        
-else
-} else
-}else
-else {
-} else {
-}else {
-else{
-} else{
-}else{
-
-else if ( x )
-} else if ( x )
-}else if ( x )
-    
-else if ( x ) {
-} else if ( x ) {
-}else if ( x ) {
-    
-else if ( x ){
-} else if ( x ){
-}else if ( x ){
-
-switch ( x )
-switch ( x ) {
-switch ( x ){
-
-for ( x )
-for ( x ) {
-for ( x ){
-
-while ( x )
-while ( x ) {
-while ( x ){
-
-do
-do {
-do{*/

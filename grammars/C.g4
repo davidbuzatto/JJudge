@@ -460,8 +460,8 @@ expressionStatement
     ;
 
 selectionStatement
-    : 'if' '(' expression ')' statement ('else' statement)?
-    | 'switch' '(' expression ')' statement
+    : If '(' expression ')' statement (Else statement)?
+    | Switch '(' expression ')' statement
     ;
 
 iterationStatement

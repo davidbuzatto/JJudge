@@ -4,8 +4,8 @@ import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.CBaseListener;
 import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.CParser;
 import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.CParser.DeclarationContext;
 import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.CParser.StatementContext;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * C language parser listener for style checking.
@@ -14,12 +14,12 @@ import java.util.List;
  */
 public class CListenerImpl extends CBaseListener {
 
-    private List<Integer> multipleDeclarationLines;
-    private List<Integer> missingLeftBraceLines;
+    private Set<Integer> multipleDeclarationLines;
+    private Set<Integer> missingLeftBraceLines;
     
     public CListenerImpl() {
-        multipleDeclarationLines = new ArrayList<>();
-        missingLeftBraceLines = new ArrayList<>();
+        multipleDeclarationLines = new TreeSet<>();
+        missingLeftBraceLines = new TreeSet<>();
     }
 
     @Override
@@ -51,7 +51,14 @@ public class CListenerImpl extends CBaseListener {
             if ( stmt.selectionStatement() != null ) {
                 // else if (next listener will manage it)
             } else if ( stmt.compoundStatement() == null ) {
-                missingLeftBraceLines.add( stmt.start.getLine() );
+                if ( ctx.If() != null ) {
+                    missingLeftBraceLines.add( ctx.If().getSymbol().getLine() );
+                    if ( ctx.Else() != null ) {
+                        missingLeftBraceLines.add( ctx.Else().getSymbol().getLine() );
+                    }
+                } else if ( ctx.Switch() != null ) {
+                    missingLeftBraceLines.add( ctx.Switch().getSymbol().getLine() );
+                }
             }
         }
     }
@@ -59,15 +66,21 @@ public class CListenerImpl extends CBaseListener {
     @Override
     public void enterIterationStatement( CParser.IterationStatementContext ctx ) {
         if ( ctx.statement().compoundStatement() == null ) {
-            missingLeftBraceLines.add( ctx.start.getLine() );
+            if ( ctx.For() != null ) {
+                missingLeftBraceLines.add( ctx.For().getSymbol().getLine() );
+            } else if ( ctx.Do() == null && ctx.While() != null ) {
+                missingLeftBraceLines.add( ctx.While().getSymbol().getLine() );
+            } else if ( ctx.Do() != null ) {
+                missingLeftBraceLines.add( ctx.Do().getSymbol().getLine() );
+            }
         }
     }
     
-    public List<Integer> getMultipleDeclarationLines() {
+    public Set<Integer> getMultipleDeclarationLines() {
         return multipleDeclarationLines;
     }
 
-    public List<Integer> getMissingLeftBraceLines() {
+    public Set<Integer> getMissingLeftBraceLines() {
         return missingLeftBraceLines;
     }
     

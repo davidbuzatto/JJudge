@@ -1,5 +1,7 @@
 Implementação de analisadores sintáticos para a verificação de estilos.
 
+Remover arquivos desnecessários do build.
+
 Generalizar opção de compilação e execução?
     Definir para cada linguagem os comandos para:
         Compilar;
@@ -8,3 +10,5 @@ Generalizar opção de compilação e execução?
     Sinceramente, não sei se vale a pena.
 
 Investigar falsos positivos (provavelmente concurrent modfification exception).
+
+

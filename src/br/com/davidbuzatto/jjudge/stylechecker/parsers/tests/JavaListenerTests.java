@@ -1,8 +1,8 @@
 package br.com.davidbuzatto.jjudge.stylechecker.parsers.tests;
 
-import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.CLexer;
-import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.CParser;
-import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.impl.CListenerImpl;
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.java.JavaLexer;
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.java.JavaParser;
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.java.impl.JavaListenerImpl;
 import java.io.File;
 import java.util.Scanner;
 import org.antlr.v4.runtime.CharStreams;
@@ -14,12 +14,12 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
  *
  * @author Prof. Dr. David Buzatto
  */
-public class CListenerTests {
+public class JavaListenerTests {
     
     public static void main( String[] args ) throws Exception {
         
         StringBuilder code = new StringBuilder();
-        File f = new File( "testStyle/cParserTest.c" );
+        File f = new File( "testStyle/JavaParserTest.java" );
         Scanner s = new Scanner( f );
         
         while ( s.hasNextLine() ) {
@@ -34,13 +34,13 @@ public class CListenerTests {
     
     public static void analyse( String code ) {
         
-        CLexer lexer = new CLexer(
+        JavaLexer lexer = new JavaLexer(
                 CharStreams.fromString( code ) );
         CommonTokenStream tokens = new CommonTokenStream( lexer );
-        CParser parser = new CParser( tokens );
+        JavaParser parser = new JavaParser( tokens );
         ParseTree tree = parser.compilationUnit();
         
-        CListenerImpl listener = new CListenerImpl();
+        JavaListenerImpl listener = new JavaListenerImpl();
         ParseTreeWalker.DEFAULT.walk( listener, tree );
         
         System.out.println( listener.getMultipleDeclarationLines() );

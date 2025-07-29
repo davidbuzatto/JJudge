@@ -75,8 +75,8 @@
     <property name="cPackage" value="br.com.davidbuzatto.jjudge.stylechecker.parsers.c"/>
     <property name="cOutput" value="br/com/davidbuzatto/jjudge/stylechecker/parsers/c"/>
     
-    <property name="javaLexerGrammar" value="Java20Lexer"/>
-    <property name="javaParserGrammar" value="Java20Parser"/>
+    <property name="javaLexerGrammar" value="JavaLexer"/>
+    <property name="javaParserGrammar" value="JavaParser"/>
     <property name="javaPackage" value="br.com.davidbuzatto.jjudge.stylechecker.parsers.java"/>
     <property name="javaOutput" value="br/com/davidbuzatto/jjudge/stylechecker/parsers/java"/>
     
