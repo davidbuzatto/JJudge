@@ -155,7 +155,7 @@ public class StyleCheckerResultFrame extends javax.swing.JFrame {
             resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(resultsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(comboResults, 0, 566, Short.MAX_VALUE)
+                .addComponent(comboResults, 0, 766, Short.MAX_VALUE)
                 .addContainerGap())
         );
         resultsPanelLayout.setVerticalGroup(

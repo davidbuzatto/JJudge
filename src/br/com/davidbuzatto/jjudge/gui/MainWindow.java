@@ -879,6 +879,9 @@ public class MainWindow extends javax.swing.JFrame {
     
     private void prepareForStyleCheckerDebug() {
         
+        listPackagesModel.addElement( new File( "testStyle/cParserTest.c" ) );
+        listPackagesModel.addElement( new File( "testStyle/JavaParserTest.java" ) );
+        
         listPackagesModel.addElement( new File( "testStyle/c.c" ) );
         listPackagesModel.addElement( new File( "testStyle/c.jjd" ) );
         listPackagesModel.addElement( new File( "testStyle/student1.jjd" ) );

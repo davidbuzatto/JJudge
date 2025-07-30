@@ -1,6 +1,12 @@
 package br.com.davidbuzatto.jjudge.stylechecker;
 
 import br.com.davidbuzatto.jjudge.gui.StyleCheckerResultFrame;
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.CLexer;
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.CParser;
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.c.impl.CListenerImpl;
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.java.JavaLexer;
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.java.JavaParser;
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.java.impl.JavaListenerImpl;
 import br.com.davidbuzatto.jjudge.testsets.Student;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.awt.Color;
@@ -14,6 +20,11 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import javax.swing.JFrame;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ConsoleErrorListener;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -110,14 +121,81 @@ public class StyleCheckerUtils {
     private static StyleCheckerResult checkStyleCCPP( File f, Student s ) throws IOException {
         
         StyleCheckerResult result = new StyleCheckerResult( f, s );
+        List<String> lines = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        
+        try ( Scanner scan = new Scanner( f, StandardCharsets.UTF_8 ) ) {
+            while ( scan.hasNextLine() ) {
+                String line = scan.nextLine();
+                sb.append( line ).append( "\n" );
+                lines.add( line );
+            }
+        }
+        
+        CListenerImpl listener = parseCCode( sb.toString(), true );
+        
+        int lineNumber = 1;
+        for ( String line : lines ) {
+            
+            if ( listener.getMultipleDeclarationLines().contains( lineNumber ) ) {
+                result.addItem( lineNumber, line, bundle.getString( "StyleCheckerResultFrame.sourceCodeError.multipleVar" ) );
+            } else if ( listener.getMissingLeftBraceLines().contains( lineNumber ) ) {
+                result.addItem( lineNumber, line, bundle.getString( "StyleCheckerResultFrame.sourceCodeError.blockStart" ) );
+            } else {
+                result.addItem( lineNumber, line, null );
+            }
+            lineNumber++;
+        }
+        
+        return result;
+        
+    }
+    
+    private static StyleCheckerResult checkStyleJava( File f, Student s ) throws IOException {
+        
+        StyleCheckerResult result = new StyleCheckerResult( f, s );
+        List<String> lines = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        
+        try ( Scanner scan = new Scanner( f, StandardCharsets.UTF_8 ) ) {
+            while ( scan.hasNextLine() ) {
+                String line = scan.nextLine();
+                sb.append( line ).append( "\n" );
+                lines.add( line );
+            }
+        }
+        
+        JavaListenerImpl listener = parseJavaCode( sb.toString(), true );
+        
+        int lineNumber = 1;
+        for ( String line : lines ) {
+            
+            if ( listener.getMultipleDeclarationLines().contains( lineNumber ) ) {
+                result.addItem( lineNumber, line, bundle.getString( "StyleCheckerResultFrame.sourceCodeError.multipleVar" ) );
+            } else if ( listener.getMissingLeftBraceLines().contains( lineNumber ) ) {
+                result.addItem( lineNumber, line, bundle.getString( "StyleCheckerResultFrame.sourceCodeError.blockStart" ) );
+            } else {
+                result.addItem( lineNumber, line, null );
+            }
+            lineNumber++;
+        }
+        
+        return result;
+        
+    }
+    
+    private static StyleCheckerResult checkStyleCCPPOld( File f, Student s ) throws IOException {
+        
+        StyleCheckerResult result = new StyleCheckerResult( f, s );
+        
         try ( Scanner scan = new Scanner( f, StandardCharsets.UTF_8 ) ) {
             
             int lineNumber = 1;
             
             while ( scan.hasNextLine() ) {
                 String line = scan.nextLine();
-                String checkVariableResult = checkVariableCCPP( line );
-                String checkStatementResult = checkStatementCCPP( line );
+                String checkVariableResult = checkVariableCCPPOld( line );
+                String checkStatementResult = checkStatementCCPPOld( line );
                 if ( checkVariableResult.isEmpty() && checkStatementResult.isEmpty() ) {
                     result.addItem( lineNumber, line, null );
                 } else {
@@ -133,7 +211,7 @@ public class StyleCheckerUtils {
         
     }
     
-    private static String checkVariableCCPP( String line ) {
+    private static String checkVariableCCPPOld( String line ) {
         
         String result = "";
         line = line.trim();
@@ -160,7 +238,7 @@ public class StyleCheckerUtils {
         
     }
     
-    private static String checkStatementCCPP( String line ) {
+    private static String checkStatementCCPPOld( String line ) {
         
         String result = "";
         line = line.trim();
@@ -182,8 +260,8 @@ public class StyleCheckerUtils {
         
     }
 
-    private static StyleCheckerResult checkStyleJava( File f, Student s ) throws IOException {
-        return checkStyleCCPP( f, s );
+    private static StyleCheckerResult checkStyleJavaOld( File f, Student s ) throws IOException {
+        return checkStyleCCPPOld( f, s );
     }
     
     private static List<StyleCheckerToken> getTokens( StyleCheckerTokenizer st ) {
@@ -203,6 +281,56 @@ public class StyleCheckerUtils {
         }
         
         return tokens;
+        
+    }
+    
+    private static CListenerImpl parseCCode( String code, boolean disableErrorReporting ) {
+        
+        CLexer lexer = new CLexer(
+                CharStreams.fromString( code ) );
+        
+        if ( disableErrorReporting ) {
+            lexer.removeErrorListener( ConsoleErrorListener.INSTANCE );
+        }
+        
+        CommonTokenStream tokens = new CommonTokenStream( lexer );
+        
+        CParser parser = new CParser( tokens );
+        if ( disableErrorReporting ) {
+            parser.removeErrorListener( ConsoleErrorListener.INSTANCE );
+        }
+        
+        ParseTree tree = parser.compilationUnit();
+        
+        CListenerImpl listener = new CListenerImpl();
+        ParseTreeWalker.DEFAULT.walk( listener, tree );
+        
+        return listener;
+        
+    }
+    
+    private static JavaListenerImpl parseJavaCode( String code, boolean disableErrorReporting ) {
+        
+        JavaLexer lexer = new JavaLexer(
+                CharStreams.fromString( code ) );
+        
+        if ( disableErrorReporting ) {
+            lexer.removeErrorListener( ConsoleErrorListener.INSTANCE );
+        }
+        
+        CommonTokenStream tokens = new CommonTokenStream( lexer );
+        
+        JavaParser parser = new JavaParser( tokens );
+        if ( disableErrorReporting ) {
+            parser.removeErrorListener( ConsoleErrorListener.INSTANCE );
+        }
+        
+        ParseTree tree = parser.compilationUnit();
+        
+        JavaListenerImpl listener = new JavaListenerImpl();
+        ParseTreeWalker.DEFAULT.walk( listener, tree );
+        
+        return listener;
         
     }
     
