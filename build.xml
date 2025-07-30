@@ -86,7 +86,7 @@
         <property name="javaLexerFullPath" value="${src.grammars.dir}/${javaLexerGrammar}.g4"/>
         <property name="javaParserFullPath" value="${src.grammars.dir}/${javaParserGrammar}.g4"/>
         
-        <echo level="info">********** ANTLR: Gerando analisadores... **********</echo>
+        <echo level="info">********** ANTLR: Generating parsers... **********</echo>
         
         <java classpath="${libraries.dir}/ANTLR-4.13.2/antlr-4.13.2-complete.jar"
               fork="true"
@@ -126,7 +126,7 @@
             <arg value="-visitor"/>
         </java>
         
-        <echo level="info">********** ANTLR: Analisadores gerados!   **********</echo>
+        <echo level="info">********** ANTLR: Parsers gerated!      **********</echo>
         
     </target>
     
