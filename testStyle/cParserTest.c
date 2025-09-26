@@ -36,6 +36,13 @@ int main( void ) {
     else
         printf( "a" );
     
+    if ( x && y && k || teste < 7 ) {
+        printf( "a" );
+    } else if ( !x && !y && k || teste < 7 ) {
+        printf( "a" );
+    } else {
+        printf( "a" );
+    }
     
     switch ( x ) {
         case 1: printf( "x" );

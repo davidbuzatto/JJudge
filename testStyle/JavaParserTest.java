@@ -43,7 +43,22 @@ public class JavaParserTest {
         else
             System.out.printf( "a" );
         
+        if ( x && y && k || teste < 7 ){
+            System.out.printf( "a" );
+        } else if ( !x && !y && k || teste < 7 ) {
+            System.out.printf( "a" );
+        } else{
+            System.out.printf( "a" );
+        }
         
+        if ( x && y && k || teste < 7 ) {
+            System.out.printf( "a" );
+        } else if ( a )
+            System.out.printf( "a" );
+        } else{
+            System.out.printf( "a" );
+        }
+    
         for ( int i = 0; i < 10; i++ ) {
             System.out.printf( "a" );
         }
@@ -115,6 +130,21 @@ class TesteTeste {
         else
             System.out.printf( "a" );
         
+        if ( x && y && k || teste < 7 ){
+            System.out.printf( "a" );
+        } else if ( !x && !y && k || teste < 7 ) {
+            System.out.printf( "a" );
+        } else{
+            System.out.printf( "a" );
+        }
+        
+        if ( x && y && k || teste < 7 ) {
+            System.out.printf( "a" );
+        } else if ( a )
+            System.out.printf( "a" );
+        } else{
+            System.out.printf( "a" );
+        }
         
         for ( int i = 0; i < 10; i++ ) {
             System.out.printf( "a" );

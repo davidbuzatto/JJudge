@@ -1,5 +1,6 @@
 package br.com.davidbuzatto.jjudge.stylechecker.parsers.java.impl;
 
+import br.com.davidbuzatto.jjudge.stylechecker.parsers.java.JavaLexer;
 import br.com.davidbuzatto.jjudge.stylechecker.parsers.java.JavaParser;
 import br.com.davidbuzatto.jjudge.stylechecker.parsers.java.JavaParserBaseListener;
 import java.util.List;
@@ -54,9 +55,22 @@ public class JavaListenerImpl extends JavaParserBaseListener {
     }
     
     private void checkIfStatementHasBlock( JavaParser.StatementContext ctx, int line ) {
+        
+        // basta para o if, não para o else if
         if ( ctx.block() == null ) {
+            
+            // teste para o else if
+            if ( !ctx.statement().isEmpty() ) {
+                JavaParser.StatementContext sc = ctx.statement().getFirst();
+                if ( ctx.statement().getFirst().start.getType() == JavaLexer.LBRACE ) {
+                    return;
+                }
+            }
+            
             missingLeftBraceLines.add( line );
+            
         }
+        
     }
     
     public Set<Integer> getMultipleDeclarationLines() {

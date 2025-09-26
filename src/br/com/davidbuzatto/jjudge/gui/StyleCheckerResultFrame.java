@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -81,19 +82,23 @@ public class StyleCheckerResultFrame extends javax.swing.JFrame {
         
         for ( StyleCheckerResultItem r : result.getItems() ) {
             
-            Color c = Colors.PASSED;
+            Color tempColor = Colors.PASSED;
             
             if ( r.getError() != null ) {
-                c = Colors.REPROVED;
+                tempColor = Colors.REPROVED;
             }
             
-            Utils.addFormattedText( 
-                textPaneSourceCode, 
-                String.format( lineFormat, r.getLineNumber() ), 
-                useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, 
-                false
-            );
-            Utils.addFormattedText( textPaneSourceCode, r.toStringNoLine() + "\n", c, false );
+            final Color c = tempColor;
+            
+            //SwingUtilities.invokeLater( () -> {
+                Utils.addFormattedText( 
+                    textPaneSourceCode, 
+                    String.format( lineFormat, r.getLineNumber() ), 
+                    useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, 
+                    false
+                );
+                Utils.addFormattedText( textPaneSourceCode, r.toStringNoLine() + "\n", c, false );
+            //});
             
         }
         

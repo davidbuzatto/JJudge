@@ -619,7 +619,7 @@ public class Utils {
                         textPane.getDocument().getLength(), text, attr );
             }
             
-            textPane.setCaretPosition(textPane.getDocument().getLength());
+            textPane.setCaretPosition( textPane.getDocument().getLength() );
             
         } catch ( BadLocationException exc ) {
             Utils.showException( exc );

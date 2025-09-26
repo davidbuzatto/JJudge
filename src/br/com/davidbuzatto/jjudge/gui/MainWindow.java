@@ -607,7 +607,6 @@ public class MainWindow extends javax.swing.JFrame {
     private void runPlagiarismDetector() {
         
         final List<File> packagesToTest = new ArrayList<>();
-        final JFrame thisFrame = this;
         
         if ( !listPackagesModel.isEmpty() ) {
             for ( int i = 0; i < listPackagesModel.getSize(); i++ ) {
@@ -697,7 +696,6 @@ public class MainWindow extends javax.swing.JFrame {
     private void runStyleChecker( StyleCheckerLanguage language ) {
         
         final List<File> filesToTest = new ArrayList<>();
-        final JFrame thisFrame = this;
         
         if ( !listPackagesModel.isEmpty() ) {
             for ( int i = 0; i < listPackagesModel.getSize(); i++ ) {
