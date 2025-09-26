@@ -126,7 +126,7 @@
             <arg value="-visitor"/>
         </java>
         
-        <echo level="info">********** ANTLR: Parsers gerated!      **********</echo>
+        <echo level="info">********** ANTLR: Parsers generated!      **********</echo>
         
     </target>
     
