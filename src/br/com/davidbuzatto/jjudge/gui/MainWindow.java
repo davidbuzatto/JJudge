@@ -6,6 +6,7 @@ import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerTestResult;
 import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerLanguage;
 import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerUtils;
 import br.com.davidbuzatto.jjudge.testsets.Student;
+import br.com.davidbuzatto.jjudge.testsets.TestResult;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import br.com.davidbuzatto.jjudge.utils.Colors;
@@ -485,9 +486,23 @@ public class MainWindow extends javax.swing.JFrame {
                                         useLightTheme );
                                 
                                 for ( TestSetResult tsr : testSetResList ) {
+                                    
                                     if ( tsr.getPackageFile() != null && tsr.getPackageFile().equals( newTestSetResult.getPackageFile() ) ) {
+                                        
                                         tsr.setTestResults( newTestSetResult.getTestResults() );
+                                        
+                                        int approved = 0;
+                                        int total = tSet.getTests().size();
+                                        for ( TestResult tr : tsr.getTestResults() ) {
+                                            if ( tr.isApproved() ) {
+                                                approved++;
+                                            }
+                                        }
+
+                                        tsr.setGrade( 10.0 / total * approved );
+        
                                     }
+                                    
                                 }
                                 
                                 resultPanel.generateRects();

@@ -485,7 +485,7 @@ public class Utils {
             }
         }
         
-        testSetResult.setGrade( 10.0 * approved / total );
+        testSetResult.setGrade( 10.0 / total * approved );
         
         return testSetResult;
         
@@ -717,7 +717,7 @@ public class Utils {
                     r.getCell( cc++ ).setCellValue( result );
 
                 }
-
+                
                 r.getCell( cc ).setCellValue( tsr.getGrade() );
 
             }
