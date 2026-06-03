@@ -315,77 +315,90 @@ public class Processor {
 
                     Process pExec = rt.exec( cmdExec, null, dir );
                     PrintWriter pwExec = new PrintWriter( pExec.getOutputStream() );
-                    FileOutputStream fosOutput = new FileOutputStream( 
-                            new File( String.format(  "%s/output.out" , baseDir ) ) );
-                    StreamGobbler sgExec = new StreamGobbler( 
-                            pExec.getInputStream(), 
-                            pExec.getErrorStream(), 
-                            fosOutput, 
-                            bundle.getString( "Processor.compileAndRun.executionStream" ), 
-                            outputStreams );
-                    Thread tExec = new Thread( sgExec );
-                    tExec.start();
-
-                    if ( textPane == null ) {
-                        System.out.printf( "|-- test case %02d:\n", i++ );
-                        System.out.println( "|   |-- process test input: " );
-                        if ( input.isEmpty() ) {
-                            System.out.println( Utils.identText( "<empty>", 3 ) );
-                        } else {
-                            System.out.println( Utils.identText( input, 3 ) );
-                        }
-                        System.out.println( "|   |" );
-                    } else {
-                        Utils.addFormattedText( 
-                                textPane, 
-                                String.format( bundle.getString( "Processor.compileAndRun.testCase" ), i++ ), 
-                                getResultTextColor( useLightTheme ), false );
-                        Utils.addFormattedText( 
-                                textPane, 
-                                bundle.getString( "Processor.compileAndRun.processTestInput" ), 
-                                getResultTextColor( useLightTheme ), false );
-                        if ( input.isEmpty() ) {
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    Utils.identText( bundle.getString( "Processor.compileAndRun.empty" ), 4 ) + "\n", 
-                                    getResultTextColor( useLightTheme ), false );
-                        } else {
-                            Utils.addFormattedText( 
-                                    textPane, 
-                                    Utils.identText( input, 4 ) + "\n", 
-                                    getResultTextColor( useLightTheme ), false );
-                        }
-                        Utils.addFormattedText( 
-                                textPane, 
-                                "|   |   |\n", 
-                                getResultTextColor( useLightTheme ), false );
-
-                    }
-
-                    for ( String s : input.split( "\n" ) ) {
-                        if ( !s.isEmpty() ) {
-                            pwExec.println( s );
-                        }
-                    }
-                    pwExec.close();
-
-                    // wait for long process time
-                    if ( !pExec.waitFor( secondsToTimeout, TimeUnit.SECONDS ) ) {
-                        state = ExecutionState.TIMEOUT_ERROR;
-                        pExec.destroyForcibly();
-                    }
-                    tExec.join();
-
-                    // abnormal termination
-                    if ( state == null ) {
-                        if ( pExec.exitValue() != 0 ) {
-                            state = ExecutionState.RUNTIME_ERROR;
-                        }
-                    }
-
-                    fosOutput.close();
-
                     
+                    try ( FileOutputStream fosOutput = new FileOutputStream(
+                            new File( String.format( "%s/output.out", baseDir ) ) ) ) {
+                        
+                        StreamGobbler sgExec = new StreamGobbler( 
+                                pExec.getInputStream(), 
+                                pExec.getErrorStream(), 
+                                fosOutput, 
+                                bundle.getString( "Processor.compileAndRun.executionStream" ), 
+                                outputStreams );
+                        Thread tExec = new Thread( sgExec );
+                        tExec.start();
+
+                        if ( textPane == null ) {
+                            System.out.printf( "|-- test case %02d:\n", i++ );
+                            System.out.println( "|   |-- process test input: " );
+                            if ( input.isEmpty() ) {
+                                System.out.println( Utils.identText( "<empty>", 3 ) );
+                            } else {
+                                System.out.println( Utils.identText( input, 3 ) );
+                            }
+                            System.out.println( "|   |" );
+                        } else {
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    String.format( bundle.getString( "Processor.compileAndRun.testCase" ), i++ ), 
+                                    getResultTextColor( useLightTheme ), false );
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    bundle.getString( "Processor.compileAndRun.processTestInput" ), 
+                                    getResultTextColor( useLightTheme ), false );
+                            if ( input.isEmpty() ) {
+                                Utils.addFormattedText( 
+                                        textPane, 
+                                        Utils.identText( bundle.getString( "Processor.compileAndRun.empty" ), 4 ) + "\n", 
+                                        getResultTextColor( useLightTheme ), false );
+                            } else {
+                                Utils.addFormattedText( 
+                                        textPane, 
+                                        Utils.identText( input, 4 ) + "\n", 
+                                        getResultTextColor( useLightTheme ), false );
+                            }
+                            Utils.addFormattedText( 
+                                    textPane, 
+                                    "|   |   |\n", 
+                                    getResultTextColor( useLightTheme ), false );
+
+                        }
+
+                        for ( String s : input.split( "\n" ) ) {
+                            if ( !s.isEmpty() ) {
+                                pwExec.println( s );
+                            }
+                        }
+                        pwExec.close();
+
+                        // wait for long process time
+                        try {
+                            if ( !pExec.waitFor( secondsToTimeout, TimeUnit.SECONDS ) ) {
+                                state = ExecutionState.TIMEOUT_ERROR;
+                                pExec.destroyForcibly();
+                            }
+                        } catch ( InterruptedException e ) {
+                            state = ExecutionState.TIMEOUT_ERROR;
+                            pExec.destroyForcibly();
+                            Thread.currentThread().interrupt();
+                        }
+
+                        try {
+                            tExec.join();
+                        } catch ( InterruptedException e ) {
+                            Thread.currentThread().interrupt();
+                        }
+
+                        // abnormal termination
+                        if ( state == null ) {
+                            if ( pExec.exitValue() != 0 ) {
+                                state = ExecutionState.RUNTIME_ERROR;
+                            }
+                        }
+
+                    }
+
+
                     // reading process output from file
                     StringBuilder sbOutput = new StringBuilder();
                     File processOutputFile = new File( String.format( "%s/%s", baseDir, "output.out" ) );
@@ -561,11 +574,14 @@ public class Processor {
         
         // clean files
         File baseDirFile = new File( baseDir );
-        for ( File cFile : baseDirFile.listFiles() ) {
-            if ( cFile.exists() && !cFile.isDirectory() ) {
-                for ( String ext : filesToRemoveByExtension ) {
-                    if ( cFile.getName().endsWith( "." + ext ) ) {
-                        cFile.delete();
+        File[] filesToClean = baseDirFile.listFiles();
+        if ( filesToClean != null ) {
+            for ( File cFile : filesToClean ) {
+                if ( cFile.exists() && !cFile.isDirectory() ) {
+                    for ( String ext : filesToRemoveByExtension ) {
+                        if ( cFile.getName().endsWith( "." + ext ) ) {
+                            cFile.delete();
+                        }
                     }
                 }
             }
