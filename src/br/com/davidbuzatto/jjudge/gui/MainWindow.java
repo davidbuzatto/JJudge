@@ -444,19 +444,21 @@ public class MainWindow extends javax.swing.JFrame {
                                         String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
                                         useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
 
-                                testSetResList.add( Utils.runTest( 
-                                        file, 
-                                        tSet, 
-                                        outputStreams, 
-                                        secondsToTimeout, 
+                                testSetResList.add( Utils.runTest(
+                                        file,
+                                        tSet,
+                                        outputStreams,
+                                        secondsToTimeout,
                                         textPaneProcessOutput,
                                         javaClasspathFiles,
                                         useLightTheme ) );
 
-                                resultPanel.generateRects();
-                                resultPanel.updateSize();
-                                resultPanel.repaint();
-                                scrollResults.updateUI();
+                                SwingUtilities.invokeLater( () -> {
+                                    resultPanel.generateRects();
+                                    resultPanel.updateSize();
+                                    resultPanel.repaint();
+                                    scrollResults.updateUI();
+                                } );
 
                                 if ( file.getName().endsWith( ".jjd" ) ) {
 
@@ -486,11 +488,11 @@ public class MainWindow extends javax.swing.JFrame {
                                         useLightTheme );
                                 
                                 for ( TestSetResult tsr : testSetResList ) {
-                                    
+
                                     if ( tsr.getPackageFile() != null && tsr.getPackageFile().equals( newTestSetResult.getPackageFile() ) ) {
-                                        
+
                                         tsr.setTestResults( newTestSetResult.getTestResults() );
-                                        
+
                                         int approved = 0;
                                         int total = tSet.getTests().size();
                                         for ( TestResult tr : tsr.getTestResults() ) {
@@ -500,15 +502,17 @@ public class MainWindow extends javax.swing.JFrame {
                                         }
 
                                         tsr.setGrade( 10.0 / total * approved );
-        
+
                                     }
-                                    
+
                                 }
-                                
-                                resultPanel.generateRects();
-                                resultPanel.updateSize();
-                                resultPanel.repaint();
-                                scrollResults.updateUI();
+
+                                SwingUtilities.invokeLater( () -> {
+                                    resultPanel.generateRects();
+                                    resultPanel.updateSize();
+                                    resultPanel.repaint();
+                                    scrollResults.updateUI();
+                                } );
 
                                 if ( file.getName().endsWith( ".jjd" ) ) {
 
