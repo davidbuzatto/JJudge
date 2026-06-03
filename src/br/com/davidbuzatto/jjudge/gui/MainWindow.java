@@ -1,6 +1,7 @@
 package br.com.davidbuzatto.jjudge.gui;
 
 import br.com.davidbuzatto.jjudge.plagiarism.PlagiarismTestResult;
+import br.com.davidbuzatto.jjudge.processor.Processor;
 import br.com.davidbuzatto.jjudge.plagiarism.PlagiarismUtils;
 import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerTestResult;
 import br.com.davidbuzatto.jjudge.stylechecker.StyleCheckerLanguage;
@@ -29,6 +30,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -64,6 +68,9 @@ public class MainWindow extends javax.swing.JFrame {
     private boolean running;
     private final Icon RUN_ICON;
     private final Icon STOP_ICON;
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private Future<?> testFuture;
     
     private List<File> javaClasspathFiles;
     
@@ -387,16 +394,13 @@ public class MainWindow extends javax.swing.JFrame {
         
         if ( tSet != null && !listPackagesModel.isEmpty() ) {
             
-            new Thread( new Runnable() {
-                
-                @Override
-                public void run() {
-                    
-                    running = true;
-                    
+            testFuture = executor.submit( () -> {
+
+                running = true;
+
+                SwingUtilities.invokeLater( () -> {
                     btnRunTest.setText( bundle.getString( "MainWindow.btnRunTestStop.text" ) );
                     btnRunTest.setIcon( STOP_ICON );
-                    
                     listPackages.setEnabled( false );
                     listTestSets.setEnabled( false );
                     btnBuildTestPackage.setEnabled( false );
@@ -419,180 +423,182 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.pleaseWait" ) );
                     textPaneProcessOutput.setText( "" );
-                    
-                    try {
-                        
-                        boolean update = testSetToUpdate != null;
-                        boolean targetFound = false;
-                        
-                        for ( int i = 0; i < listPackagesModel.size() && running; i++ ) {
-                            
-                            File file = listPackagesModel.get( i );
-                            
-                            if ( testSetToUpdate != null ) {
-                                if ( file.equals( testSetToUpdate.getPackageFile() ) ) {
-                                    targetFound = true;
-                                }
+                } );
+
+                try {
+
+                    boolean update = testSetToUpdate != null;
+                    boolean targetFound = false;
+
+                    for ( int i = 0; i < listPackagesModel.size() && running; i++ ) {
+
+                        File file = listPackagesModel.get( i );
+
+                        if ( testSetToUpdate != null ) {
+                            if ( file.equals( testSetToUpdate.getPackageFile() ) ) {
+                                targetFound = true;
                             }
-                            
-                            File destDir = new File( file.getAbsolutePath().replace( ".jjd", "-jjd-temp" ).trim() );
-                            
-                            if ( !update ) {
-                            
-                                Utils.addFormattedText( 
-                                        textPaneProcessOutput, 
-                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
-                                        useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
+                        }
 
-                                testSetResList.add( Utils.runTest(
-                                        file,
-                                        tSet,
-                                        outputStreams,
-                                        secondsToTimeout,
+                        File destDir = new File( file.getAbsolutePath().replace( ".jjd", "-jjd-temp" ).trim() );
+
+                        if ( !update ) {
+
+                            Utils.addFormattedText(
+                                    textPaneProcessOutput,
+                                    String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
+                                    useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
+
+                            testSetResList.add( Utils.runTest(
+                                    file,
+                                    tSet,
+                                    outputStreams,
+                                    secondsToTimeout,
+                                    textPaneProcessOutput,
+                                    javaClasspathFiles,
+                                    useLightTheme ) );
+
+                            SwingUtilities.invokeLater( () -> {
+                                resultPanel.generateRects();
+                                resultPanel.updateSize();
+                                resultPanel.repaint();
+                                scrollResults.updateUI();
+                            } );
+
+                            if ( file.getName().endsWith( ".jjd" ) ) {
+
+                                Utils.addFormattedText(
                                         textPaneProcessOutput,
-                                        javaClasspathFiles,
-                                        useLightTheme ) );
+                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
+                                        useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
 
-                                SwingUtilities.invokeLater( () -> {
-                                    resultPanel.generateRects();
-                                    resultPanel.updateSize();
-                                    resultPanel.repaint();
-                                    scrollResults.updateUI();
-                                } );
+                                FileUtils.deleteDirectory( destDir );
 
-                                if ( file.getName().endsWith( ".jjd" ) ) {
+                            }
 
-                                    Utils.addFormattedText( 
-                                            textPaneProcessOutput, 
-                                            String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
-                                            useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
+                        } else if ( targetFound ) {
 
-                                    FileUtils.deleteDirectory( destDir );
+                            Utils.addFormattedText(
+                                    textPaneProcessOutput,
+                                    String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
+                                    useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
 
-                                }
-                            
-                            } else if ( targetFound ) {
-                                
-                                Utils.addFormattedText( 
-                                        textPaneProcessOutput, 
-                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), file ),
-                                        useLightTheme ? Colors.PROCESSING_MESSAGE_LIGHT : Colors.PROCESSING_MESSAGE_DARK, false );
+                            TestSetResult newTestSetResult = Utils.runTest(
+                                    file,
+                                    tSet,
+                                    outputStreams,
+                                    secondsToTimeout,
+                                    textPaneProcessOutput,
+                                    javaClasspathFiles,
+                                    useLightTheme );
 
-                                TestSetResult newTestSetResult = Utils.runTest( 
-                                        file, 
-                                        tSet, 
-                                        outputStreams, 
-                                        secondsToTimeout, 
-                                        textPaneProcessOutput,
-                                        javaClasspathFiles,
-                                        useLightTheme );
-                                
-                                for ( TestSetResult tsr : testSetResList ) {
+                            for ( TestSetResult tsr : testSetResList ) {
 
-                                    if ( tsr.getPackageFile() != null && tsr.getPackageFile().equals( newTestSetResult.getPackageFile() ) ) {
+                                if ( tsr.getPackageFile() != null && tsr.getPackageFile().equals( newTestSetResult.getPackageFile() ) ) {
 
-                                        tsr.setTestResults( newTestSetResult.getTestResults() );
+                                    tsr.setTestResults( newTestSetResult.getTestResults() );
 
-                                        int approved = 0;
-                                        int total = tSet.getTests().size();
-                                        for ( TestResult tr : tsr.getTestResults() ) {
-                                            if ( tr.isApproved() ) {
-                                                approved++;
-                                            }
+                                    int approved = 0;
+                                    int total = tSet.getTests().size();
+                                    for ( TestResult tr : tsr.getTestResults() ) {
+                                        if ( tr.isApproved() ) {
+                                            approved++;
                                         }
-
-                                        tsr.setGrade( 10.0 / total * approved );
-
                                     }
 
-                                }
-
-                                SwingUtilities.invokeLater( () -> {
-                                    resultPanel.generateRects();
-                                    resultPanel.updateSize();
-                                    resultPanel.repaint();
-                                    scrollResults.updateUI();
-                                } );
-
-                                if ( file.getName().endsWith( ".jjd" ) ) {
-
-                                    Utils.addFormattedText( 
-                                            textPaneProcessOutput, 
-                                            String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
-                                            useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
-
-                                    FileUtils.deleteDirectory( destDir );
+                                    tsr.setGrade( 10.0 / total * approved );
 
                                 }
-                                
-                                break;
-                                
+
                             }
-                            
-                        }
-                        
-                        if ( checkGenerateResultsSpreadsheet.isSelected() ) {
-                            
-                            File f = Utils.processResultsToExcel( testSetResList, tSet );
-                            
-                            if ( f != null && 
-                                JOptionPane.showConfirmDialog( null, 
-                                    bundle.getString( "MainWindow.confirmOpenExcelFile" ), 
-                                    bundle.getString( "MainWindow.confirm" ), 
-                                    JOptionPane.YES_NO_OPTION ) == JOptionPane.OK_OPTION ) {
-                                
-                                Desktop.getDesktop().open( f );
-                                
+
+                            SwingUtilities.invokeLater( () -> {
+                                resultPanel.generateRects();
+                                resultPanel.updateSize();
+                                resultPanel.repaint();
+                                scrollResults.updateUI();
+                            } );
+
+                            if ( file.getName().endsWith( ".jjd" ) ) {
+
+                                Utils.addFormattedText(
+                                        textPaneProcessOutput,
+                                        String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.cleaning" ), file ),
+                                        useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
+
+                                FileUtils.deleteDirectory( destDir );
+
                             }
-                            
+
+                            break;
+
                         }
-                        
-                    } catch ( IOException exc ) {
-                        Utils.addFormattedText( 
-                                textPaneProcessOutput, 
-                                bundle.getString( "MainWindow.btnRunTestActionPerformed.errorCompileAndRun" ),
-                                Color.RED, false );
-                        Utils.showException( exc );
-                    } catch ( InterruptedException exc ) {
-                        Utils.showException( exc );
+
                     }
-                    
-                    Utils.addFormattedText( 
-                            textPaneProcessOutput, 
+
+                    if ( !Thread.currentThread().isInterrupted() && checkGenerateResultsSpreadsheet.isSelected() ) {
+
+                        File f = Utils.processResultsToExcel( testSetResList, tSet );
+
+                        if ( f != null &&
+                            JOptionPane.showConfirmDialog( null,
+                                bundle.getString( "MainWindow.confirmOpenExcelFile" ),
+                                bundle.getString( "MainWindow.confirm" ),
+                                JOptionPane.YES_NO_OPTION ) == JOptionPane.OK_OPTION ) {
+
+                            Desktop.getDesktop().open( f );
+
+                        }
+
+                    }
+
+                } catch ( IOException exc ) {
+                    Utils.addFormattedText(
+                            textPaneProcessOutput,
+                            bundle.getString( "MainWindow.btnRunTestActionPerformed.errorCompileAndRun" ),
+                            Color.RED, false );
+                    Utils.showException( exc );
+                } catch ( InterruptedException exc ) {
+                    Thread.currentThread().interrupt();
+                } finally {
+
+                    Utils.addFormattedText(
+                            textPaneProcessOutput,
                             bundle.getString( "MainWindow.btnRunTestActionPerformed.finished" ),
                             useLightTheme ? Colors.RESULT_TEXT_LIGHT : Colors.RESULT_TEXT_DARK, false );
-                    
-                    listPackages.setEnabled( true );
-                    listTestSets.setEnabled( true );
-                    btnBuildTestPackage.setEnabled( true );
-                    btnAddPackage.setEnabled( true );
-                    btnRemovePackage.setEnabled( true );
-                    btnLoadTestSet.setEnabled( true );
-                    menuItemBuildTestPackage.setEnabled( true );
-                    menuItemAddPackage.setEnabled( true );
-                    menuItemLoadTestSets.setEnabled( true);
-                    menuItemRunTest.setEnabled( true );
-                    menuItemExit.setEnabled( true );
-                    menuItemTestSets.setEnabled( true );
-                    menuItemDependencies.setEnabled( true );
-                    menuItemTheme.setEnabled( true );
-                    menuItemPlagiarismDetector.setEnabled( true );
-                    menuStyleChecker.setEnabled( true );
-                    menuItemStyleCheckerC.setEnabled( true );
-                    menuItemStyleCheckerJava.setEnabled( true );
-                    menuItemHowTo.setEnabled( true );
-                    menuItemAbout.setEnabled( true );
-                    lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
-                    
-                    btnRunTest.setText( bundle.getString( "MainWindow.btnRunTest.text" ) );
-                    btnRunTest.setIcon( RUN_ICON );
-                    btnRunTest.setEnabled( true );
-                    
+
                     running = false;
-                    
+
+                    SwingUtilities.invokeLater( () -> {
+                        listPackages.setEnabled( true );
+                        listTestSets.setEnabled( true );
+                        btnBuildTestPackage.setEnabled( true );
+                        btnAddPackage.setEnabled( true );
+                        btnRemovePackage.setEnabled( true );
+                        btnLoadTestSet.setEnabled( true );
+                        menuItemBuildTestPackage.setEnabled( true );
+                        menuItemAddPackage.setEnabled( true );
+                        menuItemLoadTestSets.setEnabled( true );
+                        menuItemRunTest.setEnabled( true );
+                        menuItemExit.setEnabled( true );
+                        menuItemTestSets.setEnabled( true );
+                        menuItemDependencies.setEnabled( true );
+                        menuItemTheme.setEnabled( true );
+                        menuItemPlagiarismDetector.setEnabled( true );
+                        menuStyleChecker.setEnabled( true );
+                        menuItemStyleCheckerC.setEnabled( true );
+                        menuItemStyleCheckerJava.setEnabled( true );
+                        menuItemHowTo.setEnabled( true );
+                        menuItemAbout.setEnabled( true );
+                        lblStatus.setText( bundle.getString( "MainWindow.btnRunTestActionPerformed.done" ) );
+                        btnRunTest.setText( bundle.getString( "MainWindow.btnRunTest.text" ) );
+                        btnRunTest.setIcon( RUN_ICON );
+                        btnRunTest.setEnabled( true );
+                    } );
+
                 }
-                
-            }).start();
+
+            } );
             
         } else if ( tSet == null ) {
             JOptionPane.showMessageDialog( 
@@ -623,11 +629,9 @@ public class MainWindow extends javax.swing.JFrame {
         
         if ( packagesToTest.size() > 1 ) {
             
-            new Thread( new Runnable() {
-                
-                @Override
-                public void run() {
-                    
+            executor.submit( () -> {
+
+                SwingUtilities.invokeLater( () -> {
                     listPackages.setEnabled( false );
                     listTestSets.setEnabled( false );
                     btnBuildTestPackage.setEnabled( false );
@@ -651,42 +655,45 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.pleaseWait" ) );
-                    
-                    try {
-                        List<PlagiarismTestResult> results = PlagiarismUtils.runPlagiarismDetector( packagesToTest );
+                } );
+
+                try {
+                    List<PlagiarismTestResult> results = PlagiarismUtils.runPlagiarismDetector( packagesToTest );
+                    SwingUtilities.invokeLater( () -> {
                         PlagiarismDetectorResultFrame frame = new PlagiarismDetectorResultFrame( results, plagiarismPanelBackgroundColor, useLightTheme );
                         frame.setVisible( true );
-                    } catch ( IOException exc ) {
-                        Utils.showException( exc );
-                    }
-                    
-                    listPackages.setEnabled( true );
-                    listTestSets.setEnabled( true );
-                    btnBuildTestPackage.setEnabled( true );
-                    btnAddPackage.setEnabled( true );
-                    btnRemovePackage.setEnabled( true );
-                    checkGenerateResultsSpreadsheet.setEnabled( true );
-                    btnLoadTestSet.setEnabled( true );
-                    btnRunTest.setEnabled( true );
-                    menuItemBuildTestPackage.setEnabled( true );
-                    menuItemAddPackage.setEnabled( true );
-                    menuItemLoadTestSets.setEnabled( true);
-                    menuItemRunTest.setEnabled( true );
-                    menuItemExit.setEnabled( true );
-                    menuItemTestSets.setEnabled( true );
-                    menuItemDependencies.setEnabled( true );
-                    menuItemTheme.setEnabled( true );
-                    menuItemPlagiarismDetector.setEnabled( true );
-                    menuStyleChecker.setEnabled( true );
-                    menuItemStyleCheckerC.setEnabled( true );
-                    menuItemStyleCheckerJava.setEnabled( true );
-                    menuItemHowTo.setEnabled( true );
-                    menuItemAbout.setEnabled( true );
-                    lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.done" ) );
-                    
+                    } );
+                } catch ( IOException exc ) {
+                    Utils.showException( exc );
+                } finally {
+                    SwingUtilities.invokeLater( () -> {
+                        listPackages.setEnabled( true );
+                        listTestSets.setEnabled( true );
+                        btnBuildTestPackage.setEnabled( true );
+                        btnAddPackage.setEnabled( true );
+                        btnRemovePackage.setEnabled( true );
+                        checkGenerateResultsSpreadsheet.setEnabled( true );
+                        btnLoadTestSet.setEnabled( true );
+                        btnRunTest.setEnabled( true );
+                        menuItemBuildTestPackage.setEnabled( true );
+                        menuItemAddPackage.setEnabled( true );
+                        menuItemLoadTestSets.setEnabled( true );
+                        menuItemRunTest.setEnabled( true );
+                        menuItemExit.setEnabled( true );
+                        menuItemTestSets.setEnabled( true );
+                        menuItemDependencies.setEnabled( true );
+                        menuItemTheme.setEnabled( true );
+                        menuItemPlagiarismDetector.setEnabled( true );
+                        menuStyleChecker.setEnabled( true );
+                        menuItemStyleCheckerC.setEnabled( true );
+                        menuItemStyleCheckerJava.setEnabled( true );
+                        menuItemHowTo.setEnabled( true );
+                        menuItemAbout.setEnabled( true );
+                        lblStatus.setText( bundle.getString( "MainWindow.menuItemPlagiarismDetector.done" ) );
+                    } );
                 }
-                
-            }).start();
+
+            } );
             
         } else {
             JOptionPane.showMessageDialog( 
@@ -712,11 +719,9 @@ public class MainWindow extends javax.swing.JFrame {
         
         if ( !filesToTest.isEmpty() ) {
             
-            new Thread( new Runnable() {
-                
-                @Override
-                public void run() {
-                    
+            executor.submit( () -> {
+
+                SwingUtilities.invokeLater( () -> {
                     listPackages.setEnabled( false );
                     listTestSets.setEnabled( false );
                     btnBuildTestPackage.setEnabled( false );
@@ -740,42 +745,45 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemHowTo.setEnabled( false );
                     menuItemAbout.setEnabled( false );
                     lblStatus.setText( bundle.getString( "MainWindow.menuItemCheckStyle.pleaseWait" ) );
-                    
-                    try {
-                        StyleCheckerTestResult result = StyleCheckerUtils.runStyleChecker( filesToTest, language );
+                } );
+
+                try {
+                    StyleCheckerTestResult result = StyleCheckerUtils.runStyleChecker( filesToTest, language );
+                    SwingUtilities.invokeLater( () -> {
                         StyleCheckerResultFrame frame = new StyleCheckerResultFrame( result, styleCheckerBackgroundColor, useLightTheme );
                         frame.setVisible( true );
-                    } catch ( IOException exc ) {
-                        Utils.showException( exc );
-                    }
-                    
-                    listPackages.setEnabled( true );
-                    listTestSets.setEnabled( true );
-                    btnBuildTestPackage.setEnabled( true );
-                    btnAddPackage.setEnabled( true );
-                    btnRemovePackage.setEnabled( true );
-                    checkGenerateResultsSpreadsheet.setEnabled( true );
-                    btnLoadTestSet.setEnabled( true );
-                    btnRunTest.setEnabled( true );
-                    menuItemBuildTestPackage.setEnabled( true );
-                    menuItemAddPackage.setEnabled( true );
-                    menuItemLoadTestSets.setEnabled( true);
-                    menuItemRunTest.setEnabled( true );
-                    menuItemExit.setEnabled( true );
-                    menuItemTestSets.setEnabled( true );
-                    menuItemDependencies.setEnabled( true );
-                    menuItemTheme.setEnabled( true );
-                    menuItemPlagiarismDetector.setEnabled( true );
-                    menuStyleChecker.setEnabled( true );
-                    menuItemStyleCheckerC.setEnabled( true );
-                    menuItemStyleCheckerJava.setEnabled( true );
-                    menuItemHowTo.setEnabled( true );
-                    menuItemAbout.setEnabled( true );
-                    lblStatus.setText( bundle.getString( "MainWindow.menuItemCheckStyle.done" ) );
-                    
+                    } );
+                } catch ( IOException exc ) {
+                    Utils.showException( exc );
+                } finally {
+                    SwingUtilities.invokeLater( () -> {
+                        listPackages.setEnabled( true );
+                        listTestSets.setEnabled( true );
+                        btnBuildTestPackage.setEnabled( true );
+                        btnAddPackage.setEnabled( true );
+                        btnRemovePackage.setEnabled( true );
+                        checkGenerateResultsSpreadsheet.setEnabled( true );
+                        btnLoadTestSet.setEnabled( true );
+                        btnRunTest.setEnabled( true );
+                        menuItemBuildTestPackage.setEnabled( true );
+                        menuItemAddPackage.setEnabled( true );
+                        menuItemLoadTestSets.setEnabled( true );
+                        menuItemRunTest.setEnabled( true );
+                        menuItemExit.setEnabled( true );
+                        menuItemTestSets.setEnabled( true );
+                        menuItemDependencies.setEnabled( true );
+                        menuItemTheme.setEnabled( true );
+                        menuItemPlagiarismDetector.setEnabled( true );
+                        menuStyleChecker.setEnabled( true );
+                        menuItemStyleCheckerC.setEnabled( true );
+                        menuItemStyleCheckerJava.setEnabled( true );
+                        menuItemHowTo.setEnabled( true );
+                        menuItemAbout.setEnabled( true );
+                        lblStatus.setText( bundle.getString( "MainWindow.menuItemCheckStyle.done" ) );
+                    } );
                 }
-                
-            }).start();
+
+            } );
             
         } else {
             JOptionPane.showMessageDialog( 
@@ -1422,6 +1430,10 @@ public class MainWindow extends javax.swing.JFrame {
             runTest( null );
         } else {
             running = false;
+            Processor.killCurrentProcess();
+            if ( testFuture != null ) {
+                testFuture.cancel( true );
+            }
             btnRunTest.setText( bundle.getString( "MainWindow.btnRunTestStopping.text" ) );
             btnRunTest.setEnabled( false );
         }

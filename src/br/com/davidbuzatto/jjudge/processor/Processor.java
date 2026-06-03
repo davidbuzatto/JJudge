@@ -24,7 +24,16 @@ import javax.swing.JTextPane;
  * @author Prof. Dr. David Buzatto
  */
 public class Processor {
-    
+
+    private static volatile Process currentProcess;
+
+    public static void killCurrentProcess() {
+        Process p = currentProcess;
+        if ( p != null ) {
+            p.destroyForcibly();
+        }
+    }
+
     public static TestResult compileAndRun( 
             String presentationName,
             String fileName, 
@@ -211,6 +220,7 @@ public class Processor {
             for ( int i = 0; i < compilationCommands.length; i++ ) {
                 
                 Process p = rt.exec( compilationCommands[i], null, dir );
+                currentProcess = p;
                 StreamGobbler sg;
                 
                 try ( FileOutputStream fosOutput = new FileOutputStream( 
@@ -225,9 +235,11 @@ public class Processor {
                     Thread t = new Thread( sg );
                     t.start();
                     t.join();
-                    
+
                 }
-                
+
+                currentProcess = null;
+
                 // if error...
                 if ( sg.isProcessErrorStreamDataAvailable() ) {
                     
@@ -314,6 +326,7 @@ public class Processor {
                     String test = tc.getOutput();
 
                     Process pExec = rt.exec( cmdExec, null, dir );
+                    currentProcess = pExec;
                     PrintWriter pwExec = new PrintWriter( pExec.getOutputStream() );
                     
                     try ( FileOutputStream fosOutput = new FileOutputStream(
@@ -396,8 +409,9 @@ public class Processor {
                             }
                         }
 
-                    }
+                    } // fosOutput closed automatically by try-with-resources
 
+                    currentProcess = null;
 
                     // reading process output from file
                     StringBuilder sbOutput = new StringBuilder();
