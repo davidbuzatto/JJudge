@@ -72,9 +72,12 @@ public class StyleCheckerUtils {
             Student s = Utils.loadStudent( destDir.getAbsolutePath() );
             List<File> pkgFiles = new ArrayList<>();
             studentsFileMap.put( s, pkgFiles );
-            for ( File f : destDir.listFiles() ) {
-                if ( f.isFile() && !f.getName().equals( "student.json" ) ) {
-                    pkgFiles.add( f );
+            File[] dirFiles = destDir.listFiles();
+            if ( dirFiles != null ) {
+                for ( File f : dirFiles ) {
+                    if ( f.isFile() && !f.getName().equals( "student.json" ) ) {
+                        pkgFiles.add( f );
+                    }
                 }
             }
         }

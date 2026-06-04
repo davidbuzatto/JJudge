@@ -80,7 +80,12 @@ public class Utils {
     public static final String PREF_CURRENT_THEME = "PREF_CURRENT_THEME";
         
     public static final ResourceBundle bundle = ResourceBundle.getBundle( "br/com/davidbuzatto/jjudge/gui/Bundle" );
-    
+
+    public static final Gson GSON = new Gson();
+    public static final Gson GSON_TEST_SETS = new GsonBuilder().registerTypeAdapterFactory( new PostProcessingEnabler() ).create();
+    public static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
+
+
     public static void zipFile( File fileToZip, File zipFile ) throws IOException {
         
         try ( FileOutputStream fos = new FileOutputStream( zipFile );
@@ -157,8 +162,11 @@ public class Utils {
                 zipOut.closeEntry();
             }
             
-            for ( File childFile : fileToZip.listFiles() ) {
-                newZipFilesHelper( childFile, fileName + File.separator + childFile.getName(), zipOut );
+            File[] children = fileToZip.listFiles();
+            if ( children != null ) {
+                for ( File childFile : children ) {
+                    newZipFilesHelper( childFile, fileName + File.separator + childFile.getName(), zipOut );
+                }
             }
             
             return;
@@ -209,9 +217,10 @@ public class Utils {
             }
             
             File[] children = fileToZip.listFiles();
-            
-            for ( File childFile : children ) {
-                recursiveZipFile( childFile, fileName + File.separator + childFile.getName(), zipOut );
+            if ( children != null ) {
+                for ( File childFile : children ) {
+                    recursiveZipFile( childFile, fileName + File.separator + childFile.getName(), zipOut );
+                }
             }
             
             return;
@@ -329,13 +338,12 @@ public class Utils {
                                 "/testSets.json"  ) ) );
 
         Type listType = new TypeToken<ArrayList<TestSet>>(){}.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapterFactory( new PostProcessingEnabler() ).create();
-        testSets = gson.fromJson( reader, listType );
-        
+        testSets = GSON_TEST_SETS.fromJson( reader, listType );
+
         return testSets;
-        
+
     }
-    
+
     public static List<TestSet> loadTestSets( File file ) {
         
         List<TestSet> testSets = null;
@@ -346,8 +354,7 @@ public class Utils {
                     new FileReader( file, StandardCharsets.UTF_8 ) );
 
             Type listType = new TypeToken<ArrayList<TestSet>>(){}.getType();
-            Gson gson = new GsonBuilder().registerTypeAdapterFactory( new PostProcessingEnabler() ).create();
-            testSets = gson.fromJson( reader, listType );
+            testSets = GSON_TEST_SETS.fromJson( reader, listType );
             
         } catch ( FileNotFoundException exc ) {
             Utils.showException( exc );
@@ -363,13 +370,12 @@ public class Utils {
     
     public static Student loadStudent( String baseDir ) throws IOException {
         
-        Gson gson = new Gson();
         Student student;
-        
-        try (JsonReader reader = new JsonReader(
+
+        try ( JsonReader reader = new JsonReader(
                 new FileReader(
-                        new File( String.format( "%s/student.json", baseDir )), StandardCharsets.UTF_8 ))) {
-            student = gson.fromJson( reader, Student.class );
+                        new File( String.format( "%s/student.json", baseDir ) ), StandardCharsets.UTF_8 ) ) ) {
+            student = GSON.fromJson( reader, Student.class );
         }
         
         return student;
@@ -378,8 +384,7 @@ public class Utils {
     
     public static void saveStudent( Student student, File file ) throws IOException {
         
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	String json = gson.toJson( student );
+        String json = GSON_PRETTY.toJson( student );
         
         try (PrintWriter writer = new PrintWriter( file, StandardCharsets.UTF_8 )) {
             writer.print( json );

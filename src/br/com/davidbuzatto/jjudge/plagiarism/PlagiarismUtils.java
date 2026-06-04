@@ -52,9 +52,12 @@ public class PlagiarismUtils {
             List<File> pkgFiles = new ArrayList<>();
             studentsFileMap.put( s.getName(), pkgFiles );
             students.add( s );
-            for ( File f : destDir.listFiles() ) {
-                if ( f.isFile() && !f.getName().equals( "student.json" ) ) {
-                    pkgFiles.add( f );
+            File[] dirFiles = destDir.listFiles();
+            if ( dirFiles != null ) {
+                for ( File f : dirFiles ) {
+                    if ( f.isFile() && !f.getName().equals( "student.json" ) ) {
+                        pkgFiles.add( f );
+                    }
                 }
             }
         }

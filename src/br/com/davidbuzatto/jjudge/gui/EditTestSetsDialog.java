@@ -5,8 +5,6 @@ import br.com.davidbuzatto.jjudge.testsets.TestCase;
 import br.com.davidbuzatto.jjudge.testsets.TestProgrammingLanguage;
 import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.utils.Utils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -817,8 +815,7 @@ public class EditTestSetsDialog extends javax.swing.JDialog {
 
     private void btnOKAndSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKAndSaveActionPerformed
         
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	String json = gson.toJson( testSets );
+        String json = Utils.GSON_PRETTY.toJson( testSets );
         
         JFileChooser jfc = new JFileChooser( new File( Utils.getPref( Utils.PREF_SAVE_TEST_SETS_PATH ) ) );
         jfc.setDialogTitle( bundle.getString( "EditTestSetsDialog.btnOKAndSaveActionPerformed.save" ) );
