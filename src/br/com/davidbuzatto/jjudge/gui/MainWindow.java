@@ -73,7 +73,7 @@ public class MainWindow extends javax.swing.JFrame {
     private Future<?> testFuture;
     
     private List<File> javaClasspathFiles;
-    private List<String> extraCompilerParams = new ArrayList<>();
+    private List<String> extraCompilerParams;
 
     private boolean useLightTheme;
     
@@ -84,10 +84,13 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow( int secondsToTimeout ) {
         
         this.secondsToTimeout = secondsToTimeout;
+        
         RUN_ICON = new ImageIcon( getClass().getResource(
                 "/br/com/davidbuzatto/jjudge/gui/icons/accept.png" ) );
         STOP_ICON = new ImageIcon( getClass().getResource(
                 "/br/com/davidbuzatto/jjudge/gui/icons/stop.png" ) );
+        
+        extraCompilerParams = new ArrayList<>();
         
         initComponents();
         customInit();
@@ -126,7 +129,7 @@ public class MainWindow extends javax.swing.JFrame {
         
         //prepareForJavaDebug();
         //prepareForCDebug();
-        //prepareForGeneralDebug();
+        prepareForGeneralDebug();
         //prepareForPlagiarismDetectorDebug();
         //prepareForStyleCheckerDebug();
         //prepareForRedoTestDebug();
@@ -396,6 +399,21 @@ public class MainWindow extends javax.swing.JFrame {
             scrollResults.updateUI();
         }
         
+        // prepare extra compiler params
+        extraCompilerParams.clear();
+        
+        if ( menuItemCheckUBD.isSelected() ) {
+            
+            // only for Linux
+            //extraCompilerParams.add( "-fsanitize=address,undefined" );
+            //extraCompilerParams.add( "-fno-sanitize-recover=all" );
+            //extraCompilerParams.add( "-fno-omit-frame-pointer" );
+            
+            extraCompilerParams.add( "-fsanitize=undefined" );
+            extraCompilerParams.add( "-fsanitize-trap" );
+            
+        }
+        
         if ( tSet != null && !listPackagesModel.isEmpty() ) {
             
             testFuture = executor.submit( () -> {
@@ -417,6 +435,7 @@ public class MainWindow extends javax.swing.JFrame {
                     menuItemRunTest.setEnabled( false );
                     menuItemExit.setEnabled( false );
                     menuItemTestSets.setEnabled( false );
+                    menuItemCheckUBD.setEnabled( false );
                     menuItemDependencies.setEnabled( false );
                     menuItemTheme.setEnabled( false );
                     menuItemPlagiarismDetector.setEnabled( false );
@@ -588,6 +607,7 @@ public class MainWindow extends javax.swing.JFrame {
                         menuItemRunTest.setEnabled( true );
                         menuItemExit.setEnabled( true );
                         menuItemTestSets.setEnabled( true );
+                        menuItemCheckUBD.setEnabled( true );
                         menuItemDependencies.setEnabled( true );
                         menuItemTheme.setEnabled( true );
                         menuItemPlagiarismDetector.setEnabled( true );
@@ -895,7 +915,8 @@ public class MainWindow extends javax.swing.JFrame {
         listPackagesModel.addElement( new File( "testSets/debugPackageC.jjd" ) );
         listPackagesModel.addElement( new File( "testSets/debugPackageCPP.jjd" ) );
         listPackagesModel.addElement( new File( "testSets/debugPackageJAVA.jjd" ) );
-        listPackagesModel.addElement( new File( "testSets/debugPackagePYTHON.jjd" ) );
+        listPackagesModel.addElement( new File( "testSets/debugPackagePYTHON2.jjd" ) );
+        listPackagesModel.addElement( new File( "testSets/debugPackagePYTHON3.jjd" ) );
         
     }
     
@@ -978,8 +999,10 @@ public class MainWindow extends javax.swing.JFrame {
         menuEdit = new javax.swing.JMenu();
         menuItemTestSets = new javax.swing.JMenuItem();
         sepMenuEdit01 = new javax.swing.JPopupMenu.Separator();
-        menuItemDependencies = new javax.swing.JMenuItem();
+        menuItemCheckUBD = new javax.swing.JCheckBoxMenuItem();
         sepMenuEdit02 = new javax.swing.JPopupMenu.Separator();
+        menuItemDependencies = new javax.swing.JMenuItem();
+        sepMenuEdit03 = new javax.swing.JPopupMenu.Separator();
         menuItemTheme = new javax.swing.JMenu();
         menuItemRadioLightTheme = new javax.swing.JRadioButtonMenuItem();
         menuItemRadioDarkTheme = new javax.swing.JRadioButtonMenuItem();
@@ -1274,7 +1297,13 @@ public class MainWindow extends javax.swing.JFrame {
         menuEdit.add(menuItemTestSets);
         menuEdit.add(sepMenuEdit01);
 
-        menuItemDependencies.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
+        menuItemCheckUBD.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
+        menuItemCheckUBD.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemCheckEMS.m").charAt(0));
+        menuItemCheckUBD.setText(bundle.getString("MainWindow.menuItemCheckUBD.text")); // NOI18N
+        menuEdit.add(menuItemCheckUBD);
+        menuEdit.add(sepMenuEdit02);
+
+        menuItemDependencies.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         menuItemDependencies.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/cog.png"))); // NOI18N
         menuItemDependencies.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemDependencies.m").charAt(0));
         menuItemDependencies.setText(bundle.getString("MainWindow.menuItemDependencies.text")); // NOI18N
@@ -1284,7 +1313,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         menuEdit.add(menuItemDependencies);
-        menuEdit.add(sepMenuEdit02);
+        menuEdit.add(sepMenuEdit03);
 
         menuItemTheme.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/davidbuzatto/jjudge/gui/icons/palette.png"))); // NOI18N
         menuItemTheme.setMnemonic(java.util.ResourceBundle.getBundle("br/com/davidbuzatto/jjudge/gui/Bundle").getString("MainWindow.menuItemTheme.m").charAt(0));
@@ -1665,6 +1694,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemAbout;
     private javax.swing.JMenuItem menuItemAddPackage;
     private javax.swing.JMenuItem menuItemBuildTestPackage;
+    private javax.swing.JCheckBoxMenuItem menuItemCheckUBD;
     private javax.swing.JMenuItem menuItemDependencies;
     private javax.swing.JMenuItem menuItemExit;
     private javax.swing.JMenuItem menuItemHowTo;
@@ -1693,6 +1723,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollTestSets;
     private javax.swing.JPopupMenu.Separator sepMenuEdit01;
     private javax.swing.JPopupMenu.Separator sepMenuEdit02;
+    private javax.swing.JPopupMenu.Separator sepMenuEdit03;
     private javax.swing.JPopupMenu.Separator sepMenuFile01;
     private javax.swing.JPopupMenu.Separator sepMenuFile02;
     private javax.swing.JPopupMenu.Separator sepMenuHelp01;

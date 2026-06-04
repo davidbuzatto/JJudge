@@ -78,7 +78,7 @@ public class Processor {
 
                 List<String> gccCmd = new ArrayList<>( Arrays.asList(
                     "gcc", fileName + ".c", "-o", fileName + ".exe",
-                    "-Werror", "-Wfatal-errors", "-std=c99", "-lm"
+                    "-Werror", "-Wfatal-errors", "-std=c99", "-lm", "-O0"
                 ) );
                 gccCmd.addAll( extraCompilerParams );
                 compilationCommands.add( gccCmd );
@@ -95,7 +95,7 @@ public class Processor {
 
                 List<String> gppCmd = new ArrayList<>( Arrays.asList(
                     "g++", fileName + ".cpp", "-o", fileName + ".exe",
-                    "-Werror", "-Wfatal-errors", "-std=c++20", "-lm"
+                    "-Werror", "-Wfatal-errors", "-std=c++20", "-lm", "-O0"
                 ) );
                 gppCmd.addAll( extraCompilerParams );
                 compilationCommands.add( gppCmd );
