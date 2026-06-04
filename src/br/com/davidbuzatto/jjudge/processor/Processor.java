@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -34,16 +35,17 @@ public class Processor {
         }
     }
 
-    public static TestResult compileAndRun( 
+    public static TestResult compileAndRun(
             String presentationName,
-            String fileName, 
-            String baseDir, 
-            int secondsToTimeout, 
+            String fileName,
+            String baseDir,
+            int secondsToTimeout,
             boolean outputStreams,
             List<TestCase> testCases,
             TestProgrammingLanguage pLang,
             JTextPane textPane,
             List<File> javaClasspathFiles,
+            List<String> extraCompilerParams,
             boolean useLightTheme ) throws IOException, InterruptedException {
         
         ResourceBundle bundle = Utils.bundle;
@@ -54,154 +56,118 @@ public class Processor {
         testResult.setTestCasesResult( new ArrayList<>() );
             
         ExecutionState state = null;
-        Runtime rt = Runtime.getRuntime();
         File dir = new File( baseDir );
         int passedTestCases = 0;
-        
+
         String sourceExt = pLang.name().toLowerCase();
         sourceExt = sourceExt.equals( "python" ) ? "py" : sourceExt;
-        
-        String[] cmdExec = new String[0];
+
+        List<String> cmdExec = new ArrayList<>();
         String[] filesToRemoveByExtension = { "o", "exe", "class", "out" };
-        String[][] compilationCommands = {};
-        String[] threadId = {};
-        
-        
+        List<List<String>> compilationCommands = new ArrayList<>();
+        List<String> threadId = new ArrayList<>();
+
+
         switch ( pLang ) {
-            
-            case C:
-                
-                cmdExec = new String[]{
-                    String.format( "%s%s%s.exe", baseDir, File.separator, fileName )
-                };
 
-                /*compilationCommands = new String[][]{
-                    String.format( "gcc -Werror -Wfatal-errors -c %s.c -o %s.o", fileName, fileName ).split( "\\s+" ),
-                    String.format( "g++ -o %s.exe %s.o", fileName, fileName ).split( "\\s+" )
-                };
-                
-                threadId = new String[]{
-                    "    gcc (comp)",
-                    "    g++ (link)"
-                };*/
-                
-                compilationCommands = new String[][]{
-                    String.format( "gcc %s.c -o %s.exe -Werror -Wfatal-errors -std=c99 -lm", fileName, fileName ).split( "\\s+" )
-                };
+            case C: {
 
-                threadId = new String[]{
-                    "    gcc"
-                };
-                
+                cmdExec = new ArrayList<>( Arrays.asList(
+                    baseDir + File.separator + fileName + ".exe"
+                ) );
+
+                List<String> gccCmd = new ArrayList<>( Arrays.asList(
+                    "gcc", fileName + ".c", "-o", fileName + ".exe",
+                    "-Werror", "-Wfatal-errors", "-std=c99", "-lm"
+                ) );
+                gccCmd.addAll( extraCompilerParams );
+                compilationCommands.add( gccCmd );
+                threadId.add( "    gcc" );
                 break;
-                
-                
-                
-            case CPP:
-                
-                cmdExec = new String[]{
-                    String.format( "%s%s%s.exe", baseDir, File.separator, fileName )
-                };
 
-                /*compilationCommands = new String[][]{
-                    String.format( "g++ -Werror -Wfatal-errors -c %s.cpp -o %s.o", fileName, fileName ).split( "\\s+" ),
-                    String.format( "g++ -o %s.exe %s.o", fileName, fileName ).split( "\\s+" )
-                };
+            }
 
-                threadId = new String[]{
-                    "    g++ (comp)",
-                    "    g++ (link)"
-                };*/
-                
-                compilationCommands = new String[][]{
-                    String.format( "g++ %s.cpp -o %s.exe -Werror -Wfatal-errors -std=c++20 -lm", fileName, fileName ).split( "\\s+" )
-                };
+            case CPP: {
 
-                threadId = new String[]{
-                    "    g++"
-                };
-                
+                cmdExec = new ArrayList<>( Arrays.asList(
+                    baseDir + File.separator + fileName + ".exe"
+                ) );
+
+                List<String> gppCmd = new ArrayList<>( Arrays.asList(
+                    "g++", fileName + ".cpp", "-o", fileName + ".exe",
+                    "-Werror", "-Wfatal-errors", "-std=c++20", "-lm"
+                ) );
+                gppCmd.addAll( extraCompilerParams );
+                compilationCommands.add( gppCmd );
+                threadId.add( "    g++" );
                 break;
-                
-                
-                
-            case JAVA:
-                
+
+            }
+
+            case JAVA: {
+
                 String classpathFiles = "";
-                String classpathFilesWithCP = "";
-                boolean runningOnWindows = Utils.runningOnWindows();
-                
                 if ( javaClasspathFiles != null ) {
                     classpathFiles = Utils.buildDependenciesPath( javaClasspathFiles );
-                    if ( runningOnWindows ) {
-                        classpathFilesWithCP = String.format( "-cp \"%s\"", classpathFiles );
-                    } else {
-                        classpathFilesWithCP = String.format( "-cp %s", classpathFiles );
-                    }
                 }
-                
-                /*System.out.println( classpathFiles );
-                System.out.println( classpathFilesWithCP );*/
-                
+
                 // multiple file compilation and execution
                 if ( fileName.contains( "/" ) ) {
-                        
+
                     int ind = fileName.lastIndexOf( '/' );
                     String fileDir = fileName.substring( 0, ind );
                     String justName = fileName.substring( ind + 1 );
-                    
-                    String cmdExecString;
-                    String compilationCommandsString;
-                    
-                    if ( runningOnWindows ) {
-                        cmdExecString = "java -Duser.language=en -Duser.country=US -cp \"%s%s%s%s%s\" %s";
-                        compilationCommandsString = "javac -Xlint:unchecked %s.java -cp \"%s%s%s%s%s\"";
-                    } else {
-                        cmdExecString = "java -Duser.language=en -Duser.country=US -cp %s%s%s%s%s %s";
-                        compilationCommandsString = "javac -Xlint:unchecked %s.java -cp %s%s%s%s%s";
+                    String cp = baseDir + File.separator + fileDir;
+                    if ( !classpathFiles.isEmpty() ) {
+                        cp += File.pathSeparator + classpathFiles;
                     }
-                    
-                    cmdExec = String.format( cmdExecString, 
-                            baseDir, 
-                            File.separator,
-                            fileDir, 
-                            File.pathSeparator, 
-                            classpathFiles, 
-                            justName ).split( "\\s+" );
 
-                    compilationCommands = new String[][]{
-                        String.format( compilationCommandsString, 
-                                fileName, 
-                                baseDir, 
-                                File.separator,
-                                fileDir, 
-                                File.pathSeparator, 
-                                classpathFiles ).split( "\\s+" )
-                    };
-                    
+                    cmdExec = new ArrayList<>( Arrays.asList(
+                        "java", "-Duser.language=en", "-Duser.country=US",
+                        "-cp", cp, justName
+                    ) );
+
+                    List<String> javacCmd = new ArrayList<>( Arrays.asList(
+                        "javac", "-Xlint:unchecked", fileName + ".java", "-cp", cp
+                    ) );
+                    javacCmd.addAll( extraCompilerParams );
+                    compilationCommands.add( javacCmd );
+
                 } else {
-                    
-                    cmdExec = String.format( "java -Duser.language=en -Duser.country=US %s%s", classpathFilesWithCP + " ", fileName ).split( "\\s+" );
 
-                    compilationCommands = new String[][]{
-                        String.format( "javac -Xlint:unchecked %s.java%s", fileName, " " + classpathFilesWithCP ).split( "\\s+" )
-                    };
-                
+                    cmdExec = new ArrayList<>( Arrays.asList(
+                        "java", "-Duser.language=en", "-Duser.country=US"
+                    ) );
+                    if ( !classpathFiles.isEmpty() ) {
+                        cmdExec.add( "-cp" );
+                        cmdExec.add( classpathFiles );
+                    }
+                    cmdExec.add( fileName );
+
+                    List<String> javacCmd = new ArrayList<>( Arrays.asList(
+                        "javac", "-Xlint:unchecked", fileName + ".java"
+                    ) );
+                    if ( !classpathFiles.isEmpty() ) {
+                        javacCmd.add( "-cp" );
+                        javacCmd.add( classpathFiles );
+                    }
+                    javacCmd.addAll( extraCompilerParams );
+                    compilationCommands.add( javacCmd );
+
                 }
 
-                threadId = new String[]{
-                    "    javac"
-                };
-                
+                threadId.add( "    javac" );
                 break;
-                
-                
-                
-            case PYTHON:
-                
-                cmdExec = String.format( "python %s.py", fileName ).split( "\\s+" );
+
+            }
+
+            case PYTHON: {
+
+                cmdExec = new ArrayList<>( Arrays.asList( "python", fileName + ".py" ) );
                 break;
-            
+
+            }
+
         }
         
         if ( textPane == null ) {
@@ -217,20 +183,22 @@ public class Processor {
         if ( new File( String.format( "%s/%s.%s", baseDir, fileName, sourceExt ) ).exists() ) {
             
             // compilation
-            for ( int i = 0; i < compilationCommands.length; i++ ) {
-                
-                Process p = rt.exec( compilationCommands[i], null, dir );
+            for ( int i = 0; i < compilationCommands.size(); i++ ) {
+
+                ProcessBuilder pbComp = new ProcessBuilder( compilationCommands.get( i ) );
+                pbComp.directory( dir );
+                Process p = pbComp.start();
                 currentProcess = p;
                 StreamGobbler sg;
-                
-                try ( FileOutputStream fosOutput = new FileOutputStream( 
-                        new File( String.format(  "%s/error.out" , baseDir ) ) ) ) {
-                    
-                    sg = new StreamGobbler( 
+
+                try ( FileOutputStream fosOutput = new FileOutputStream(
+                        new File( String.format( "%s/error.out", baseDir ) ) ) ) {
+
+                    sg = new StreamGobbler(
                             p.getInputStream(),
                             p.getErrorStream(),
                             fosOutput,
-                            threadId[i],
+                            threadId.get( i ),
                             outputStreams );
                     Thread t = new Thread( sg );
                     t.start();
@@ -295,7 +263,7 @@ public class Processor {
 
                 if ( textPane == null ) {
                     
-                    if ( compilationCommands.length > 0 ) {
+                    if ( !compilationCommands.isEmpty() ) {
                         System.out.println( "|-- compiled!" );
                     }
                     
@@ -303,7 +271,7 @@ public class Processor {
                     
                 } else {
                     
-                    if ( compilationCommands.length > 0 ) {
+                    if ( !compilationCommands.isEmpty() ) {
                         Utils.addFormattedText( 
                             textPane, 
                             bundle.getString( "Processor.compileAndRun.compiled" ), 
@@ -325,7 +293,9 @@ public class Processor {
                     String input = tc.getInput();
                     String test = tc.getOutput();
 
-                    Process pExec = rt.exec( cmdExec, null, dir );
+                    ProcessBuilder pbExec = new ProcessBuilder( cmdExec );
+                    pbExec.directory( dir );
+                    Process pExec = pbExec.start();
                     currentProcess = pExec;
                     PrintWriter pwExec = new PrintWriter( pExec.getOutputStream() );
                     

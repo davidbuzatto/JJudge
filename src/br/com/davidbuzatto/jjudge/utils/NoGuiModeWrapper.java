@@ -4,6 +4,7 @@ import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import org.apache.commons.io.FileUtils;
@@ -30,13 +31,14 @@ public class NoGuiModeWrapper {
 
                     System.out.println( String.format( bundle.getString( "MainWindow.btnRunTestActionPerformed.processing" ), fileToTest ) );
 
-                    TestSetResult result = Utils.runTest( 
-                            fileToTest, 
-                            testSet, 
-                            true, 
-                            5, 
+                    TestSetResult result = Utils.runTest(
+                            fileToTest,
+                            testSet,
+                            true,
+                            5,
                             null,
                             javaClasspathFiles,
+                            new ArrayList<>(),
                             true );
 
                     if ( fileToTest.getName().endsWith( ".jjd" ) ) {

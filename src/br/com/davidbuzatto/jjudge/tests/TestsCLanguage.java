@@ -6,6 +6,7 @@ import br.com.davidbuzatto.jjudge.testsets.TestSet;
 import br.com.davidbuzatto.jjudge.testsets.TestSetResult;
 import br.com.davidbuzatto.jjudge.utils.Utils;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,6 +47,7 @@ public class TestsCLanguage {
                     null,
                     null,
                     null,
+                    new ArrayList<>(),
                     true );
 
             System.out.println( testSet.getDescription() );

@@ -73,7 +73,8 @@ public class MainWindow extends javax.swing.JFrame {
     private Future<?> testFuture;
     
     private List<File> javaClasspathFiles;
-    
+    private List<String> extraCompilerParams = new ArrayList<>();
+
     private boolean useLightTheme;
     
     public MainWindow() {
@@ -456,6 +457,7 @@ public class MainWindow extends javax.swing.JFrame {
                                     secondsToTimeout,
                                     textPaneProcessOutput,
                                     javaClasspathFiles,
+                                    extraCompilerParams,
                                     useLightTheme ) );
 
                             SwingUtilities.invokeLater( () -> {
@@ -490,6 +492,7 @@ public class MainWindow extends javax.swing.JFrame {
                                     secondsToTimeout,
                                     textPaneProcessOutput,
                                     javaClasspathFiles,
+                                    extraCompilerParams,
                                     useLightTheme );
 
                             for ( TestSetResult tsr : testSetResList ) {

@@ -395,16 +395,17 @@ public class Utils {
         
     }
     
-    public static TestSetResult verify( 
-            TestSet testSet, 
-            Student student, 
-            String baseDir, 
-            int secondsToTimeout, 
+    public static TestSetResult verify(
+            TestSet testSet,
+            Student student,
+            String baseDir,
+            int secondsToTimeout,
             boolean outputStreams,
             JTextPane textPane,
             File packageFile,
             File file,
             List<File> javaClasspathFiles,
+            List<String> extraCompilerParams,
             boolean useLightTheme ) throws IOException, InterruptedException {
         
         TestSetResult testSetResult = new TestSetResult();
@@ -420,16 +421,17 @@ public class Utils {
 
                 String fileName = lookupTestName( t, baseDir, testSet );
                 
-                TestResult testResult = Processor.compileAndRun( 
+                TestResult testResult = Processor.compileAndRun(
                         t.getPresentationName(),
-                        fileName, 
-                        baseDir, 
-                        secondsToTimeout, 
+                        fileName,
+                        baseDir,
+                        secondsToTimeout,
                         outputStreams,
                         t.getTestCases(),
                         testSet.getProgrammingLanguage(),
                         textPane,
                         javaClasspathFiles,
+                        extraCompilerParams,
                         useLightTheme );
                 
                 testSetResult.getTestResults().add( testResult );
@@ -449,16 +451,17 @@ public class Utils {
                 
                 if ( filenameWithoutExt.equals( fileName ) ) {
                     
-                    testResult = Processor.compileAndRun( 
+                    testResult = Processor.compileAndRun(
                             t.getPresentationName(),
-                            fileName, 
-                            baseDir, 
-                            secondsToTimeout, 
+                            fileName,
+                            baseDir,
+                            secondsToTimeout,
                             outputStreams,
                             t.getTestCases(),
                             testSet.getProgrammingLanguage(),
                             textPane,
                             javaClasspathFiles,
+                            extraCompilerParams,
                             useLightTheme );
                 
                 } else {
@@ -491,13 +494,14 @@ public class Utils {
         
     }
     
-    public static TestSetResult runTest( 
-            File file, 
-            TestSet testSet, 
-            boolean outputStreams, 
+    public static TestSetResult runTest(
+            File file,
+            TestSet testSet,
+            boolean outputStreams,
             int secondsToTimeout,
             JTextPane textPane,
             List<File> javaClasspathFiles,
+            List<String> extraCompilerParams,
             boolean useLightTheme ) throws IOException, InterruptedException {
         
         File destDir;
@@ -550,28 +554,30 @@ public class Utils {
         } else { 
             
             if ( file.getName().endsWith( ".jjd" ) ) {
-                return verify( 
-                        testSet, 
-                        student, 
-                        baseDir, 
-                        secondsToTimeout, 
+                return verify(
+                        testSet,
+                        student,
+                        baseDir,
+                        secondsToTimeout,
                         outputStreams,
                         textPane,
                         file,
                         null,
                         javaClasspathFiles,
+                        extraCompilerParams,
                         useLightTheme );
             } else {
-                return verify( 
-                        testSet, 
-                        student, 
-                        baseDir, 
-                        secondsToTimeout, 
+                return verify(
+                        testSet,
+                        student,
+                        baseDir,
+                        secondsToTimeout,
                         outputStreams,
                         textPane,
                         null,
                         file,
                         javaClasspathFiles,
+                        extraCompilerParams,
                         useLightTheme );
             }
             
