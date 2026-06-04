@@ -129,7 +129,7 @@ public class MainWindow extends javax.swing.JFrame {
         
         //prepareForJavaDebug();
         //prepareForCDebug();
-        prepareForGeneralDebug();
+        //prepareForGeneralDebug();
         //prepareForPlagiarismDetectorDebug();
         //prepareForStyleCheckerDebug();
         //prepareForRedoTestDebug();
