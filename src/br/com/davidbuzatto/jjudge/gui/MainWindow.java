@@ -120,6 +120,9 @@ public class MainWindow extends javax.swing.JFrame {
         
         setExtendedState( JFrame.MAXIMIZED_BOTH );
         resultPanel.setMouseOverAllowed( true );
+
+        scrollResults.getVerticalScrollBar().setUnitIncrement( 25 );
+        scrollResults.getHorizontalScrollBar().setUnitIncrement( 25 );
         
         //prepareForJavaDebug();
         //prepareForCDebug();
