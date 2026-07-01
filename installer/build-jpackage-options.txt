@@ -12,3 +12,4 @@
 --win-per-user-install
 --win-shortcut
 --java-options -splash:app/splash.png
+--jlink-options --add-modules=java.xml,java.naming,jdk.xml.dom,jdk.charsets
